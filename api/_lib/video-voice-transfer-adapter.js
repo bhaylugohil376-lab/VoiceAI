@@ -9,13 +9,12 @@ function isHttpsUrl(value) {
   }
 }
 
-/**
- * Sends the validated video and settings to your configured
- * video voice-transfer provider.
- *
- * Provider contract: accepts multipart/form-data and returns
- * a hosted video URL, JSON with a video URL, or a video response.
- */
+function providerError(message, status = 502) {
+  const error = new Error(message);
+  error.status = status;
+  return error;
+}
+
 export async function transferVideo({
   providerUrl,
   providerKey,
@@ -25,11 +24,11 @@ export async function transferVideo({
   fields
 }) {
   if (!providerUrl || !isHttpsUrl(providerUrl) || !providerKey) {
-    throw new Error("Video transfer provider is not configured.");
+    throw providerError("Video provider is not configured.", 503);
   }
 
-  if (!videoBuffer?.length) {
-    throw new Error("Uploaded video is empty.");
+  if (!Buffer.isBuffer(videoBuffer) || videoBuffer.length === 0) {
+    throw providerError("The uploaded video is empty.", 400);
   }
 
   const form = new FormData();
@@ -39,7 +38,7 @@ export async function transferVideo({
     new Blob([videoBuffer], {
       type: mimeType || "application/octet-stream"
     }),
-    originalFilename || "input-video.mp4"
+    originalFilename || "upload.mp4"
   );
 
   for (const [key, value] of Object.entries(fields || {})) {
@@ -57,39 +56,45 @@ export async function transferVideo({
         Accept: "application/json, video/*"
       },
       body: form,
-      signal: AbortSignal.timeout(55000)
+      signal: AbortSignal.timeout(180000)
     });
   } catch (error) {
-    console.error("Video provider connection failed:", error.message);
-    throw new Error("Video provider could not be reached.");
+    if (error?.name === "TimeoutError" ||
+        error?.name === "AbortError") {
+      throw providerError("Video processing timed out.", 504);
+    }
+
+    throw providerError("Could not reach the video provider.", 502);
   }
 
   if (!response.ok) {
-    const detail = await response.text().catch(() => "");
-    console.error(
-      "Video provider error:",
-      response.status,
-      detail.slice(0, 300)
-    );
+    // Do not send provider error details or secrets to the browser.
+    await response.text().catch(() => "");
 
-    throw new Error(
-      response.status === 429
-        ? "Video provider quota reached or service is busy."
-        : "Video provider failed to process the video."
-    );
+    if (response.status === 429) {
+      throw providerError("The video provider quota is exhausted or busy.", 429);
+    }
+
+    if (response.status === 401 || response.status === 403) {
+      throw providerError("The video provider rejected its API credentials.", 502);
+    }
+
+    throw providerError("The video provider could not process this video.", 502);
   }
 
-  const contentType = response.headers.get("content-type") || "";
+  const contentType = (
+    response.headers.get("content-type") || ""
+  ).toLowerCase();
 
-  if (contentType.toLowerCase().startsWith("video/")) {
-    const output = Buffer.from(await response.arrayBuffer());
+  if (contentType.startsWith("video/")) {
+    const outputBuffer = Buffer.from(await response.arrayBuffer());
 
-    if (!output.length || output.length > MAX_OUTPUT_BYTES) {
-      throw new Error("Provider video output is empty or too large.");
+    if (!outputBuffer.length || outputBuffer.length > MAX_OUTPUT_BYTES) {
+      throw providerError("The provider returned an empty or oversized video.");
     }
 
     return {
-      base64: output.toString("base64"),
+      base64: outputBuffer.toString("base64"),
       fileName: "voiceai-voice-transfer.mp4",
       title: "Transformed Video"
     };
@@ -100,18 +105,17 @@ export async function transferVideo({
   try {
     result = await response.json();
   } catch {
-    throw new Error("Provider returned an invalid response.");
+    throw providerError("The provider returned an unsupported response.");
   }
 
   const outputUrl =
-    result.outputUrl ||
-    result.videoUrl ||
-    result.url ||
-    result.data?.outputUrl ||
-    result.data?.videoUrl ||
-    result.data?.url;
+    result.outputUrl || result.videoUrl || result.url;
 
-  if (typeof outputUrl === "string" && isHttpsUrl(outputUrl)) {
+  if (typeof outputUrl === "string" && outputUrl.trim()) {
+    if (!isHttpsUrl(outputUrl)) {
+      throw providerError("The provider returned an invalid video URL.");
+    }
+
     return {
       outputUrl,
       fileName: result.fileName || "voiceai-voice-transfer.mp4",
@@ -119,22 +123,30 @@ export async function transferVideo({
     };
   }
 
-  const base64 = result.base64 || result.data?.base64;
+  if (typeof result.base64 === "string" && result.base64.length > 0) {
+    const encoded = result.base64.replace(/\s/g, "");
 
-  if (
-    typeof base64 === "string" &&
-    base64.length > 0 &&
-    base64.length <= 28 * 1024 * 1024 &&
-    /^[A-Za-z0-9+/]+={0,2}$/.test(base64)
-  ) {
+    if (
+      encoded.length > Math.ceil(MAX_OUTPUT_BYTES / 3) * 4 + 4 ||
+      !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(encoded)
+    ) {
+      throw providerError("The provider returned invalid or oversized video data.");
+    }
+
+    const outputBuffer = Buffer.from(encoded, "base64");
+
+    if (!outputBuffer.length || outputBuffer.length > MAX_OUTPUT_BYTES) {
+      throw providerError("The provider returned an empty or oversized video.");
+    }
+
     return {
-      base64,
+      base64: outputBuffer.toString("base64"),
       fileName: result.fileName || "voiceai-voice-transfer.mp4",
       title: result.title || "Transformed Video"
     };
   }
 
-  throw new Error(
-    "Provider response must contain a hosted video URL or base64 video."
+  throw providerError(
+    "The provider must return a hosted video URL or base64 video."
   );
 }
