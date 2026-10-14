@@ -1,3 +1,4 @@
+
 import { requireUser } from "../_lib/auth.js";
 import { checkAndUseAI } from "../_lib/usage.js";
 import {
@@ -16,9 +17,8 @@ export default async function handler(req, res) {
     if (!user) return;
 
     const body = parseJsonBody(req);
-    const id = typeof body?.agent_id === "string"
-      ? body.agent_id.trim()
-      : "";
+    const id =
+      typeof body?.agent_id === "string" ? body.agent_id.trim() : "";
 
     if (!id || id.length > 100) {
       return sendError(res, 400, "A valid agent ID is required.");
@@ -40,7 +40,11 @@ export default async function handler(req, res) {
       return sendError(res, 404, "Agent not found.");
     }
 
-    const config = agent.config || {};
+    const config =
+      agent.config && typeof agent.config === "object"
+        ? agent.config
+        : {};
+
     const providerAgentId = config.elevenlabs_agent_id;
 
     if (!providerAgentId || agent.status !== "deployed") {
