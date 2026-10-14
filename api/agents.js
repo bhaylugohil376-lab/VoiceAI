@@ -1,5 +1,3 @@
-
-import { supabaseAdmin } from "./_lib/supabase.js";
 import { requireUser } from "./_lib/auth.js";
 import {
   requireMethod,
@@ -7,70 +5,73 @@ import {
   sendError,
   sendSuccess
 } from "./_lib/response.js";
+import { supabaseAdmin } from "./_lib/supabase.js";
 
-const AGENT_TYPES = ["voice", "assistant", "customer_support"];
+const MAX_NAME_LENGTH = 120;
+const MAX_INSTRUCTIONS_LENGTH = 12000;
+const MAX_VOICE_ID_LENGTH = 150;
 
 export default async function handler(req, res) {
+  if (!requireMethod(req, res, ["GET", "POST", "DELETE"])) {
+    return;
+  }
+
   try {
     const user = await requireUser(req, res);
     if (!user) return;
 
-    if (!requireMethod(req, res, ["GET", "POST", "PATCH", "DELETE"])) {
-      return;
-    }
-
     if (req.method === "GET") {
       const { data, error } = await supabaseAdmin
         .from("agents")
-        .select("id, name, description, type, config, status, created_at, updated_at")
+        .select("*")
         .eq("user_id", user.id)
-        .order("updated_at", { ascending: false })
-        .limit(100);
+        .order("created_at", { ascending: false });
 
       if (error) {
         console.error("Agent list error:", error.message);
-        return sendError(res, 500, "Could not load agents.");
+        return sendError(res, 500, "Could not load your agents.");
       }
 
-      return sendSuccess(res, {
-        agents: data || [],
-        count: data?.length || 0
-      });
+      return sendSuccess(res, { agents: data || [] });
     }
 
     const body = parseJsonBody(req);
 
-    if (!body || typeof body !== "object") {
-      return sendError(res, 400, "Valid JSON body is required.");
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return sendError(res, 400, "Invalid request body.");
     }
 
     if (req.method === "POST") {
-      const name = typeof body.name === "string" ? body.name.trim() : "";
-      const description =
-        typeof body.description === "string" ? body.description.trim() : "";
-      const type = body.type || "assistant";
-      const config = body.config ?? {};
-      const status = "draft";
+      const name =
+        typeof body.name === "string" ? body.name.trim() : "";
 
-      if (name.length < 2 || name.length > 100) {
-        return sendError(res, 400, "Agent name must be 2–100 characters.");
+      const instructions =
+        typeof body.instructions === "string"
+          ? body.instructions.trim()
+          : "";
+
+      const voiceId =
+        typeof body.voice_id === "string"
+          ? body.voice_id.trim()
+          : null;
+
+      if (!name || name.length > MAX_NAME_LENGTH) {
+        return sendError(
+          res,
+          400,
+          `Agent name is required and must be at most ${MAX_NAME_LENGTH} characters.`
+        );
       }
 
-      if (description.length > 1000) {
-        return sendError(res, 400, "Description is too long.");
-      }
-
-      if (!AGENT_TYPES.includes(type)) {
-        return sendError(res, 400, "Invalid agent type.");
+      if (instructions.length > MAX_INSTRUCTIONS_LENGTH) {
+        return sendError(res, 400, "Agent instructions are too long.");
       }
 
       if (
-        !config ||
-        typeof config !== "object" ||
-        Array.isArray(config) ||
-        JSON.stringify(config).length > 20000
+        voiceId &&
+        !/^[A-Za-z0-9_-]{1,150}$/.test(voiceId)
       ) {
-        return sendError(res, 400, "Invalid agent configuration.");
+        return sendError(res, 400, "Invalid voice ID.");
       }
 
       const { data, error } = await supabaseAdmin
@@ -78,126 +79,55 @@ export default async function handler(req, res) {
         .insert({
           user_id: user.id,
           name,
-          description,
-          type,
-          config,
-          status
+          instructions,
+          voice_id: voiceId
         })
-        .select("id, name, description, type, config, status, created_at, updated_at")
+        .select("*")
         .single();
 
       if (error) {
         console.error("Agent create error:", error.message);
-        return sendError(res, 500, "Could not create agent.");
+        return sendError(res, 500, "Could not create the agent.");
       }
 
-      return sendSuccess(res, {
-        message: "Agent draft created.",
+      return res.status(201).json({
+        success: true,
         agent: data
       });
     }
 
-    if (
-      typeof body.id !== "string" ||
-      body.id.length < 1 ||
-      body.id.length > 100
-    ) {
-      return sendError(res, 400, "A valid agent id is required.");
-    }
+    const agentId =
+      typeof body.id === "string" || typeof body.id === "number"
+        ? String(body.id).trim()
+        : "";
 
-    if (req.method === "PATCH") {
-      const updates = { updated_at: new Date().toISOString() };
-
-      if (Object.hasOwn(body, "name")) {
-        if (
-          typeof body.name !== "string" ||
-          body.name.trim().length < 2 ||
-          body.name.trim().length > 100
-        ) {
-          return sendError(res, 400, "Invalid agent name.");
-        }
-        updates.name = body.name.trim();
-      }
-
-      if (Object.hasOwn(body, "description")) {
-        if (
-          typeof body.description !== "string" ||
-          body.description.trim().length > 1000
-        ) {
-          return sendError(res, 400, "Invalid description.");
-        }
-        updates.description = body.description.trim();
-      }
-
-      if (Object.hasOwn(body, "type")) {
-        if (!AGENT_TYPES.includes(body.type)) {
-          return sendError(res, 400, "Invalid agent type.");
-        }
-        updates.type = body.type;
-      }
-
-      if (Object.hasOwn(body, "config")) {
-        if (
-          !body.config ||
-          typeof body.config !== "object" ||
-          Array.isArray(body.config) ||
-          JSON.stringify(body.config).length > 20000
-        ) {
-          return sendError(res, 400, "Invalid agent configuration.");
-        }
-        updates.config = body.config;
-      }
-
-      const editableFields = ["name", "description", "type", "config"];
-      if (!editableFields.some((key) => Object.hasOwn(body, key))) {
-        return sendError(res, 400, "No editable fields provided.");
-      }
-
-      const { data, error } = await supabaseAdmin
-        .from("agents")
-        .update(updates)
-        .eq("id", body.id)
-        .eq("user_id", user.id)
-        .select("id, name, description, type, config, status, created_at, updated_at")
-        .maybeSingle();
-
-      if (error) {
-        console.error("Agent update error:", error.message);
-        return sendError(res, 500, "Could not update agent.");
-      }
-
-      if (!data) {
-        return sendError(res, 404, "Agent not found.");
-      }
-
-      return sendSuccess(res, {
-        message: "Agent updated.",
-        agent: data
-      });
+    if (!agentId || agentId.length > 100) {
+      return sendError(res, 400, "A valid agent ID is required.");
     }
 
     const { data, error } = await supabaseAdmin
       .from("agents")
       .delete()
-      .eq("id", body.id)
+      .eq("id", agentId)
       .eq("user_id", user.id)
-      .select("id");
+      .select("id")
+      .maybeSingle();
 
     if (error) {
       console.error("Agent delete error:", error.message);
-      return sendError(res, 500, "Could not delete agent.");
+      return sendError(res, 500, "Could not delete the agent.");
     }
 
-    if (!data?.length) {
+    if (!data) {
       return sendError(res, 404, "Agent not found.");
     }
 
     return sendSuccess(res, {
-      message: "Agent deleted.",
-      id: data[0].id
+      deleted: true,
+      id: data.id
     });
   } catch (error) {
-    console.error("Agents API error:", error);
-    return sendError(res, 500, "Unexpected server error.");
+    console.error("Agents API error:", error?.message || error);
+    return sendError(res, 500, "Internal server error.");
   }
 }
