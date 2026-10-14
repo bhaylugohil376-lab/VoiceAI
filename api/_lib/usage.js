@@ -4,72 +4,132 @@ import { supabaseAdmin } from "./supabase.js";
 const FREE_LIMIT = 5;
 const WINDOW_HOURS = 24;
 
-// Each tool must use a distinct action name:
-// "tts", "assistant", "image", "stt", "voice_clone", etc.
+const ALLOWED_ACTIONS = new Set([
+  "tts",
+  "assistant",
+  "image",
+  "stt",
+  "dubbing",
+  "voice_clone",
+  "voice_design",
+  "voice_changer",
+  "voice_isolator",
+  "captions",
+  "music",
+  "sound_effects",
+  "agents",
+  "video_voice_transfer"
+]);
+
 export async function checkAndUseAI(user, action) {
   if (!user?.id) {
-    return { allowed: false, status: 401, error: "Authentication required." };
+    return {
+      allowed: false,
+      status: 401,
+      error: "Authentication required."
+    };
   }
 
   if (
     typeof action !== "string" ||
-    !/^[a-z][a-z0-9_]{1,49}$/.test(action)
+    !ALLOWED_ACTIONS.has(action)
   ) {
-    return { allowed: false, status: 400, error: "Invalid AI action." };
-  }
-
-  // Load the user's plan from their server-side profile.
-  const { data: profile, error: profileError } = await supabaseAdmin
-    .from("profiles")
-    .select("plan")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (profileError) {
-    console.error("Plan lookup failed:", profileError.message);
-    return { allowed: false, status: 500, error: "Could not verify subscription." };
-  }
-
-  const plan = String(profile?.plan || "free").toLowerCase();
-
-  if (plan === "premium") {
     return {
-      allowed: true,
-      premium: true,
-      remaining: null
+      allowed: false,
+      status: 400,
+      error: "Invalid or unsupported AI action."
     };
   }
 
-  // Atomic enforcement should be performed by a database RPC.
-  const { data, error } = await supabaseAdmin.rpc("check_and_use_ai", {
-    p_user_id: user.id,
-    p_action: action,
-    p_limit: FREE_LIMIT,
-    p_window_hours: WINDOW_HOURS
-  });
+  try {
+    const { data: profile, error: profileError } =
+      await supabaseAdmin
+        .from("profiles")
+        .select("plan")
+        .eq("id", user.id)
+        .maybeSingle();
 
-  if (error) {
-    console.error("Usage RPC failed:", error.message);
+    if (profileError) {
+      console.error(
+        "Subscription lookup failed:",
+        profileError.message
+      );
+
+      return {
+        allowed: false,
+        status: 500,
+        error: "Could not verify your subscription."
+      };
+    }
+
+    const plan = String(profile?.plan || "free")
+      .trim()
+      .toLowerCase();
+
+    if (plan === "premium") {
+      return {
+        allowed: true,
+        premium: true,
+        remaining: null
+      };
+    }
+
+    // The database function must enforce and record usage
+    // atomically to prevent concurrent requests bypassing
+    // the free limit.
+    const { data, error } = await supabaseAdmin.rpc(
+      "check_and_use_ai",
+      {
+        p_user_id: user.id,
+        p_action: action,
+        p_limit: FREE_LIMIT,
+        p_window_hours: WINDOW_HOURS
+      }
+    );
+
+    if (error) {
+      console.error(
+        "Usage enforcement failed:",
+        error.message
+      );
+
+      return {
+        allowed: false,
+        status: 500,
+        error: "Usage enforcement is not configured correctly."
+      };
+    }
+
+    const result = Array.isArray(data) ? data[0] : data;
+
+    if (!result || result.allowed !== true) {
+      return {
+        allowed: false,
+        status: 429,
+        error:
+          "Free limit reached for this tool. Try again after the 24-hour usage window resets, or upgrade to Premium.",
+        remaining: 0
+      };
+    }
+
+    return {
+      allowed: true,
+      premium: false,
+      remaining:
+        typeof result.remaining === "number"
+          ? result.remaining
+          : null
+    };
+  } catch (error) {
+    console.error(
+      "Usage enforcement error:",
+      error?.message || error
+    );
+
     return {
       allowed: false,
       status: 500,
-      error: "Usage check is not configured correctly."
+      error: "Could not verify AI usage."
     };
   }
-
-  const result = Array.isArray(data) ? data[0] : data;
-
-  if (!result || result.allowed !== true) {
-    return {
-      allowed: false,
-      status: 429,
-      error: "Free limit reached for this tool. Try again after the usage window resets, or upgrade to Premium."
-    };
-  }
-
-  return {
-    allowed: true,
-    premium: false,
-    remaining: result.remaining ?? null
-  };
 }
