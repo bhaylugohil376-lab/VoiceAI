@@ -1,42 +1,19 @@
-
-import { supabaseAdmin } from "./_lib/supabase.js";
 import { requireUser } from "./_lib/auth.js";
 import {
   requireMethod,
   parseJsonBody,
-  sendError
+  sendError,
+  sendSuccess
 } from "./_lib/response.js";
+import { supabaseAdmin } from "./_lib/supabase.js";
 
-const ALLOWED_TYPES = new Set([
-  "tts",
-  "voice_clone",
-  "voice_changer",
-  "dubbing",
-  "music",
-  "sound_effects",
-  "captions",
-  "image",
-  "studio",
-  "other"
-]);
-
-const MAX_TITLE_LENGTH = 120;
-const MAX_DESCRIPTION_LENGTH = 2000;
-
-function cleanString(value, maxLength) {
-  if (typeof value !== "string") return null;
-
-  const result = value.trim();
-
-  if (!result || result.length > maxLength) return null;
-
-  return result;
-}
+const MAX_TITLE_LENGTH = 150;
+const MAX_CONTENT_LENGTH = 100000;
+const ALLOWED_STATUSES = ["draft", "in_progress", "completed"];
 
 export default async function handler(req, res) {
-  if (!["GET", "POST", "PATCH", "DELETE"].includes(req.method)) {
-    res.setHeader("Allow", "GET, POST, PATCH, DELETE");
-    return sendError(res, 405, "Method not allowed.");
+  if (!requireMethod(req, res, ["GET", "POST", "PATCH", "DELETE"])) {
+    return;
   }
 
   try {
@@ -48,71 +25,65 @@ export default async function handler(req, res) {
         .from("projects")
         .select("*")
         .eq("user_id", user.id)
-        .order("updated_at", { ascending: false })
-        .limit(100);
+        .order("updated_at", { ascending: false });
 
       if (error) {
-        console.error("Project list error:", error.message);
-        return sendError(res, 500, "Could not load your projects.");
+        console.error("Projects list error:", error.message);
+        return sendError(res, 500, "Could not load projects.");
       }
 
-      return res.status(200).json({
-        success: true,
-        projects: data || []
-      });
+      return sendSuccess(res, { projects: data || [] });
     }
 
     const body = parseJsonBody(req);
-
-    if (!body) {
-      return sendError(res, 400, "Send a valid JSON request.");
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return sendError(res, 400, "Invalid request body.");
     }
 
     if (req.method === "POST") {
-      const title = cleanString(body.title, MAX_TITLE_LENGTH);
+      const title =
+        typeof body.title === "string" ? body.title.trim() : "";
 
-      if (!title) {
+      if (!title || title.length > MAX_TITLE_LENGTH) {
         return sendError(
           res,
           400,
-          "Project title is required (maximum 120 characters)."
+          `Title is required and must be at most ${MAX_TITLE_LENGTH} characters.`
         );
       }
 
-      const description =
-        body.description === undefined
-          ? ""
-          : typeof body.description === "string"
-            ? body.description.trim()
-            : null;
+      const record = {
+        user_id: user.id,
+        title
+      };
 
-      if (
-        description === null ||
-        description.length > MAX_DESCRIPTION_LENGTH
-      ) {
-        return sendError(res, 400, "Invalid project description.");
+      if (typeof body.content === "string") {
+        if (body.content.length > MAX_CONTENT_LENGTH) {
+          return sendError(res, 400, "Project content is too large.");
+        }
+        record.content = body.content;
       }
 
-      const type = body.type || "other";
+      if (typeof body.description === "string") {
+        record.description = body.description.slice(0, 2000);
+      }
 
-      if (typeof type !== "string" || !ALLOWED_TYPES.has(type)) {
-        return sendError(res, 400, "Invalid project type.");
+      if (typeof body.status === "string") {
+        if (!ALLOWED_STATUSES.includes(body.status)) {
+          return sendError(res, 400, "Invalid project status.");
+        }
+        record.status = body.status;
       }
 
       const { data, error } = await supabaseAdmin
         .from("projects")
-        .insert({
-          user_id: user.id,
-          title,
-          description,
-          type
-        })
+        .insert(record)
         .select("*")
         .single();
 
       if (error) {
         console.error("Project create error:", error.message);
-        return sendError(res, 500, "Could not create the project.");
+        return sendError(res, 500, "Could not create project.");
       }
 
       return res.status(201).json({
@@ -122,111 +93,104 @@ export default async function handler(req, res) {
     }
 
     const projectId =
-      typeof body.id === "string" ? body.id.trim() : "";
+      typeof body.id === "string" || typeof body.id === "number"
+        ? String(body.id).trim()
+        : "";
 
-    if (
-      !projectId ||
-      projectId.length > 100 ||
-      !/^[a-zA-Z0-9_-]+$/.test(projectId)
-    ) {
-      return sendError(res, 400, "A valid project id is required.");
+    if (!projectId || projectId.length > 100) {
+      return sendError(res, 400, "A valid project ID is required.");
     }
 
-    // All modifications are scoped to the authenticated owner.
-    const { data: existing, error: lookupError } = await supabaseAdmin
-      .from("projects")
-      .select("id")
-      .eq("id", projectId)
-      .eq("user_id", user.id)
-      .maybeSingle();
+    if (req.method === "PATCH") {
+      const updates = {};
 
-    if (lookupError) {
-      console.error("Project lookup error:", lookupError.message);
-      return sendError(res, 500, "Could not verify project ownership.");
-    }
+      if (Object.prototype.hasOwnProperty.call(body, "title")) {
+        if (
+          typeof body.title !== "string" ||
+          !body.title.trim() ||
+          body.title.trim().length > MAX_TITLE_LENGTH
+        ) {
+          return sendError(res, 400, "Invalid project title.");
+        }
+        updates.title = body.title.trim();
+      }
 
-    if (!existing) {
-      return sendError(res, 404, "Project not found.");
-    }
+      if (Object.prototype.hasOwnProperty.call(body, "content")) {
+        if (
+          typeof body.content !== "string" ||
+          body.content.length > MAX_CONTENT_LENGTH
+        ) {
+          return sendError(res, 400, "Invalid project content.");
+        }
+        updates.content = body.content;
+      }
 
-    if (req.method === "DELETE") {
-      const { error } = await supabaseAdmin
+      if (Object.prototype.hasOwnProperty.call(body, "description")) {
+        if (typeof body.description !== "string") {
+          return sendError(res, 400, "Invalid project description.");
+        }
+        updates.description = body.description.slice(0, 2000);
+      }
+
+      if (Object.prototype.hasOwnProperty.call(body, "status")) {
+        if (
+          typeof body.status !== "string" ||
+          !ALLOWED_STATUSES.includes(body.status)
+        ) {
+          return sendError(res, 400, "Invalid project status.");
+        }
+        updates.status = body.status;
+      }
+
+      if (Object.keys(updates).length === 0) {
+        return sendError(res, 400, "No valid project changes provided.");
+      }
+
+      updates.updated_at = new Date().toISOString();
+
+      const { data, error } = await supabaseAdmin
         .from("projects")
-        .delete()
+        .update(updates)
         .eq("id", projectId)
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .select("*")
+        .maybeSingle();
 
       if (error) {
-        console.error("Project delete error:", error.message);
-        return sendError(res, 500, "Could not delete the project.");
+        console.error("Project update error:", error.message);
+        return sendError(res, 500, "Could not update project.");
       }
 
-      return res.status(200).json({
-        success: true,
-        deleted: true,
-        id: projectId
-      });
-    }
-
-    const updates = {};
-
-    if (body.title !== undefined) {
-      const title = cleanString(body.title, MAX_TITLE_LENGTH);
-
-      if (!title) {
-        return sendError(res, 400, "Invalid project title.");
+      if (!data) {
+        return sendError(res, 404, "Project not found.");
       }
 
-      updates.title = title;
+      return sendSuccess(res, { project: data });
     }
-
-    if (body.description !== undefined) {
-      if (
-        typeof body.description !== "string" ||
-        body.description.trim().length > MAX_DESCRIPTION_LENGTH
-      ) {
-        return sendError(res, 400, "Invalid project description.");
-      }
-
-      updates.description = body.description.trim();
-    }
-
-    if (body.type !== undefined) {
-      if (
-        typeof body.type !== "string" ||
-        !ALLOWED_TYPES.has(body.type)
-      ) {
-        return sendError(res, 400, "Invalid project type.");
-      }
-
-      updates.type = body.type;
-    }
-
-    if (Object.keys(updates).length === 0) {
-      return sendError(res, 400, "No valid project fields to update.");
-    }
-
-    updates.updated_at = new Date().toISOString();
 
     const { data, error } = await supabaseAdmin
       .from("projects")
-      .update(updates)
+      .delete()
       .eq("id", projectId)
       .eq("user_id", user.id)
-      .select("*")
-      .single();
+      .select("id")
+      .maybeSingle();
 
     if (error) {
-      console.error("Project update error:", error.message);
-      return sendError(res, 500, "Could not update the project.");
+      console.error("Project delete error:", error.message);
+      return sendError(res, 500, "Could not delete project.");
     }
 
-    return res.status(200).json({
-      success: true,
-      project: data
+    if (!data) {
+      return sendError(res, 404, "Project not found.");
+    }
+
+    return sendSuccess(res, {
+      deleted: true,
+      id: data.id
     });
   } catch (error) {
-    console.error("Projects API error:", error.message);
-    return sendError(res, 500, "Project operation failed.");
+    console.error("Projects API error:", error?.message || error);
+    return sendError(res, 500, "Internal server error.");
   }
 }
