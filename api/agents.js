@@ -1,3 +1,4 @@
+
 import { requireUser } from "./_lib/auth.js";
 import {
   requireMethod,
@@ -7,14 +8,8 @@ import {
 } from "./_lib/response.js";
 import { supabaseAdmin } from "./_lib/supabase.js";
 
-const MAX_NAME_LENGTH = 120;
-const MAX_INSTRUCTIONS_LENGTH = 12000;
-const MAX_VOICE_ID_LENGTH = 150;
-
 export default async function handler(req, res) {
-  if (!requireMethod(req, res, ["GET", "POST", "DELETE"])) {
-    return;
-  }
+  if (!requireMethod(req, res, ["GET", "POST"])) return;
 
   try {
     const user = await requireUser(req, res);
@@ -23,111 +18,142 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       const { data, error } = await supabaseAdmin
         .from("agents")
-        .select("*")
+        .select(
+          "id, name, description, type, config, status, created_at, updated_at"
+        )
         .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
+        .order("updated_at", { ascending: false });
 
       if (error) {
-        console.error("Agent list error:", error.message);
-        return sendError(res, 500, "Could not load your agents.");
+        console.error("Agent list failed:", error.message);
+        return sendError(res, 500, "Could not load agents.");
       }
 
       return sendSuccess(res, { agents: data || [] });
     }
 
     const body = parseJsonBody(req);
+    const id = typeof body?.id === "string" ? body.id.trim() : "";
+    const name = typeof body?.name === "string" ? body.name.trim() : "";
+    const description =
+      typeof body?.description === "string" ? body.description.trim() : "";
 
-    if (!body || typeof body !== "object" || Array.isArray(body)) {
-      return sendError(res, 400, "Invalid request body.");
+    const systemPrompt =
+      typeof body?.system_prompt === "string"
+        ? body.system_prompt.trim()
+        : "";
+
+    const voiceId =
+      typeof body?.voice_id === "string" ? body.voice_id.trim() : "";
+
+    const language =
+      typeof body?.language === "string" ? body.language.trim() : "en";
+
+    const model =
+      typeof body?.model === "string" ? body.model.trim() : "gemini-2.5-flash";
+
+    if (!name || name.length > 120) {
+      return sendError(res, 400, "Agent name is required (max 120 characters).");
     }
 
-    if (req.method === "POST") {
-      const name =
-        typeof body.name === "string" ? body.name.trim() : "";
+    if (description.length > 2000 || systemPrompt.length > 12000) {
+      return sendError(res, 400, "Agent description or instructions are too long.");
+    }
 
-      const instructions =
-        typeof body.instructions === "string"
-          ? body.instructions.trim()
-          : "";
+    if (!["en", "hi", "gu"].includes(language)) {
+      return sendError(res, 400, "Unsupported language.");
+    }
 
-      const voiceId =
-        typeof body.voice_id === "string"
-          ? body.voice_id.trim()
-          : null;
+    if (!["gemini-2.5-flash", "gemini-2.5-pro"].includes(model)) {
+      return sendError(res, 400, "Unsupported model.");
+    }
 
-      if (!name || name.length > MAX_NAME_LENGTH) {
-        return sendError(
-          res,
-          400,
-          `Agent name is required and must be at most ${MAX_NAME_LENGTH} characters.`
-        );
+    const configPatch = {
+      system_prompt: systemPrompt,
+      voice_id: voiceId,
+      language,
+      model,
+      temperature: Math.max(
+        0,
+        Math.min(1, Number(body?.temperature ?? 0.7) || 0)
+      ),
+      allow_interruptions: body?.allow_interruptions !== false,
+      memory_enabled: body?.memory_enabled !== false,
+      end_call_detection: body?.end_call_detection !== false,
+      welcome_message:
+        typeof body?.welcome_message === "string"
+          ? body.welcome_message.trim().slice(0, 1000)
+          : ""
+    };
+
+    if (id) {
+      if (id.length > 100) {
+        return sendError(res, 400, "Invalid agent ID.");
       }
 
-      if (instructions.length > MAX_INSTRUCTIONS_LENGTH) {
-        return sendError(res, 400, "Agent instructions are too long.");
+      const { data: existing, error: findError } = await supabaseAdmin
+        .from("agents")
+        .select("id, config, status")
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (findError) {
+        console.error("Agent lookup failed:", findError.message);
+        return sendError(res, 500, "Could not load this agent.");
       }
 
-      if (
-        voiceId &&
-        !/^[A-Za-z0-9_-]{1,150}$/.test(voiceId)
-      ) {
-        return sendError(res, 400, "Invalid voice ID.");
+      if (!existing) {
+        return sendError(res, 404, "Agent not found.");
       }
+
+      const oldConfig =
+        existing.config && typeof existing.config === "object"
+          ? existing.config
+          : {};
 
       const { data, error } = await supabaseAdmin
         .from("agents")
-        .insert({
-          user_id: user.id,
+        .update({
           name,
-          instructions,
-          voice_id: voiceId
+          description,
+          config: { ...oldConfig, ...configPatch },
+          updated_at: new Date().toISOString()
         })
-        .select("*")
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .select("id, name, description, type, config, status, updated_at")
         .single();
 
       if (error) {
-        console.error("Agent create error:", error.message);
-        return sendError(res, 500, "Could not create the agent.");
+        console.error("Agent update failed:", error.message);
+        return sendError(res, 500, "Could not save agent changes.");
       }
 
-      return res.status(201).json({
-        success: true,
-        agent: data
-      });
-    }
-
-    const agentId =
-      typeof body.id === "string" || typeof body.id === "number"
-        ? String(body.id).trim()
-        : "";
-
-    if (!agentId || agentId.length > 100) {
-      return sendError(res, 400, "A valid agent ID is required.");
+      return sendSuccess(res, { agent: data });
     }
 
     const { data, error } = await supabaseAdmin
       .from("agents")
-      .delete()
-      .eq("id", agentId)
-      .eq("user_id", user.id)
-      .select("id")
-      .maybeSingle();
+      .insert({
+        user_id: user.id,
+        name,
+        description,
+        type: "voice",
+        config: configPatch,
+        status: "draft"
+      })
+      .select("id, name, description, type, config, status, created_at")
+      .single();
 
     if (error) {
-      console.error("Agent delete error:", error.message);
-      return sendError(res, 500, "Could not delete the agent.");
+      console.error("Agent creation failed:", error.message);
+      return sendError(res, 500, "Could not create agent.");
     }
 
-    if (!data) {
-      return sendError(res, 404, "Agent not found.");
-    }
-
-    return sendSuccess(res, {
-      deleted: true,
-      id: data.id
-    });
+    return sendSuccess(res, { agent: data }, 201);
   } catch (error) {
     console.error("Agents API error:", error?.message || error);
-    return sendError(res, 500, "Internal server error.");
+    return sendError(res, 500, "Agent request failed.");
   }
 }
