@@ -1,5 +1,3 @@
-
-import { supabaseAdmin } from "./_lib/supabase.js";
 import { requireUser } from "./_lib/auth.js";
 import {
   requireMethod,
@@ -7,88 +5,69 @@ import {
   sendError,
   sendSuccess
 } from "./_lib/response.js";
-
-function validVoiceId(value) {
-  return (
-    typeof value === "string" &&
-    value.length > 0 &&
-    value.length <= 200 &&
-    /^[a-zA-Z0-9_-]+$/.test(value)
-  );
-}
+import { supabaseAdmin } from "./_lib/supabase.js";
 
 export default async function handler(req, res) {
+  if (!requireMethod(req, res, ["GET", "POST", "DELETE"])) {
+    return;
+  }
+
   try {
     const user = await requireUser(req, res);
     if (!user) return;
-
-    if (!requireMethod(req, res, ["GET", "POST", "DELETE"])) {
-      return;
-    }
 
     if (req.method === "GET") {
       const { data, error } = await supabaseAdmin
         .from("favorite_voices")
         .select("*")
         .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(200);
+        .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Fetch favorites failed:", error.message);
-        return sendError(res, 500, "Could not load favourite voices.");
+        console.error("Favorites list error:", error.message);
+        return sendError(res, 500, "Could not load favorite voices.");
       }
 
-      return sendSuccess(res, {
-        favorites: data || [],
-        count: data?.length || 0
-      });
+      return sendSuccess(res, { favorites: data || [] });
     }
 
     const body = parseJsonBody(req);
 
-    if (!body || !validVoiceId(body.voice_id)) {
-      return sendError(res, 400, "A valid voice_id is required.");
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return sendError(res, 400, "Invalid request body.");
     }
 
-    const voiceId = body.voice_id;
+    const voiceId =
+      typeof body.voice_id === "string" ? body.voice_id.trim() : "";
+
+    if (!/^[A-Za-z0-9_-]{1,150}$/.test(voiceId)) {
+      return sendError(res, 400, "A valid voice ID is required.");
+    }
 
     if (req.method === "POST") {
-      const { data: existing, error: lookupError } = await supabaseAdmin
-        .from("favorite_voices")
-        .select("user_id,voice_id")
-        .eq("user_id", user.id)
-        .eq("voice_id", voiceId)
-        .maybeSingle();
-
-      if (lookupError) {
-        console.error("Favorite lookup failed:", lookupError.message);
-        return sendError(res, 500, "Could not check favourite voice.");
-      }
-
-      if (existing) {
-        return sendSuccess(res, {
-          message: "Voice is already in favourites.",
-          favorite: existing
-        });
-      }
-
       const { data, error } = await supabaseAdmin
         .from("favorite_voices")
-        .insert({
-          user_id: user.id,
-          voice_id: voiceId
-        })
-        .select()
+        .upsert(
+          {
+            user_id: user.id,
+            voice_id: voiceId
+          },
+          { onConflict: "user_id,voice_id" }
+        )
+        .select("*")
         .single();
 
       if (error) {
-        console.error("Add favorite failed:", error.message);
-        return sendError(res, 500, "Could not add favourite voice.");
+        console.error("Favorite save error:", error.message);
+        return sendError(
+          res,
+          500,
+          "Could not add this voice to favorites."
+        );
       }
 
-      return sendSuccess(res, {
-        message: "Voice added to favourites.",
+      return res.status(201).json({
+        success: true,
         favorite: data
       });
     }
@@ -101,18 +80,16 @@ export default async function handler(req, res) {
       .select("voice_id");
 
     if (error) {
-      console.error("Remove favorite failed:", error.message);
-      return sendError(res, 500, "Could not remove favourite voice.");
+      console.error("Favorite removal error:", error.message);
+      return sendError(res, 500, "Could not remove this favorite.");
     }
 
     return sendSuccess(res, {
-      message: data?.length
-        ? "Voice removed from favourites."
-        : "Voice was not in favourites.",
-      removed: data?.length || 0
+      removed: (data || []).length > 0,
+      voice_id: voiceId
     });
   } catch (error) {
-    console.error("Favorites API error:", error);
-    return sendError(res, 500, "An unexpected server error occurred.");
+    console.error("Favorites API error:", error?.message || error);
+    return sendError(res, 500, "Internal server error.");
   }
 }
