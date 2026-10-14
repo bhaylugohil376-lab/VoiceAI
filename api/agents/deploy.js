@@ -1,3 +1,4 @@
+
 import { requireUser } from "../_lib/auth.js";
 import { checkAndUseAI } from "../_lib/usage.js";
 import {
@@ -48,15 +49,21 @@ export default async function handler(req, res) {
         ? agent.config
         : {};
 
+    if (config.elevenlabs_agent_id && agent.status === "deployed") {
+      return sendSuccess(res, {
+        message: "Agent is already deployed.",
+        provider: "elevenlabs",
+        provider_agent_id: config.elevenlabs_agent_id
+      });
+    }
+
     const systemPrompt =
       typeof config.system_prompt === "string"
         ? config.system_prompt.trim()
         : "";
 
     const voiceId =
-      typeof config.voice_id === "string"
-        ? config.voice_id.trim()
-        : "";
+      typeof config.voice_id === "string" ? config.voice_id.trim() : "";
 
     if (!systemPrompt) {
       return sendError(res, 400, "Add system instructions before deployment.");
@@ -66,16 +73,8 @@ export default async function handler(req, res) {
       return sendError(
         res,
         400,
-        "Select a valid ElevenLabs voice ID before deployment."
+        "Select a real ElevenLabs voice ID before deployment."
       );
-    }
-
-    if (config.elevenlabs_agent_id) {
-      return sendSuccess(res, {
-        message: "This agent is already deployed.",
-        provider: "elevenlabs",
-        provider_agent_id: config.elevenlabs_agent_id
-      });
     }
 
     const usage = await checkAndUseAI(user, "agents");
@@ -87,38 +86,28 @@ export default async function handler(req, res) {
       );
     }
 
-    const language =
-      typeof config.language === "string" ? config.language : "en";
+    const language = config.language || "en";
 
-    const response = await fetch(
+    const providerResponse = await fetch(
       "https://api.elevenlabs.io/v1/convai/agents/create",
       {
         method: "POST",
         headers: {
           "xi-api-key": apiKey,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Accept: "application/json"
         },
         body: JSON.stringify({
           name: agent.name,
           conversation_config: {
             agent: {
-              prompt: {
-                prompt: systemPrompt
-              },
+              prompt: { prompt: systemPrompt },
               first_message:
-                typeof config.welcome_message === "string"
-                  ? config.welcome_message
-                  : "Hello! How can I help you today?",
+                config.welcome_message ||
+                "Hello! How can I help you today?",
               language
             },
-            tts: {
-              voice_id: voiceId
-            }
-          },
-          platform_settings: {
-            auth: {
-              enable_auth: true
-            }
+            tts: { voice_id: voiceId }
           },
           tags: ["voiceai", `voiceai-user-${user.id}`]
         }),
@@ -126,19 +115,19 @@ export default async function handler(req, res) {
       }
     );
 
-    const result = await response.json().catch(() => ({}));
+    const result = await providerResponse.json().catch(() => ({}));
 
-    if (!response.ok || !result.agent_id) {
+    if (!providerResponse.ok || !result.agent_id) {
       console.error(
         "ElevenLabs deployment failed:",
-        response.status,
-        JSON.stringify(result).slice(0, 500)
+        providerResponse.status,
+        JSON.stringify(result).slice(0, 400)
       );
 
       return sendError(
         res,
-        response.status === 429 ? 429 : 502,
-        "ElevenLabs could not deploy this agent. Check the voice ID, API access and provider quota."
+        providerResponse.status === 429 ? 429 : 502,
+        "Deployment failed. Verify the ElevenLabs API key, voice ID and account access."
       );
     }
 
@@ -159,11 +148,11 @@ export default async function handler(req, res) {
       .eq("user_id", user.id);
 
     if (saveError) {
-      console.error("Agent deployment record save failed:", saveError.message);
+      console.error("Deployment record save failed:", saveError.message);
       return sendError(
         res,
         500,
-        "Provider agent was created, but its ID could not be saved. Check the agent record before retrying."
+        "Provider created the agent, but saving its ID failed. Check the database before retrying."
       );
     }
 
@@ -175,7 +164,6 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("Agent deployment error:", error?.message || error);
-
     return sendError(
       res,
       error?.name === "TimeoutError" ? 504 : 500,
