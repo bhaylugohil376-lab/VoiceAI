@@ -1,42 +1,36 @@
-
 import formidable from "formidable";
-import { readFile } from "node:fs/promises";
+import { readFile, unlink } from "node:fs/promises";
 import path from "node:path";
-
 import { requireUser } from "./_lib/auth.js";
 import { checkAndUseAI } from "./_lib/usage.js";
-import {
-  requireMethod,
-  sendError,
-  sendSuccess
-} from "./_lib/response.js";
+import { requireMethod, sendError, sendSuccess } from "./_lib/response.js";
 
-// Vercel must receive the raw multipart request.
 export const config = {
-  api: {
-    bodyParser: false
-  }
+  api: { bodyParser: false }
 };
 
-// Keep below the typical serverless request-body limit.
 const MAX_FILE_SIZE = 4 * 1024 * 1024;
+const MAX_OUTPUT_BYTES = 20 * 1024 * 1024;
 const ALLOWED_EXTENSIONS = new Set([".mp4", ".mov", ".webm"]);
 
-function firstString(value) {
+function first(value) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function getField(fields, name, fallback = "") {
-  const value = firstString(fields[name]);
+function field(fields, name, fallback = "") {
+  const value = first(fields[name]);
   return typeof value === "string" ? value.trim() : fallback;
 }
 
-function getBooleanField(fields, name, fallback = false) {
-  const value = getField(fields, name, String(fallback)).toLowerCase();
-  return value === "true" || value === "1";
+function validHttpsUrl(value) {
+  try {
+    return new URL(value).protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
-function parseMultipart(req) {
+function parseForm(req) {
   const form = formidable({
     multiples: false,
     maxFiles: 1,
@@ -53,153 +47,117 @@ function parseMultipart(req) {
   });
 }
 
-function validProviderUrl(value) {
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:";
-  } catch {
-    return false;
+async function cleanup(file) {
+  if (file?.filepath) {
+    await unlink(file.filepath).catch(() => {});
   }
+}
+
+function decodeBase64(value) {
+  if (typeof value !== "string" || !value) return null;
+
+  const encoded = value.replace(/\s/g, "");
+
+  if (
+    encoded.length > Math.ceil(MAX_OUTPUT_BYTES / 3) * 4 + 4 ||
+    !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(encoded)
+  ) {
+    return null;
+  }
+
+  const buffer = Buffer.from(encoded, "base64");
+
+  if (!buffer.length || buffer.length > MAX_OUTPUT_BYTES) return null;
+  return buffer;
 }
 
 export default async function handler(req, res) {
   if (!requireMethod(req, res, ["POST"])) return;
 
+  let uploaded;
+
   try {
-    // Authenticate the signed-in VoiceAI user.
     const user = await requireUser(req, res);
     if (!user) return;
 
     const providerUrl = process.env.VIDEO_VOICE_TRANSFER_API_URL;
     const providerKey = process.env.VIDEO_VOICE_TRANSFER_API_KEY;
 
-    if (!providerUrl || !validProviderUrl(providerUrl) || !providerKey) {
-      return sendError(
-        res,
-        503,
-        "Video voice-transfer provider is not configured."
-      );
+    if (!providerUrl || !validHttpsUrl(providerUrl) || !providerKey) {
+      return sendError(res, 503, "Video voice-transfer provider is not configured.");
     }
 
     let parsed;
 
     try {
-      parsed = await parseMultipart(req);
+      parsed = await parseForm(req);
     } catch (error) {
-      if (
-        error?.code === 1009 ||
+      const tooLarge =
         error?.httpCode === 413 ||
-        /maxFileSize|larger than/i.test(error?.message || "")
-      ) {
-        return sendError(
-          res,
-          413,
-          "Video is too large. Please upload a video under 4 MB."
-        );
-      }
+        error?.code === 1009 ||
+        /maxFileSize|larger than/i.test(error?.message || "");
 
       return sendError(
         res,
-        400,
-        "Could not read the uploaded video. Please try again."
+        tooLarge ? 413 : 400,
+        tooLarge ? "Video must be under 4 MB." : "Invalid video upload."
       );
     }
 
     const { fields, files } = parsed;
-    const uploaded = firstString(files.file);
+    uploaded = first(files.file);
 
-    if (!uploaded?.filepath) {
+    if (!uploaded?.filepath || !uploaded.size) {
+      await cleanup(uploaded);
       return sendError(res, 400, "Please upload a video file.");
     }
 
-    const extension = path.extname(
-      uploaded.originalFilename || ""
-    ).toLowerCase();
+    const extension = path.extname(uploaded.originalFilename || "").toLowerCase();
 
     if (!ALLOWED_EXTENSIONS.has(extension)) {
-      return sendError(
-        res,
-        400,
-        "Supported video formats are MP4, MOV and WebM."
-      );
+      await cleanup(uploaded);
+      return sendError(res, 400, "Supported formats: MP4, MOV and WebM.");
     }
 
-    if (uploaded.size > MAX_FILE_SIZE) {
-      return sendError(
-        res,
-        413,
-        "Video is too large. Please upload a video under 4 MB."
-      );
-    }
-
-    const voiceId = getField(fields, "voiceId");
-    const transferMode = getField(fields, "transferMode", "voice");
+    const voiceId = field(fields, "voiceId");
+    const transferMode = field(fields, "transferMode", "voice");
 
     if (!voiceId || voiceId.length > 200) {
-      return sendError(res, 400, "Please select a valid AI voice.");
+      await cleanup(uploaded);
+      return sendError(res, 400, "Please select a valid voice.");
     }
 
-    if (!transferMode || transferMode.length > 50) {
-      return sendError(res, 400, "Invalid transfer mode.");
-    }
+    const similarity = Number(field(fields, "similarity", "75"));
+    const clarity = Number(field(fields, "clarity", "75"));
+    const expression = Number(field(fields, "expression", "50"));
 
-    const similarity = Number(getField(fields, "similarity", "75"));
-    const clarity = Number(getField(fields, "clarity", "75"));
-    const expression = Number(getField(fields, "expression", "50"));
-
-    for (const [name, value] of Object.entries({
-      similarity,
-      clarity,
-      expression
-    })) {
-      if (!Number.isFinite(value) || value < 0 || value > 100) {
-        return sendError(
-          res,
-          400,
-          `${name} must be between 0 and 100.`
-        );
-      }
-    }
-
-    // Consume a use only after request and file validation.
-    const usage = await checkAndUseAI(user, "video_voice_transfer");
-
-    if (!usage.allowed) {
-      return sendError(
-        res,
-        usage.status || 429,
-        usage.error || "Your usage limit has been reached."
-      );
+    if (
+      ![similarity, clarity, expression].every(
+        value => Number.isFinite(value) && value >= 0 && value <= 100
+      )
+    ) {
+      await cleanup(uploaded);
+      return sendError(res, 400, "Settings must be between 0 and 100.");
     }
 
     const videoBuffer = await readFile(uploaded.filepath);
-    const outboundForm = new FormData();
 
-    outboundForm.append(
+    const form = new FormData();
+    form.append(
       "file",
       new Blob([videoBuffer], {
         type: uploaded.mimetype || "application/octet-stream"
       }),
-      uploaded.originalFilename || `upload${extension}`
+      uploaded.originalFilename || `video${extension}`
     );
-
-    outboundForm.append("voiceId", voiceId);
-    outboundForm.append("transferMode", transferMode);
-    outboundForm.append("similarity", String(similarity));
-    outboundForm.append("clarity", String(clarity));
-    outboundForm.append("expression", String(expression));
-    outboundForm.append(
-      "preserveMusic",
-      String(getBooleanField(fields, "preserveMusic"))
-    );
-    outboundForm.append(
-      "preserveTiming",
-      String(getBooleanField(fields, "preserveTiming", true))
-    );
-    outboundForm.append(
-      "enhanceAudio",
-      String(getBooleanField(fields, "enhanceAudio"))
-    );
+    form.append("voiceId", voiceId);
+    form.append("transferMode", transferMode);
+    form.append("similarity", String(similarity));
+    form.append("clarity", String(clarity));
+    form.append("expression", String(expression));
+    form.append("preserveMusic", field(fields, "preserveMusic", "false"));
+    form.append("preserveTiming", field(fields, "preserveTiming", "true"));
+    form.append("enhanceAudio", field(fields, "enhanceAudio", "false"));
 
     let providerResponse;
 
@@ -209,134 +167,110 @@ export default async function handler(req, res) {
         headers: {
           Authorization: `Bearer ${providerKey}`,
           "x-api-key": providerKey,
-          Accept: "application/json, video/mp4"
+          Accept: "application/json, video/*"
         },
-        body: outboundForm,
+        body: form,
         signal: AbortSignal.timeout(180000)
       });
     } catch (error) {
-      console.error("Video voice-transfer provider request failed:", error.message);
+      console.error("Video provider request failed:", error?.name || "NetworkError");
+      await cleanup(uploaded);
 
       return sendError(
         res,
         error?.name === "TimeoutError" ? 504 : 502,
-        "The video processing service could not be reached. Please try again."
+        "Video processing service could not be reached."
       );
     }
 
     if (!providerResponse.ok) {
-      const detail = await providerResponse.text().catch(() => "");
-
-      console.error(
-        "Video voice-transfer provider returned an error:",
-        providerResponse.status,
-        detail.slice(0, 300)
-      );
-
-      if (providerResponse.status === 429) {
-        return sendError(
-          res,
-          429,
-          "The voice provider is busy or its quota has been reached."
-        );
-      }
+      console.error("Video provider HTTP status:", providerResponse.status);
+      await providerResponse.body?.cancel().catch(() => {});
+      await cleanup(uploaded);
 
       return sendError(
         res,
-        502,
-        "The voice provider could not process this video."
+        providerResponse.status === 429 ? 429 : 502,
+        providerResponse.status === 429
+          ? "Provider is busy or its quota has been reached."
+          : "Video processing failed at the provider."
       );
     }
 
-    const contentType =
-      providerResponse.headers.get("content-type") || "";
+    let output;
 
-    // Some adapters return the rendered MP4 directly.
-    if (contentType.toLowerCase().startsWith("video/")) {
-      const outputBuffer = Buffer.from(
-        await providerResponse.arrayBuffer()
-      );
+    const contentType = (
+      providerResponse.headers.get("content-type") || ""
+    ).toLowerCase();
 
-      if (!outputBuffer.length || outputBuffer.length > 20 * 1024 * 1024) {
-        return sendError(
-          res,
-          502,
-          "The provider returned an empty or oversized video result. Configure it to return a hosted video URL."
-        );
+    if (contentType.startsWith("video/")) {
+      const buffer = Buffer.from(await providerResponse.arrayBuffer());
+
+      if (!buffer.length || buffer.length > MAX_OUTPUT_BYTES) {
+        await cleanup(uploaded);
+        return sendError(res, 502, "Provider returned invalid video output.");
       }
 
-      return sendSuccess(res, {
-        base64: outputBuffer.toString("base64"),
-        fileName: "voiceai-voice-transfer.mp4",
-        remaining: usage.remaining ?? null
-      });
+      output = {
+        base64: buffer.toString("base64"),
+        fileName: "voiceai-voice-transfer.mp4"
+      };
+    } else {
+      let result;
+
+      try {
+        result = await providerResponse.json();
+      } catch {
+        await cleanup(uploaded);
+        return sendError(res, 502, "Provider returned an unsupported response.");
+      }
+
+      const outputUrl = result.outputUrl || result.videoUrl || result.url;
+
+      if (typeof outputUrl === "string" && outputUrl) {
+        if (!validHttpsUrl(outputUrl)) {
+          await cleanup(uploaded);
+          return sendError(res, 502, "Provider returned an invalid video URL.");
+        }
+
+        output = {
+          outputUrl,
+          fileName: result.fileName || "voiceai-voice-transfer.mp4"
+        };
+      } else {
+        const buffer = decodeBase64(result.base64);
+
+        if (!buffer) {
+          await cleanup(uploaded);
+          return sendError(res, 502, "Provider returned no valid video output.");
+        }
+
+        output = {
+          base64: buffer.toString("base64"),
+          fileName: result.fileName || "voiceai-voice-transfer.mp4"
+        };
+      }
     }
 
-    let result;
+    await cleanup(uploaded);
 
-    try {
-      result = await providerResponse.json();
-    } catch {
+    const usage = await checkAndUseAI(user, "video_voice_transfer");
+
+    if (!usage?.allowed) {
       return sendError(
         res,
-        502,
-        "The provider returned an invalid response. It must return a video URL or base64 video."
+        usage?.status || 429,
+        usage?.error || "Usage limit reached."
       );
     }
 
-    const outputUrl =
-      result.outputUrl ||
-      result.videoUrl ||
-      result.url;
-
-    const base64 = result.base64;
-
-    if (typeof outputUrl === "string" && outputUrl.trim()) {
-      if (!validProviderUrl(outputUrl)) {
-        return sendError(
-          res,
-          502,
-          "The provider returned an invalid video URL."
-        );
-      }
-
-      return sendSuccess(res, {
-        outputUrl,
-        fileName: result.fileName || "voiceai-voice-transfer.mp4",
-        title: result.title || "Transformed Video",
-        remaining: usage.remaining ?? null
-      });
-    }
-
-    if (
-      typeof base64 === "string" &&
-      base64.length > 0 &&
-      base64.length <= 28 * 1024 * 1024 &&
-      /^[A-Za-z0-9+/]+={0,2}$/.test(base64)
-    ) {
-      return sendSuccess(res, {
-        base64,
-        fileName: result.fileName || "voiceai-voice-transfer.mp4",
-        title: result.title || "Transformed Video",
-        remaining: usage.remaining ?? null
-      });
-    }
-
-    return sendError(
-      res,
-      502,
-      "The provider response did not contain a valid video URL or base64 output."
-    );
+    return sendSuccess(res, {
+      ...output,
+      remaining: usage.remaining ?? null
+    });
   } catch (error) {
-    console.error(
-      "Video voice-transfer API error:",
-      error?.message || error
-    );
-
-    return sendError(
-      res,
-      500,
-      "An unexpected error occurred while processing the video."
-    );
+    await cleanup(uploaded);
+    console.error("Video voice-transfer error:", error?.message || "Unknown error");
+    return sendError(res, 500, "An unexpected video-processing error occurred.");
   }
 }
