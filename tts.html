@@ -1,697 +1,297 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
-  <title>Text to Speech — VoiceAI</title>
-
-  <link rel="stylesheet" href="./style.css" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoiceAI — Text to Speech</title>
+  <link rel="stylesheet" href="./style.css">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .tts-container{max-width:1000px;margin:30px auto;padding:20px}
+    .tts-card{padding:22px;border:1px solid #ddd;border-radius:16px;margin:18px 0}
+    .tts-card label{display:block;font-weight:600;margin:14px 0 7px}
+    .tts-card textarea,.tts-card select,.tts-card input{box-sizing:border-box;width:100%;padding:12px;border:1px solid #ccc;border-radius:9px;font:inherit}
+    .tts-card textarea{min-height:170px;resize:vertical}
+    .tts-row{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+    .tts-btn{padding:12px 18px;border:0;border-radius:9px;cursor:pointer;font-weight:600;margin-top:15px}
+    .tts-primary{background:#6d4aff;color:white}
+    .tts-status{margin:12px 0;overflow-wrap:anywhere}
+    .tts-error{color:#c62828}
+    .tts-success{color:#16803c}
+    .tts-audio{width:100%;margin-top:14px}
+    .tts-hidden{display:none}
+    @media(max-width:600px){.tts-row{grid-template-columns:1fr}.tts-container{padding:12px}}
+  </style>
 </head>
-
 <body>
+  <main class="tts-container">
+    <h1>Text to Speech</h1>
+    <p>Convert your text into speech using your connected voice provider.</p>
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="nav-inner">
+    <section class="tts-card">
+      <label for="ttsText">Enter your text</label>
+      <textarea id="ttsText" maxlength="5000" placeholder="Type or paste your text here..."></textarea>
+      <div><span id="charCount">0</span>/5000 characters</div>
 
-      <a href="index.html" class="logo">
-        <span class="logo-mark">
-          <i data-lucide="audio-lines"></i>
-        </span>
-        <span>VoiceAI</span>
+      <div class="tts-row">
+        <div>
+          <label for="voiceSelect">Voice</label>
+          <select id="voiceSelect">
+            <option value="">Loading voices...</option>
+          </select>
+        </div>
+        <div>
+          <label for="outputFormat">Audio format</label>
+          <select id="outputFormat">
+            <option value="mp3_44100_128">MP3 — High quality</option>
+            <option value="mp3_22050_32">MP3 — Smaller file</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="generateBtn" class="tts-btn tts-primary" type="button">
+        Generate speech
+      </button>
+      <button id="refreshVoicesBtn" class="tts-btn" type="button">
+        Refresh voices
+      </button>
+      <div id="ttsStatus" class="tts-status" role="status" aria-live="polite"></div>
+    </section>
+
+    <section id="resultCard" class="tts-card tts-hidden">
+      <h2>Your audio</h2>
+      <audio id="audioPlayer" class="tts-audio" controls></audio>
+      <br>
+      <a id="downloadLink" class="tts-btn tts-primary" download="voiceai-speech.mp3">
+        Download MP3
       </a>
-
-      <nav class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="tools.html">AI Tools</a>
-        <a href="voices.html">Voices</a>
-        <a href="studio.html">Studio</a>
-        <a href="pricing.html">Pricing</a>
-      </nav>
-
-      <div class="nav-actions">
-        <a href="login.html" class="secondary-btn">
-          Login
-        </a>
-
-        <a href="pricing.html" class="primary-btn">
-          Get Premium
-        </a>
-      </div>
-
-    </div>
-  </header>
-
-
-  <!-- MAIN -->
-  <main>
-
-    <!-- PAGE HERO -->
-    <section class="hero">
-      <div class="hero-content">
-
-        <div class="hero-badge">
-          <i data-lucide="volume-2"></i>
-          AI Text to Speech
-        </div>
-
-        <h1>
-          Turn your text into
-          <span>natural AI voice.</span>
-        </h1>
-
-        <p>
-          Create professional voiceovers for ads, videos, podcasts,
-          reels and more with AI-powered voices.
-        </p>
-
-      </div>
     </section>
-
-
-    <!-- TTS WORKSPACE -->
-    <section class="tool-workspace">
-
-      <div class="tool-panel">
-
-        <!-- HEADER -->
-        <div class="tool-panel-header">
-
-          <div>
-            <span class="section-label">
-              TEXT TO SPEECH
-            </span>
-
-            <h2>
-              Generate your voice
-            </h2>
-
-            <p>
-              Write your script and choose a voice.
-            </p>
-          </div>
-
-          <div class="usage-badge">
-            <i data-lucide="gauge"></i>
-            <span id="usageText">
-              5 free uses
-            </span>
-          </div>
-
-        </div>
-
-
-        <!-- SCRIPT -->
-        <div class="form-group">
-
-          <div class="form-label-row">
-            <label for="ttsText">
-              Your script
-            </label>
-
-            <span id="ttsCounter">
-              0 / 5000
-            </span>
-          </div>
-
-          <textarea
-            id="ttsText"
-            maxlength="5000"
-            rows="10"
-            placeholder="Type or paste your script here..."
-          ></textarea>
-
-        </div>
-
-
-        <!-- CONTROLS -->
-        <div class="tts-controls">
-
-          <div class="form-group">
-
-            <label for="ttsVoice">
-              Voice
-            </label>
-
-            <div class="select-wrapper">
-
-              <i data-lucide="mic-2"></i>
-
-              <select id="ttsVoice">
-
-                <option value="">
-                  Select a voice
-                </option>
-
-                <option value="default-male">
-                  David — Professional Male
-                </option>
-
-                <option value="default-female">
-                  Jessica — Professional Female
-                </option>
-
-                <option value="bryan">
-                  Bryan — Polished & Engaging
-                </option>
-
-                <option value="juniper">
-                  Juniper — Grounded & Professional
-                </option>
-
-                <option value="hale">
-                  Hale — Smooth & Persuasive
-                </option>
-
-                <option value="jerry">
-                  Jerry B — Upbeat & Energetic
-                </option>
-
-                <option value="allison">
-                  Allison — Energetic & Clear
-                </option>
-
-              </select>
-
-            </div>
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label for="ttsFormat">
-              Output format
-            </label>
-
-            <div class="select-wrapper">
-
-              <i data-lucide="file-audio"></i>
-
-              <select id="ttsFormat">
-
-                <option value="mp3_44100_128">
-                  MP3 — 128 kbps
-                </option>
-
-                <option value="mp3_44100_192">
-                  MP3 — 192 kbps
-                </option>
-
-                <option value="pcm_44100">
-                  WAV / PCM
-                </option>
-
-              </select>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- GENERATE -->
-        <button
-          id="ttsGenerateBtn"
-          class="primary-btn generate-btn"
-          type="button"
-        >
-          <i data-lucide="sparkles"></i>
-          Generate Voice
-        </button>
-
-
-        <!-- RESULT -->
-        <div
-          id="ttsResult"
-          class="tts-result"
-          hidden
-        >
-
-          <div class="result-header">
-
-            <div class="result-title">
-              <span class="result-icon">
-                <i data-lucide="audio-lines"></i>
-              </span>
-
-              <div>
-                <strong>
-                  Generated Voice
-                </strong>
-
-                <small id="resultVoiceName">
-                  AI Voice
-                </small>
-              </div>
-            </div>
-
-            <button
-              id="ttsDownloadBtn"
-              class="secondary-btn"
-              type="button"
-            >
-              <i data-lucide="download"></i>
-              Download
-            </button>
-
-          </div>
-
-          <audio
-            id="ttsAudio"
-            controls
-            preload="metadata"
-          ></audio>
-
-        </div>
-
-
-        <!-- ERROR -->
-        <div
-          id="ttsError"
-          class="tts-error"
-          hidden
-        ></div>
-
-      </div>
-
-
-      <!-- SIDE INFO -->
-      <aside class="tool-sidebar">
-
-        <div class="sidebar-card">
-
-          <div class="sidebar-icon">
-            <i data-lucide="zap"></i>
-          </div>
-
-          <h3>
-            Professional AI voices
-          </h3>
-
-          <p>
-            Generate natural-sounding voiceovers for your content.
-          </p>
-
-        </div>
-
-
-        <div class="sidebar-card">
-
-          <div class="sidebar-icon">
-            <i data-lucide="megaphone"></i>
-          </div>
-
-          <h3>
-            Perfect for ads
-          </h3>
-
-          <p>
-            Create polished narration for advertisements,
-            reels and social media.
-          </p>
-
-        </div>
-
-
-        <div class="sidebar-card">
-
-          <div class="sidebar-icon">
-            <i data-lucide="shield-check"></i>
-          </div>
-
-          <h3>
-            Secure generation
-          </h3>
-
-          <p>
-            Your API keys stay on the server and are never exposed
-            in browser code.
-          </p>
-
-        </div>
-
-      </aside>
-
-    </section>
-
   </main>
 
-
-  <!-- FOOTER -->
-  <footer class="footer">
-
-    <div class="footer-inner">
-
-      <div>
-        <strong>VoiceAI</strong>
-        <span>
-          AI Voice Studio
-        </span>
-      </div>
-
-      <div>
-        © 2026 VoiceAI. All rights reserved.
-      </div>
-
-    </div>
-
-  </footer>
-
-
-  <!-- SUPABASE -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./supabase-config.js"></script>
-
-  <!-- TTS PAGE SCRIPT -->
   <script>
-
+  (() => {
     "use strict";
 
-    document.addEventListener("DOMContentLoaded", () => {
+    const $ = (id) => document.getElementById(id);
+    const textInput = $("ttsText");
+    const voiceSelect = $("voiceSelect");
+    const formatSelect = $("outputFormat");
+    const generateBtn = $("generateBtn");
+    const refreshBtn = $("refreshVoicesBtn");
+    const status = $("ttsStatus");
+    const resultCard = $("resultCard");
+    const audioPlayer = $("audioPlayer");
+    const downloadLink = $("downloadLink");
 
-      if (window.lucide) {
-        lucide.createIcons();
+    let audioUrl = null;
+    let requestInProgress = false;
+
+    function showStatus(message, type = "") {
+      status.textContent = message;
+      status.className = "tts-status" + (type ? " " + type : "");
+    }
+
+    function getSupabaseClient() {
+      // Uses the existing client if your project creates one.
+      if (window.supabaseClient &&
+          typeof window.supabaseClient.auth?.getSession === "function") {
+        return window.supabaseClient;
       }
 
-      const textInput =
-        document.getElementById("ttsText");
+      // Otherwise configure these values in your project's existing config.
+      const url = window.SUPABASE_URL;
+      const key = window.SUPABASE_ANON_KEY;
 
-      const voiceInput =
-        document.getElementById("ttsVoice");
-
-      const formatInput =
-        document.getElementById("ttsFormat");
-
-      const generateBtn =
-        document.getElementById("ttsGenerateBtn");
-
-      const counter =
-        document.getElementById("ttsCounter");
-
-      const result =
-        document.getElementById("ttsResult");
-
-      const audio =
-        document.getElementById("ttsAudio");
-
-      const downloadBtn =
-        document.getElementById("ttsDownloadBtn");
-
-      const errorBox =
-        document.getElementById("ttsError");
-
-      const resultVoiceName =
-        document.getElementById("resultVoiceName");
-
-      const usageText =
-        document.getElementById("usageText");
-
-
-      /* --------------------------------
-         RESTORE HOMEPAGE TEXT
-      -------------------------------- */
-
-      const savedText =
-        sessionStorage.getItem("voiceai_tts_text");
-
-      const savedVoice =
-        sessionStorage.getItem("voiceai_tts_voice");
-
-      if (savedText) {
-        textInput.value = savedText;
+      if (url && key && window.supabase?.createClient) {
+        window.supabaseClient = window.supabase.createClient(url, key);
+        return window.supabaseClient;
       }
 
-      if (savedVoice) {
-        voiceInput.value = savedVoice;
+      return null;
+    }
+
+    async function getAccessToken() {
+      const client = getSupabaseClient();
+
+      if (!client) {
+        throw new Error(
+          "Supabase client is not configured. Sign in and configure SUPABASE_URL and SUPABASE_ANON_KEY."
+        );
       }
 
+      const { data, error } = await client.auth.getSession();
 
-      /* --------------------------------
-         COUNTER
-      -------------------------------- */
+      if (error) throw new Error(error.message);
 
-      function updateCounter() {
+      const token = data?.session?.access_token;
+      if (!token) throw new Error("Please sign in before generating speech.");
 
-        counter.textContent =
-          `${textInput.value.length} / 5000`;
+      return token;
+    }
 
-      }
+    async function apiFetch(url, options = {}) {
+      const token = await getAccessToken();
 
-      textInput.addEventListener(
-        "input",
-        updateCounter
-      );
-
-      updateCounter();
-
-
-      /* --------------------------------
-         SHOW ERROR
-      -------------------------------- */
-
-      function showError(message) {
-
-        errorBox.textContent = message;
-        errorBox.hidden = false;
-
-      }
-
-
-      function clearError() {
-
-        errorBox.textContent = "";
-        errorBox.hidden = true;
-
-      }
-
-
-      /* --------------------------------
-         GENERATE
-      -------------------------------- */
-
-      generateBtn.addEventListener(
-        "click",
-        async () => {
-
-          clearError();
-
-          const text =
-            textInput.value.trim();
-
-          const voice =
-            voiceInput.value;
-
-          const outputFormat =
-            formatInput.value;
-
-
-          if (!text) {
-
-            showError(
-              "Please enter your script first."
-            );
-
-            textInput.focus();
-
-            return;
-          }
-
-
-          if (!voice) {
-
-            showError(
-              "Please select a voice."
-            );
-
-            voiceInput.focus();
-
-            return;
-          }
-
-
-          /* Loading */
-
-          generateBtn.disabled = true;
-
-          generateBtn.innerHTML = `
-            <i data-lucide="loader-circle"></i>
-            Generating...
-          `;
-
-          if (window.lucide) {
-            lucide.createIcons();
-          }
-
-
-          try {
-
-            let accessToken = null;
-
-
-            /* Supabase session */
-
-            if (
-              window.supabaseClient
-            ) {
-
-              const {
-                data
-              } =
-                await window.supabaseClient
-                  .auth
-                  .getSession();
-
-              accessToken =
-                data?.session?.access_token || null;
-
-            }
-
-
-            if (!accessToken) {
-
-              window.location.href =
-                "login.html";
-
-              return;
-
-            }
-
-
-            /* API */
-
-            const response =
-              await fetch(
-                "/api/tts",
-                {
-                  method: "POST",
-
-                  headers: {
-                    "Content-Type":
-                      "application/json",
-
-                    "Authorization":
-                      `Bearer ${accessToken}`
-                  },
-
-                  body: JSON.stringify({
-                    text,
-                    voiceId: voice,
-                    outputFormat
-                  })
-                }
-              );
-
-
-            const data =
-              await response.json();
-
-
-            if (!response.ok) {
-
-              throw new Error(
-                data?.error ||
-                "Voice generation failed."
-              );
-
-            }
-
-
-            if (!data.audio) {
-
-              throw new Error(
-                "No audio was returned."
-              );
-
-            }
-
-
-            /* Audio */
-
-            audio.src =
-              data.audio;
-
-            audio.load();
-
-            result.hidden = false;
-
-
-            resultVoiceName.textContent =
-              voiceInput.options[
-                voiceInput.selectedIndex
-              ]?.text || "AI Voice";
-
-
-            /* Download */
-
-            downloadBtn.onclick = () => {
-
-              const link =
-                document.createElement("a");
-
-              link.href =
-                data.audio;
-
-              link.download =
-                "voiceai-generation.mp3";
-
-              document.body.appendChild(link);
-
-              link.click();
-
-              link.remove();
-
-            };
-
-
-            /* Usage */
-
-            usageText.textContent =
-              data.remaining === undefined
-                ? "Generation complete"
-                : `${data.remaining} free uses remaining`;
-
-
-          } catch (error) {
-
-            console.error(
-              "TTS Error:",
-              error
-            );
-
-            showError(
-              error.message ||
-              "Something went wrong."
-            );
-
-          } finally {
-
-            generateBtn.disabled = false;
-
-            generateBtn.innerHTML = `
-              <i data-lucide="sparkles"></i>
-              Generate Voice
-            `;
-
-            if (window.lucide) {
-              lucide.createIcons();
-            }
-
-          }
-
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          ...(options.headers || {}),
+          Authorization: "Bearer " + token
         }
-      );
+      });
 
+      if (!response.ok) {
+        let message = "Request failed (" + response.status + ")";
+        try {
+          const payload = await response.json();
+          message = payload.error || payload.message || message;
+        } catch (_) {}
+        throw new Error(message);
+      }
+
+      return response;
+    }
+
+    async function loadVoices() {
+      voiceSelect.disabled = true;
+      voiceSelect.replaceChildren(new Option("Loading voices...", ""));
+      showStatus("Loading available voices...");
+
+      try {
+        const response = await apiFetch("/api/voices?page_size=100");
+        const payload = await response.json();
+
+        if (!payload.success || !Array.isArray(payload.voices)) {
+          throw new Error(payload.error || "Voice API returned an invalid response.");
+        }
+
+        if (payload.voices.length === 0) {
+          voiceSelect.replaceChildren(new Option("No voices available", ""));
+          showStatus("No voices were returned by the provider.", "tts-error");
+          return;
+        }
+
+        voiceSelect.replaceChildren();
+
+        for (const voice of payload.voices) {
+          if (!voice.voice_id || !voice.name) continue;
+
+          const option = new Option(voice.name, voice.voice_id);
+          const labels = voice.labels || {};
+          const gender = labels.gender ? " • " + labels.gender : "";
+          const category = voice.category ? " • " + voice.category : "";
+          option.textContent = voice.name + gender + category;
+          voiceSelect.add(option);
+        }
+
+        if (!voiceSelect.options.length) {
+          throw new Error("The voice response contained no usable voice IDs.");
+        }
+
+        voiceSelect.disabled = false;
+        showStatus("Loaded " + voiceSelect.options.length + " voices.", "tts-success");
+      } catch (error) {
+        voiceSelect.replaceChildren(new Option("Could not load voices", ""));
+        showStatus(error.message, "tts-error");
+      } finally {
+        voiceSelect.disabled = false;
+      }
+    }
+
+    async function generateSpeech() {
+      if (requestInProgress) return;
+
+      const text = textInput.value.trim();
+      const voiceId = voiceSelect.value;
+      const outputFormat = formatSelect.value;
+
+      if (!text) {
+        showStatus("Please enter some text first.", "tts-error");
+        textInput.focus();
+        return;
+      }
+
+      if (text.length > 5000) {
+        showStatus("Text must be 5000 characters or fewer.", "tts-error");
+        return;
+      }
+
+      if (!voiceId) {
+        showStatus("Select a voice before generating speech.", "tts-error");
+        return;
+      }
+
+      requestInProgress = true;
+      generateBtn.disabled = true;
+      generateBtn.textContent = "Generating...";
+      showStatus("Generating audio. Please wait...");
+      resultCard.classList.add("tts-hidden");
+
+      try {
+        const response = await apiFetch("/api/tts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text,
+            voice_id: voiceId,
+            output_format: outputFormat
+          })
+        });
+
+        // /api/tts returns binary audio, not JSON.
+        const contentType = response.headers.get("content-type") || "";
+
+        if (contentType.includes("application/json")) {
+          const payload = await response.json();
+          throw new Error(payload.error || "The API did not return audio.");
+        }
+
+        const audioBlob = await response.blob();
+
+        if (!audioBlob.size) {
+          throw new Error("The provider returned an empty audio file.");
+        }
+
+        if (audioUrl) URL.revokeObjectURL(audioUrl);
+        audioUrl = URL.createObjectURL(audioBlob);
+
+        audioPlayer.src = audioUrl;
+        downloadLink.href = audioUrl;
+        downloadLink.download = "voiceai-speech.mp3";
+        resultCard.classList.remove("tts-hidden");
+
+        const remaining = response.headers.get("X-Usage-Remaining");
+        showStatus(
+          "Speech generated successfully." +
+          (remaining !== null ? " Remaining usage: " + remaining : ""),
+          "tts-success"
+        );
+
+        resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch (error) {
+        showStatus(error.message || "Could not generate speech.", "tts-error");
+      } finally {
+        requestInProgress = false;
+        generateBtn.disabled = false;
+        generateBtn.textContent = "Generate speech";
+      }
+    }
+
+    textInput.addEventListener("input", () => {
+      $("charCount").textContent = textInput.value.length;
     });
 
-  </script>
+    generateBtn.addEventListener("click", generateSpeech);
+    refreshBtn.addEventListener("click", loadVoices);
 
+    window.addEventListener("beforeunload", () => {
+      if (audioUrl) URL.revokeObjectURL(audioUrl);
+    });
+
+    loadVoices();
+  })();
+  </script>
 </body>
 </html>
