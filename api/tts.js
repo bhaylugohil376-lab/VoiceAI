@@ -14,29 +14,60 @@ export default async function handler(req, res) {
 
     const apiKey = process.env.ELEVENLABS_API_KEY;
     if (!apiKey) {
-      return sendError(res, 503, "Text-to-Speech provider is not configured.");
+      return sendError(
+        res,
+        503,
+        "Text-to-Speech provider is not configured."
+      );
     }
 
     const body = req.body && typeof req.body === "object"
       ? req.body
       : {};
 
-    const text = typeof body.text === "string" ? body.text.trim() : "";
-    const voiceId = typeof body.voice_id === "string"
-      ? body.voice_id.trim()
+    const text = typeof body.text === "string"
+      ? body.text.trim()
       : "";
+
+    const voiceId = typeof (body.voice_id ?? body.voiceId) === "string"
+      ? (body.voice_id ?? body.voiceId).trim()
+      : "";
+
+    const outputFormat = body.output_format ?? body.outputFormat;
+    const allowedFormats = [
+      "mp3_44100_128",
+      "mp3_44100_192",
+      "pcm_44100",
+      "mp3_22050_32",
+      "pcm_16000"
+    ];
 
     if (!text) {
       return sendError(res, 400, "Please enter text to convert.");
     }
 
     if (text.length > 5000) {
-      return sendError(res, 400, "Text must be 5000 characters or fewer.");
+      return sendError(
+        res,
+        400,
+        "Text must be 5000 characters or fewer."
+      );
     }
 
     if (!voiceId || !/^[A-Za-z0-9_-]{5,100}$/.test(voiceId)) {
       return sendError(res, 400, "Please select a valid voice.");
     }
+
+    const format = allowedFormats.includes(outputFormat)
+      ? outputFormat
+      : "mp3_44100_128";
+
+    const modelValue = body.model_id ?? body.modelId;
+    const modelId =
+      typeof modelValue === "string" &&
+      /^[A-Za-z0-9_-]{1,100}$/.test(modelValue)
+        ? modelValue
+        : "eleven_multilingual_v2";
 
     const usage = await checkAndUseAI(user, "tts");
 
@@ -48,20 +79,8 @@ export default async function handler(req, res) {
       );
     }
 
-    const modelId =
-      typeof body.model_id === "string" &&
-      /^[A-Za-z0-9_-]{1,100}$/.test(body.model_id)
-        ? body.model_id
-        : "eleven_multilingual_v2";
-
-    const outputFormat =
-      typeof body.output_format === "string" &&
-      ["mp3_44100_128", "mp3_22050_32", "pcm_16000"].includes(body.output_format)
-        ? body.output_format
-        : "mp3_44100_128";
-
     const providerResponse = await fetch(
-      `${ELEVENLABS_API_URL}/text-to-speech/${encodeURIComponent(voiceId)}?output_format=${encodeURIComponent(outputFormat)}`,
+      `${ELEVENLABS_API_URL}/text-to-speech/${encodeURIComponent(voiceId)}?output_format=${encodeURIComponent(format)}`,
       {
         method: "POST",
         headers: {
@@ -77,41 +96,65 @@ export default async function handler(req, res) {
     );
 
     if (!providerResponse.ok) {
-      const providerMessage = await providerResponse.text();
-      console.error(
-        "ElevenLabs TTS failed:",
-        providerResponse.status,
-        providerMessage.slice(0, 500)
-      );
+      const details = await providerResponse.text();
 
-      if (providerResponse.status === 401 || providerResponse.status === 403) {
-        return sendError(res, 502, "The voice provider rejected the server API key or permissions.");
+      console.error("ElevenLabs TTS error:", {
+        status: providerResponse.status,
+        details: details.slice(0, 500)
+      });
+
+      if (
+        providerResponse.status === 401 ||
+        providerResponse.status === 403
+      ) {
+        return sendError(
+          res,
+          502,
+          "ElevenLabs rejected the API key or its permissions."
+        );
       }
 
       if (providerResponse.status === 429) {
-        return sendError(res, 429, "The voice provider rate limit or quota was reached.");
+        return sendError(
+          res,
+          429,
+          "ElevenLabs quota or rate limit reached."
+        );
       }
 
-      return sendError(res, 502, "Audio generation failed. Please try again.");
+      return sendError(
+        res,
+        502,
+        "Audio generation failed. Check the voice ID and output format."
+      );
     }
 
-    const audioBuffer = Buffer.from(await providerResponse.arrayBuffer());
+    const audioBuffer = Buffer.from(
+      await providerResponse.arrayBuffer()
+    );
 
     if (!audioBuffer.length) {
-      return sendError(res, 502, "The voice provider returned empty audio.");
+      return sendError(res, 502, "The provider returned empty audio.");
     }
 
     res.setHeader(
       "Content-Type",
-      outputFormat.startsWith("pcm_") ? "audio/pcm" : "audio/mpeg"
+      format.startsWith("pcm_") ? "audio/pcm" : "audio/mpeg"
     );
     res.setHeader("Content-Length", String(audioBuffer.length));
     res.setHeader("Cache-Control", "no-store");
-    res.setHeader("X-Usage-Remaining", usage.remaining == null ? "unlimited" : String(usage.remaining));
+    res.setHeader(
+      "X-Usage-Remaining",
+      usage.remaining == null ? "unlimited" : String(usage.remaining)
+    );
 
     return res.status(200).send(audioBuffer);
   } catch (error) {
-    console.error("TTS API error:", error.message);
-    return sendError(res, 500, "An unexpected error occurred during audio generation.");
+    console.error("TTS API error:", error);
+    return sendError(
+      res,
+      500,
+      "An unexpected error occurred during audio generation."
+    );
   }
 }
