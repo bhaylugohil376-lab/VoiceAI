@@ -3,7 +3,7 @@ import { requireUser } from "./_lib/auth.js";
 import { checkAndUseAI } from "./_lib/usage.js";
 import { requireMethod, sendError } from "./_lib/response.js";
 
-const ELEVENLABS_API_URL = "https://api.elevenlabs.io/v1";
+const API_URL = "https://api.elevenlabs.io/v1";
 
 export default async function handler(req, res) {
   if (!requireMethod(req, res, ["POST"])) return;
@@ -13,33 +13,22 @@ export default async function handler(req, res) {
     if (!user) return;
 
     const apiKey = process.env.ELEVENLABS_API_KEY;
+
     if (!apiKey) {
-      return sendError(
-        res,
-        503,
-        "Text-to-Speech provider is not configured."
-      );
+      return sendError(res, 503, "ElevenLabs API key is not configured.");
     }
 
-    const body = req.body && typeof req.body === "object"
-      ? req.body
-      : {};
+    const body = req.body || {};
+    const text = typeof body.text === "string" ? body.text.trim() : "";
+    const voiceId = body.voice_id ?? body.voiceId;
+    const requestedFormat = body.output_format ?? body.outputFormat;
 
-    const text = typeof body.text === "string"
-      ? body.text.trim()
-      : "";
-
-    const voiceId = typeof (body.voice_id ?? body.voiceId) === "string"
-      ? (body.voice_id ?? body.voiceId).trim()
-      : "";
-
-    const outputFormat = body.output_format ?? body.outputFormat;
     const allowedFormats = [
       "mp3_44100_128",
       "mp3_44100_192",
-      "pcm_44100",
       "mp3_22050_32",
-      "pcm_16000"
+      "pcm_16000",
+      "pcm_44100"
     ];
 
     if (!text) {
@@ -47,19 +36,18 @@ export default async function handler(req, res) {
     }
 
     if (text.length > 5000) {
-      return sendError(
-        res,
-        400,
-        "Text must be 5000 characters or fewer."
-      );
+      return sendError(res, 400, "Text must be 5000 characters or fewer.");
     }
 
-    if (!voiceId || !/^[A-Za-z0-9_-]{5,100}$/.test(voiceId)) {
-      return sendError(res, 400, "Please select a valid voice.");
+    if (
+      typeof voiceId !== "string" ||
+      !/^[A-Za-z0-9_-]{5,100}$/.test(voiceId.trim())
+    ) {
+      return sendError(res, 400, "Please select a valid provider voice ID.");
     }
 
-    const format = allowedFormats.includes(outputFormat)
-      ? outputFormat
+    const format = allowedFormats.includes(requestedFormat)
+      ? requestedFormat
       : "mp3_44100_128";
 
     const modelValue = body.model_id ?? body.modelId;
@@ -80,7 +68,7 @@ export default async function handler(req, res) {
     }
 
     const providerResponse = await fetch(
-      `${ELEVENLABS_API_URL}/text-to-speech/${encodeURIComponent(voiceId)}?output_format=${encodeURIComponent(format)}`,
+      `${API_URL}/text-to-speech/${encodeURIComponent(voiceId.trim())}?output_format=${encodeURIComponent(format)}`,
       {
         method: "POST",
         headers: {
@@ -100,17 +88,14 @@ export default async function handler(req, res) {
 
       console.error("ElevenLabs TTS error:", {
         status: providerResponse.status,
-        details: details.slice(0, 500)
+        details: details.slice(0, 400)
       });
 
-      if (
-        providerResponse.status === 401 ||
-        providerResponse.status === 403
-      ) {
+      if ([401, 403].includes(providerResponse.status)) {
         return sendError(
           res,
           502,
-          "ElevenLabs rejected the API key or its permissions."
+          "ElevenLabs rejected the API key or permissions."
         );
       }
 
@@ -125,7 +110,7 @@ export default async function handler(req, res) {
       return sendError(
         res,
         502,
-        "Audio generation failed. Check the voice ID and output format."
+        "Audio generation failed. Check the voice ID, model and API access."
       );
     }
 
