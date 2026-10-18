@@ -1,3 +1,4 @@
+
 import { requireUser } from "./_lib/auth.js";
 import { supabaseAdmin } from "./_lib/supabase.js";
 import { sendError } from "./_lib/response.js";
@@ -5,7 +6,7 @@ import { sendError } from "./_lib/response.js";
 const FREE_LIMIT = 5;
 const WINDOW_HOURS = 24;
 
-const ALLOWED_ACTIONS = [
+const ALLOWED_ACTIONS = new Set([
   "tts",
   "assistant",
   "image",
@@ -20,23 +21,31 @@ const ALLOWED_ACTIONS = [
   "sound_effects",
   "agents",
   "video_voice_transfer"
-];
+]);
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
-    return sendError(
-      res,
-      405,
-      "Method not allowed."
-    );
+    return sendError(res, 405, "Method not allowed.");
   }
 
   try {
     const user = await requireUser(req, res);
 
-    if (!user?.id) {
-      return;
+    // requireUser already sends the 401 response when unauthenticated.
+    if (!user?.id) return;
+
+    const rawAction = req.query?.action;
+    const action = Array.isArray(rawAction)
+      ? rawAction[0]
+      : rawAction;
+
+    if (action && !ALLOWED_ACTIONS.has(action)) {
+      return sendError(
+        res,
+        400,
+        "Invalid or unsupported AI action."
+      );
     }
 
     const { data: profile, error: profileError } =
@@ -51,7 +60,6 @@ export default async function handler(req, res) {
         "Usage profile lookup failed:",
         profileError.message
       );
-
       return sendError(
         res,
         500,
@@ -62,22 +70,6 @@ export default async function handler(req, res) {
     const plan = String(profile?.plan || "free")
       .trim()
       .toLowerCase();
-
-    const actionParam = req.query?.action;
-    const action = Array.isArray(actionParam)
-      ? actionParam[0]
-      : actionParam;
-
-    if (
-      action &&
-      !ALLOWED_ACTIONS.includes(action)
-    ) {
-      return sendError(
-        res,
-        400,
-        "Invalid or unsupported AI action."
-      );
-    }
 
     if (plan === "premium") {
       return res.status(200).json({
@@ -91,24 +83,27 @@ export default async function handler(req, res) {
       });
     }
 
-    const { data, error } = await supabaseAdmin
+    const since = new Date(
+      Date.now() - WINDOW_HOURS * 60 * 60 * 1000
+    ).toISOString();
+
+    let query = supabaseAdmin
       .from("usage_logs")
       .select("id", { count: "exact", head: true })
       .eq("user_id", user.id)
-      .gte(
-        "created_at",
-        new Date(
-          Date.now() - WINDOW_HOURS * 60 * 60 * 1000
-        ).toISOString()
-      )
-      .match(action ? { action } : {});
+      .gte("created_at", since);
+
+    if (action) {
+      query = query.eq("action", action);
+    }
+
+    const { count, error } = await query;
 
     if (error) {
       console.error(
         "Usage count lookup failed:",
         error.message
       );
-
       return sendError(
         res,
         500,
@@ -116,34 +111,7 @@ export default async function handler(req, res) {
       );
     }
 
-    const used = data?.length ?? 0;
-
-    // Use the exact count returned by Supabase.
-    // With head:true, count is provided separately.
-    const countResult = await supabaseAdmin
-      .from("usage_logs")
-      .select("id", {
-        count: "exact",
-        head: true
-      })
-      .eq("user_id", user.id)
-      .gte(
-        "created_at",
-        new Date(
-          Date.now() - WINDOW_HOURS * 60 * 60 * 1000
-        ).toISOString()
-      )
-      .match(action ? { action } : {});
-
-    if (countResult.error) {
-      return sendError(
-        res,
-        500,
-        "Could not retrieve usage information."
-      );
-    }
-
-    const actualUsed = countResult.count ?? used;
+    const used = count ?? 0;
 
     return res.status(200).json({
       success: true,
@@ -151,11 +119,8 @@ export default async function handler(req, res) {
       premium: false,
       action: action || null,
       limit: FREE_LIMIT,
-      used: actualUsed,
-      remaining: Math.max(
-        0,
-        FREE_LIMIT - actualUsed
-      ),
+      used,
+      remaining: Math.max(0, FREE_LIMIT - used),
       windowHours: WINDOW_HOURS
     });
   } catch (error) {
