@@ -11,6 +11,7 @@ STRIPE_WEBHOOK_SECRET
 STRIPE_PREMIUM_MONTHLY_PRICE_ID
 STRIPE_PREMIUM_YEARLY_PRICE_ID
 APP_URL
+
 MUSIC_API_URL / MUSIC_API_KEY (if Music provider is enabled)
 SOUND_EFFECTS_API_URL / SOUND_EFFECTS_API_KEY (if SFX provider is enabled)
 See .env.example for names only. Never commit real secret values.
@@ -19,7 +20,8 @@ Supabase usage-limit migration
 Run supabase/usage_limits.sql in the Supabase SQL Editor before production use.
 It changes Free usage to 5 uses per 24-hour window per AI section/action. TTS, Clone, STT, Image, Music, SFX, Agents, etc. have independent counters. Premium/Admin are unlimited at the application level.
 Deployment
-The included vercel.json intentionally does not declare a legacy/invalid Node runtime. Vercel detects the Node.js runtime for /api functions.
+The included vercel.json intentionally does not declare a legacy/invalid Node runtime. Vercel detects the Node.js runtime for /api functions. 
+
 Media-provider notes
 TTS, STT, voice cloning, dubbing and image generation are wired to their server APIs. Music and Sound Effects use configurable provider endpoints. Studio export and Video Voice Transfer create authenticated jobs/queues; a real production media worker/provider is required to render the final media file.
 Security
