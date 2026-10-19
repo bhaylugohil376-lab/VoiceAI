@@ -3,7 +3,6 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-const { pathToFileURL } = require("node:url");
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -11,7 +10,7 @@ const ROOT_DIR = __dirname;
 
 app.disable("x-powered-by");
 
-// Block private files, but allow API requests to reach their routes.
+// Block private files from public access.
 app.use((req, res, next) => {
   let pathname;
 
@@ -37,19 +36,21 @@ app.use((req, res, next) => {
   next();
 });
 
-// Stripe webhook: preserve the raw request body for signature verification.
+// Stripe webhook must receive the original raw body.
+// Register this BEFORE express.json().
 app.post(
   "/api/stripe-webhook",
-  express.raw({ type: "application/json", limit: "1mb" }),
+  express.raw({
+    type: "application/json",
+    limit: "1mb"
+  }),
   async (req, res, next) => {
     try {
-      const loaded = await import(
-        pathToFileURL(
-          path.join(ROOT_DIR, "api/stripe-webhook.js")
-        ).href
+      const stripeModule = await import(
+        path.join(ROOT_DIR, "api", "stripe-webhook.js")
       );
 
-      const handler = loaded.default;
+      const handler = stripeModule.default;
 
       if (typeof handler !== "function") {
         return res.status(500).json({
@@ -64,19 +65,17 @@ app.post(
   }
 );
 
-// Parse request bodies for the other API routes.
+// Parse JSON for the other routes.
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: false, limit: "1mb" }));
 
-// Load and run an API handler.
+// Load API handlers, supporting CommonJS and ES Module exports.
 function mountHandler(route, file) {
   app.all(route, async (req, res, next) => {
     try {
-      const loaded = await import(
-        pathToFileURL(path.join(ROOT_DIR, file)).href
-      );
+      const modulePath = path.join(ROOT_DIR, file);
+      const loaded = await import(modulePath);
 
-      // Supports standard ESM default exports and CommonJS exports.
       const handler =
         typeof loaded.default === "function"
           ? loaded.default
@@ -99,9 +98,13 @@ function mountHandler(route, file) {
 
 mountHandler("/api/voices", "api/voices.js");
 mountHandler("/api/tts", "api/tts.js");
-mountHandler("/api/health", "api/health.js");
 
-// Unknown API paths must return JSON, not the frontend.
+// Mount health endpoint only if the file exists.
+if (fs.existsSync(path.join(ROOT_DIR, "api", "health.js"))) {
+  mountHandler("/api/health", "api/health.js");
+}
+
+// Unknown API endpoints return JSON.
 app.use("/api", (req, res) => {
   res.status(404).json({
     error: "API endpoint not found",
@@ -116,6 +119,7 @@ app.use(express.static(ROOT_DIR, {
   extensions: ["html"]
 }));
 
+// Frontend fallback.
 app.get("*", (req, res, next) => {
   const indexPath = path.join(ROOT_DIR, "index.html");
 
