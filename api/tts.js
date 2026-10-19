@@ -1,4 +1,5 @@
 
+const { supabaseAdmin } = require("./_lib/supabase");
 const { checkAndUseAI } = require("./_lib/usage");
 
 const SUPPORT_EMAIL = "bhaylugohil376@gmail.com";
@@ -30,11 +31,29 @@ module.exports = async function handler(req, res) {
   const apiKey = process.env.ELEVENLABS_API_KEY;
 
   if (!apiKey) {
-    return sendError(
-      res,
-      503,
-      "Text-to-speech service is not configured"
-    );
+    return sendError(res, 503, "TTS service is not configured");
+  }
+
+  const authorization = req.headers.authorization || "";
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
+
+  if (!match) {
+    return sendError(res, 401, "Authentication required");
+  }
+
+  let user;
+
+  try {
+    const { data, error } = await supabaseAdmin.auth.getUser(match[1]);
+
+    if (error || !data?.user?.id) {
+      return sendError(res, 401, "Invalid or expired access token");
+    }
+
+    user = data.user;
+  } catch (error) {
+    console.error("Authentication failed:", error.message);
+    return sendError(res, 503, "Could not verify authentication");
   }
 
   const body = req.body;
@@ -43,9 +62,7 @@ module.exports = async function handler(req, res) {
     return sendError(res, 400, "A valid JSON body is required");
   }
 
-  const text =
-    typeof body.text === "string" ? body.text.trim() : "";
-
+  const text = typeof body.text === "string" ? body.text.trim() : "";
   const voiceId =
     typeof body.voiceId === "string"
       ? body.voiceId.trim()
@@ -58,21 +75,14 @@ module.exports = async function handler(req, res) {
       ? body.model_id.trim()
       : "eleven_multilingual_v2";
 
-  const outputFormat =
-    typeof body.output_format === "string"
-      ? body.output_format
-      : "mp3_44100_128";
+  const outputFormat = body.output_format || "mp3_44100_128";
 
   if (!text) {
     return sendError(res, 400, "Text is required");
   }
 
   if (text.length > MAX_TEXT_LENGTH) {
-    return sendError(
-      res,
-      400,
-      `Text must not exceed ${MAX_TEXT_LENGTH} characters`
-    );
+    return sendError(res, 400, "Text is too long");
   }
 
   if (!voiceId || !/^[a-zA-Z0-9_-]+$/.test(voiceId)) {
@@ -87,11 +97,10 @@ module.exports = async function handler(req, res) {
     return sendError(res, 400, "Unsupported output_format");
   }
 
-  // Usage helper must return { allowed: true } on success.
   let usage;
 
   try {
-    usage = await checkAndUseAI(req);
+    usage = await checkAndUseAI(user, "tts");
   } catch (error) {
     console.error("Usage check failed:", error.message);
     return sendError(res, 503, "Could not verify usage limits");
@@ -99,16 +108,14 @@ module.exports = async function handler(req, res) {
 
   if (!usage || usage.allowed !== true) {
     const status =
-      usage && [401, 403, 429].includes(usage.status)
+      usage && [400, 401, 403, 429].includes(usage.status)
         ? usage.status
         : 503;
 
     return sendError(
       res,
       status,
-      usage && typeof usage.message === "string"
-        ? usage.message
-        : "Usage limit could not be verified"
+      usage?.error || "Usage limit verification failed"
     );
   }
 
@@ -119,10 +126,9 @@ module.exports = async function handler(req, res) {
     const url = new URL(
       `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}`
     );
-
     url.searchParams.set("output_format", outputFormat);
 
-    const response = await fetch(url, {
+    const upstream = await fetch(url, {
       method: "POST",
       headers: {
         "xi-api-key": apiKey,
@@ -136,35 +142,33 @@ module.exports = async function handler(req, res) {
       signal: controller.signal,
     });
 
-    if (!response.ok) {
-      console.error("ElevenLabs request failed:", {
-        status: response.status,
-      });
+    if (!upstream.ok) {
+      console.error("ElevenLabs TTS failed with status:", upstream.status);
 
-      if (response.status === 429) {
+      if (upstream.status === 429) {
         return sendError(res, 429, "TTS provider rate limit reached");
       }
 
-      if ([400, 404].includes(response.status)) {
+      if ([400, 404].includes(upstream.status)) {
         return sendError(res, 422, "Invalid TTS input or voice ID");
       }
 
       return sendError(res, 502, "TTS provider request failed");
     }
 
-    const audio = Buffer.from(await response.arrayBuffer());
+    const audio = Buffer.from(await upstream.arrayBuffer());
 
-    if (audio.length === 0) {
+    if (!audio.length) {
       return sendError(res, 502, "TTS provider returned empty audio");
     }
 
-    const isRawAudio =
+    const isRaw =
       outputFormat.startsWith("pcm_") ||
       outputFormat.startsWith("ulaw_");
 
     res.setHeader(
       "Content-Type",
-      isRawAudio ? "application/octet-stream" : "audio/mpeg"
+      isRaw ? "application/octet-stream" : "audio/mpeg"
     );
     res.setHeader("Content-Length", String(audio.length));
     res.setHeader("Cache-Control", "no-store");
@@ -172,7 +176,7 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).send(audio);
   } catch (error) {
-    console.error("TTS generation failed:", error.message);
+    console.error("TTS request failed:", error.message);
 
     if (error.name === "AbortError") {
       return sendError(res, 504, "TTS provider timed out");
