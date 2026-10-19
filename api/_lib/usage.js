@@ -1,5 +1,5 @@
 
-import { supabaseAdmin } from "./supabase.js";
+const { supabaseAdmin } = require("./supabase");
 
 const FREE_LIMIT = 5;
 const WINDOW_HOURS = 24;
@@ -21,8 +21,8 @@ const ALLOWED_ACTIONS = new Set([
   "video_voice_transfer",
 ]);
 
-export async function checkAndUseAI(user, action) {
-  if (!user?.id) {
+async function checkAndUseAI(user, action) {
+  if (!user || !user.id) {
     return {
       allowed: false,
       status: 401,
@@ -50,10 +50,7 @@ export async function checkAndUseAI(user, action) {
         .maybeSingle();
 
     if (profileError) {
-      console.error(
-        "Subscription lookup failed:",
-        profileError.message
-      );
+      console.error("Subscription lookup failed:", profileError.message);
 
       return {
         allowed: false,
@@ -85,10 +82,7 @@ export async function checkAndUseAI(user, action) {
     );
 
     if (error) {
-      console.error(
-        "Usage enforcement failed:",
-        error.message
-      );
+      console.error("Usage enforcement failed:", error.message);
 
       return {
         allowed: false,
@@ -134,3 +128,5 @@ export async function checkAndUseAI(user, action) {
     };
   }
 }
+
+module.exports = { checkAndUseAI };
