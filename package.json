@@ -2,16 +2,11 @@
 {
   "name": "voiceai",
   "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "description": "VoiceAI application and API server",
+  "description": "VoiceAI Studio & SaaS platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "check": "node check-project.js"
-  },
-  "engines": {
-    "node": ">=20"
+    "dev": "node --watch server.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
