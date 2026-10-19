@@ -63,4 +63,8 @@ export async function requireAuth(req, res) {
   }
 }
 
+
+// Backwards-compatible alias used by endpoint handlers.
+export const requireUser = requireAuth;
+
 export default requireAuth;
