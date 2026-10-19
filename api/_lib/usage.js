@@ -18,7 +18,7 @@ const ALLOWED_ACTIONS = new Set([
   "music",
   "sound_effects",
   "agents",
-  "video_voice_transfer"
+  "video_voice_transfer",
 ]);
 
 export async function checkAndUseAI(user, action) {
@@ -26,7 +26,7 @@ export async function checkAndUseAI(user, action) {
     return {
       allowed: false,
       status: 401,
-      error: "Authentication required."
+      error: "Authentication required.",
     };
   }
 
@@ -37,7 +37,7 @@ export async function checkAndUseAI(user, action) {
     return {
       allowed: false,
       status: 400,
-      error: "Invalid or unsupported AI action."
+      error: "Invalid or unsupported AI action.",
     };
   }
 
@@ -57,8 +57,8 @@ export async function checkAndUseAI(user, action) {
 
       return {
         allowed: false,
-        status: 500,
-        error: "Could not verify your subscription."
+        status: 503,
+        error: "Could not verify your subscription.",
       };
     }
 
@@ -70,20 +70,17 @@ export async function checkAndUseAI(user, action) {
       return {
         allowed: true,
         premium: true,
-        remaining: null
+        remaining: null,
       };
     }
 
-    // The database function must enforce and record usage
-    // atomically to prevent concurrent requests bypassing
-    // the free limit.
     const { data, error } = await supabaseAdmin.rpc(
       "check_and_use_ai",
       {
         p_user_id: user.id,
         p_action: action,
         p_limit: FREE_LIMIT,
-        p_window_hours: WINDOW_HOURS
+        p_window_hours: WINDOW_HOURS,
       }
     );
 
@@ -95,20 +92,24 @@ export async function checkAndUseAI(user, action) {
 
       return {
         allowed: false,
-        status: 500,
-        error: "Usage enforcement is not configured correctly."
+        status: 503,
+        error: "Usage enforcement is unavailable.",
       };
     }
 
     const result = Array.isArray(data) ? data[0] : data;
 
-    if (!result || result.allowed !== true) {
+    if (
+      !result ||
+      typeof result !== "object" ||
+      result.allowed !== true
+    ) {
       return {
         allowed: false,
         status: 429,
         error:
           "Free limit reached for this tool. Try again after the 24-hour usage window resets, or upgrade to Premium.",
-        remaining: 0
+        remaining: 0,
       };
     }
 
@@ -118,7 +119,7 @@ export async function checkAndUseAI(user, action) {
       remaining:
         typeof result.remaining === "number"
           ? result.remaining
-          : null
+          : null,
     };
   } catch (error) {
     console.error(
@@ -128,8 +129,8 @@ export async function checkAndUseAI(user, action) {
 
     return {
       allowed: false,
-      status: 500,
-      error: "Could not verify AI usage."
+      status: 503,
+      error: "Could not verify AI usage.",
     };
   }
 }
