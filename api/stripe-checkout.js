@@ -1,6 +1,6 @@
 
 import Stripe from "stripe";
-import { requireUser } from "./_lib/auth.js";
+import { requireAuth } from "./_lib/auth.js";
 import {
   requireMethod,
   parseJsonBody,
@@ -8,15 +8,20 @@ import {
 } from "./_lib/response.js";
 
 export default async function handler(req, res) {
-  if (!requireMethod(req, res, ["POST"])) return;
+  if (!requireMethod(req, res, ["POST"])) {
+    return;
+  }
 
   try {
-    const user = await requireUser(req, res);
-    if (!user) return;
+    const user = await requireAuth(req, res);
+
+    if (!user) {
+      return;
+    }
 
     const body = parseJsonBody(req);
 
-    if (!body) {
+    if (!body || typeof body !== "object") {
       return sendError(res, 400, "Send a valid JSON request.");
     }
 
@@ -65,7 +70,11 @@ export default async function handler(req, res) {
       baseUrl.protocol !== "https:" &&
       process.env.NODE_ENV === "production"
     ) {
-      return sendError(res, 500, "Production APP_URL must use HTTPS.");
+      return sendError(
+        res,
+        500,
+        "Production APP_URL must use HTTPS."
+      );
     }
 
     const stripe = new Stripe(secretKey);
@@ -88,20 +97,26 @@ export default async function handler(req, res) {
       subscription_data: {
         metadata: {
           user_id: user.id,
-          plan: "premium"
+          plan: "premium",
+          billing_interval: interval
         }
       },
-      success_url:
-        new URL(
-          "/pricing.html?checkout=success&session_id={CHECKOUT_SESSION_ID}",
-          baseUrl
-        ).toString(),
-      cancel_url:
-        new URL("/pricing.html?checkout=cancelled", baseUrl).toString()
+      success_url: new URL(
+        "/pricing.html?checkout=success&session_id={CHECKOUT_SESSION_ID}",
+        baseUrl
+      ).toString(),
+      cancel_url: new URL(
+        "/pricing.html?checkout=cancelled",
+        baseUrl
+      ).toString()
     });
 
     if (!session.url) {
-      return sendError(res, 502, "Stripe did not return a checkout URL.");
+      return sendError(
+        res,
+        502,
+        "Stripe did not return a checkout URL."
+      );
     }
 
     return res.status(200).json({
@@ -116,6 +131,10 @@ export default async function handler(req, res) {
       return sendError(res, 500, "Stripe secret key is invalid.");
     }
 
-    return sendError(res, 500, "Could not create the checkout session.");
+    return sendError(
+      res,
+      500,
+      "Could not create the checkout session."
+    );
   }
 }
