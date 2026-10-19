@@ -1,4 +1,3 @@
-
 export function methodNotAllowed(res, allowed = ["POST"]) {
   res.setHeader("Allow", allowed.join(", "));
 
