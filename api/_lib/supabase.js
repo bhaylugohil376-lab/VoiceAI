@@ -1,22 +1,46 @@
-const { createClient } = require('@supabase/supabase-js');
+
+import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  console.warn('Warning: Missing Supabase URL or Service Role Key in environment variables.');
+  console.error(
+    "Supabase configuration error: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required."
+  );
 }
 
-// Client for standard public requests with RLS
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+if (!supabaseUrl) {
+  throw new Error("Missing SUPABASE_URL environment variable.");
+}
 
-// Admin client bypassing RLS for server-side usage logging & billing sync
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false
+if (!supabaseServiceKey) {
+  throw new Error(
+    "Missing SUPABASE_SERVICE_ROLE_KEY environment variable."
+  );
+}
+
+const supabaseAdmin = createClient(
+  supabaseUrl,
+  supabaseServiceKey,
+  {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
   }
-});
+);
 
-module.exports = { supabase, supabaseAdmin };
+const supabase = supabaseAnonKey
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+      },
+    })
+  : null;
+
+export { supabase, supabaseAdmin };
