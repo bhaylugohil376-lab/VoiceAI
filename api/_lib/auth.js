@@ -1,34 +1,66 @@
 
-import { supabaseAdmin } from "./supabase.js";
+import { getSupabasePublic } from "./supabase.js";
 
-export async function requireUser(req, res) {
-  const authorization = req.headers.authorization || "";
+/**
+ * Verify the Supabase access token from:
+ * Authorization: Bearer <access_token>
+ *
+ * Returns the authenticated user on success.
+ * Returns null after sending an error response on failure.
+ */
+export async function requireAuth(req, res) {
+  const authorization = req.headers?.authorization || "";
+
   const match = authorization.match(/^Bearer\s+(.+)$/i);
 
   if (!match) {
     res.status(401).json({
-      error: "Authentication required. Please log in."
+      success: false,
+      error: "Authentication required. Provide a Bearer token."
     });
+
     return null;
   }
 
-  const accessToken = match[1].trim();
+  const token = match[1].trim();
 
-  if (!accessToken) {
+  if (!token) {
     res.status(401).json({
-      error: "Invalid access token."
+      success: false,
+      error: "Authentication token is missing."
     });
+
     return null;
   }
 
-  const { data, error } = await supabaseAdmin.auth.getUser(accessToken);
+  try {
+    const supabase = getSupabasePublic();
 
-  if (error || !data?.user) {
-    res.status(401).json({
-      error: "Your session is invalid or expired. Please log in again."
+    const { data, error } = await supabase.auth.getUser(token);
+
+    if (error || !data?.user) {
+      res.status(401).json({
+        success: false,
+        error: "Invalid or expired authentication token."
+      });
+
+      return null;
+    }
+
+    return data.user;
+  } catch (error) {
+    console.error(
+      "Authentication error:",
+      error?.message || error
+    );
+
+    res.status(503).json({
+      success: false,
+      error: "Authentication service is unavailable."
     });
+
     return null;
   }
-
-  return data.user;
 }
+
+export default requireAuth;
