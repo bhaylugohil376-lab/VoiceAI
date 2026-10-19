@@ -162,12 +162,16 @@
     try {
       const savedText = sessionStorage.getItem("voiceai_tts_text");
       const savedVoice = sessionStorage.getItem("voiceai_tts_voice");
+      const savedVoiceName = sessionStorage.getItem("voiceai_selected_voice_name");
       if (savedText && !textInput.value) {
         textInput.value = savedText;
         $("charCount").textContent = String(savedText.length);
       }
       if (savedVoice) {
         voiceSelect.dataset.preferredVoice = savedVoice;
+      }
+      if (savedVoiceName) {
+        voiceSelect.dataset.preferredVoiceName = savedVoiceName;
       }
     } catch (error) {
       console.warn("Could not restore homepage draft:", error);
@@ -195,11 +199,15 @@
     }
 
     const preferredVoice = voiceSelect.dataset.preferredVoice;
+    const preferredVoiceName = voiceSelect.dataset.preferredVoiceName;
     if (preferredVoice && [...voiceSelect.options].some(option => option.value === preferredVoice)) {
       voiceSelect.value = preferredVoice;
       delete voiceSelect.dataset.preferredVoice;
+      delete voiceSelect.dataset.preferredVoiceName;
     } else if ([...voiceSelect.options].some(option => option.value === previousValue)) {
       voiceSelect.value = previousValue;
+    } else if (preferredVoice && preferredVoiceName && !query) {
+      setStatus(`Your selected voice “${preferredVoiceName}” is not in the loaded voice list. Refresh voices or choose another voice.`, "error");
     }
 
     $("voiceCount").textContent =
