@@ -1,5 +1,5 @@
 
-const { supabaseAdmin } = require("./supabase");
+import { getSupabaseAdmin } from "./supabase.js";
 
 const FREE_LIMIT = 5;
 const WINDOW_HOURS = 24;
@@ -18,15 +18,15 @@ const ALLOWED_ACTIONS = new Set([
   "music",
   "sound_effects",
   "agents",
-  "video_voice_transfer",
+  "video_voice_transfer"
 ]);
 
-async function checkAndUseAI(user, action) {
-  if (!user || !user.id) {
+export async function checkAndUseAI(user, action) {
+  if (!user?.id) {
     return {
       allowed: false,
       status: 401,
-      error: "Authentication required.",
+      error: "Authentication required."
     };
   }
 
@@ -37,11 +37,13 @@ async function checkAndUseAI(user, action) {
     return {
       allowed: false,
       status: 400,
-      error: "Invalid or unsupported AI action.",
+      error: "Invalid or unsupported AI action."
     };
   }
 
   try {
+    const supabaseAdmin = getSupabaseAdmin();
+
     const { data: profile, error: profileError } =
       await supabaseAdmin
         .from("profiles")
@@ -50,12 +52,15 @@ async function checkAndUseAI(user, action) {
         .maybeSingle();
 
     if (profileError) {
-      console.error("Subscription lookup failed:", profileError.message);
+      console.error(
+        "Subscription lookup failed:",
+        profileError.message
+      );
 
       return {
         allowed: false,
         status: 503,
-        error: "Could not verify your subscription.",
+        error: "Could not verify your subscription."
       };
     }
 
@@ -67,7 +72,7 @@ async function checkAndUseAI(user, action) {
       return {
         allowed: true,
         premium: true,
-        remaining: null,
+        remaining: null
       };
     }
 
@@ -77,17 +82,20 @@ async function checkAndUseAI(user, action) {
         p_user_id: user.id,
         p_action: action,
         p_limit: FREE_LIMIT,
-        p_window_hours: WINDOW_HOURS,
+        p_window_hours: WINDOW_HOURS
       }
     );
 
     if (error) {
-      console.error("Usage enforcement failed:", error.message);
+      console.error(
+        "Usage enforcement failed:",
+        error.message
+      );
 
       return {
         allowed: false,
         status: 503,
-        error: "Usage enforcement is unavailable.",
+        error: "Usage enforcement is unavailable."
       };
     }
 
@@ -103,7 +111,7 @@ async function checkAndUseAI(user, action) {
         status: 429,
         error:
           "Free limit reached for this tool. Try again after the 24-hour usage window resets, or upgrade to Premium.",
-        remaining: 0,
+        remaining: 0
       };
     }
 
@@ -113,7 +121,7 @@ async function checkAndUseAI(user, action) {
       remaining:
         typeof result.remaining === "number"
           ? result.remaining
-          : null,
+          : null
     };
   } catch (error) {
     console.error(
@@ -124,9 +132,9 @@ async function checkAndUseAI(user, action) {
     return {
       allowed: false,
       status: 503,
-      error: "Could not verify AI usage.",
+      error: "Could not verify AI usage."
     };
   }
 }
 
-module.exports = { checkAndUseAI };
+export default checkAndUseAI;
