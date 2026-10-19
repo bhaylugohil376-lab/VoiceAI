@@ -64,7 +64,8 @@ export default async function handler(req, res) {
           generationConfig: {
             responseModalities: ["IMAGE"]
           }
-        })
+        }),
+        signal: AbortSignal.timeout(60000)
       }
     );
 
