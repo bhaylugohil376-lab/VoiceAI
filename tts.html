@@ -158,6 +158,22 @@
     return response;
   }
 
+  function restoreHomepageDraft() {
+    try {
+      const savedText = sessionStorage.getItem("voiceai_tts_text");
+      const savedVoice = sessionStorage.getItem("voiceai_tts_voice");
+      if (savedText && !textInput.value) {
+        textInput.value = savedText;
+        $("charCount").textContent = String(savedText.length);
+      }
+      if (savedVoice) {
+        voiceSelect.dataset.preferredVoice = savedVoice;
+      }
+    } catch (error) {
+      console.warn("Could not restore homepage draft:", error);
+    }
+  }
+
   function renderVoices() {
     const query = voiceSearch.value.trim().toLowerCase();
     const previousValue = voiceSelect.value;
@@ -178,7 +194,11 @@
       voiceSelect.add(option);
     }
 
-    if ([...voiceSelect.options].some(option => option.value === previousValue)) {
+    const preferredVoice = voiceSelect.dataset.preferredVoice;
+    if (preferredVoice && [...voiceSelect.options].some(option => option.value === preferredVoice)) {
+      voiceSelect.value = preferredVoice;
+      delete voiceSelect.dataset.preferredVoice;
+    } else if ([...voiceSelect.options].some(option => option.value === previousValue)) {
       voiceSelect.value = previousValue;
     }
 
@@ -324,6 +344,7 @@
     if (audioUrl) URL.revokeObjectURL(audioUrl);
   });
 
+  restoreHomepageDraft();
   loadVoices(false);
 })();
 </script>
