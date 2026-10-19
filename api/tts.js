@@ -99,7 +99,7 @@ export default async function handler(req, res) {
           text,
           model_id: modelId
         }),
-        signal: AbortSignal.timeout(60000)
+        signal: AbortSignal.timeout(55000)
       }
     );
 
@@ -144,6 +144,14 @@ export default async function handler(req, res) {
       "TTS endpoint error:",
       error?.message || error
     );
+
+    if (error?.name === "TimeoutError" || error?.name === "AbortError") {
+      return sendError(
+        res,
+        504,
+        "Text-to-Speech generation timed out. Please try again with shorter text."
+      );
+    }
 
     return sendError(
       res,
