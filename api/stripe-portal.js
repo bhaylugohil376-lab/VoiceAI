@@ -44,34 +44,38 @@ export default async function handler(req, res) {
       );
     }
 
-    const { data: subscription, error } = await supabaseAdmin
-      .from("subscriptions")
-      .select("stripe_customer_id, status")
-      .eq("user_id", user.id)
-      .not("stripe_customer_id", "is", null)
-      .in("status", ["active", "trialing", "past_due"])
-      .order("updated_at", { ascending: false })
-      .limit(1)
+    // The webhook stores the authoritative customer ID and plan on profiles.
+    // Querying a separate subscriptions table here caused the portal to fail
+    // when that optional table had not been created or synchronized.
+    const { data: profile, error } = await supabaseAdmin
+      .from("profiles")
+      .select("stripe_customer_id, plan")
+      .eq("id", user.id)
       .maybeSingle();
 
     if (error) {
-      console.error("Subscription lookup failed:", error.message);
+      console.error("Billing profile lookup failed:", error.message);
       return sendError(res, 500, "Could not load your billing details.");
     }
 
-    if (!subscription?.stripe_customer_id) {
+    if (
+      String(profile?.plan || "").trim().toLowerCase() !== "premium" ||
+      !profile?.stripe_customer_id
+    ) {
       return sendError(
         res,
         404,
-        "No eligible Stripe subscription was found for this account."
+        "No active Premium billing customer was found for this account."
       );
     }
+
+    const customerId = profile.stripe_customer_id;
 
     const stripe = new Stripe(secretKey);
 
     const portalSession =
       await stripe.billingPortal.sessions.create({
-        customer: subscription.stripe_customer_id,
+        customer: customerId,
         return_url: new URL("/pricing.html", baseUrl).toString()
       });
 
