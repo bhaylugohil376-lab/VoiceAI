@@ -1,79 +1,58 @@
 
-import express from "express";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import dotenv from "dotenv";
+const express = require("express");
+const path = require("path");
+require("dotenv").config();
 
-dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const app = express();
-const port = Number(process.env.PORT || 3000);
+const port = process.env.PORT || 3000;
 
-// Stripe webhook ko raw body chahiye signature verify karne ke liye.
-const stripeWebhook = (await import("./api/stripe-webhook.js")).default;
-
+// Stripe webhook must receive the raw body for signature verification.
+// Keep this route before express.json().
 app.post(
   "/api/stripe-webhook",
-  express.raw({ type: "application/json", limit: "2mb" }),
-  (req, res, next) =>
-    Promise.resolve(stripeWebhook(req, res)).catch(next)
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    try {
+      const { default: handler } = await import(
+        "./api/stripe-webhook.js"
+      );
+
+      return await handler(req, res);
+    } catch (error) {
+      console.error("Stripe webhook error:", error.message);
+
+      if (!res.headersSent) {
+        return res.status(500).json({
+          success: false,
+          error: "Stripe webhook processing failed."
+        });
+      }
+    }
+  }
 );
 
-// Normal API requests
-app.use(express.json({ limit: "2mb" }));
-app.use(express.urlencoded({ extended: true, limit: "2mb" }));
+// Standard API request parsing
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
-// Load API handlers from api/*.js
-const apiFiles = [
-  "voices",
-  "tts"
-];
+// Voice API routes (CommonJS)
+app.use("/api/voices", require("./api/voices"));
+app.use("/api/tts", require("./api/tts"));
 
-for (const name of apiFiles) {
-  const mod = await import(`./api/${name}.js`);
-  const handler = mod.default;
+// Static frontend
+app.use(express.static(path.join(__dirname, ".")));
 
-  if (typeof handler !== "function") {
-    throw new TypeError(`API handler is not a function: ${name}`);
-  }
-
-  app.all(`/api/${name}`, (req, res, next) => {
-    Promise.resolve(handler(req, res)).catch(next);
-  });
-}
-
-// Static website files
-app.use(express.static(__dirname, { index: "index.html" }));
-
-app.get("/healthz", (_req, res) => {
-  res.status(200).json({ ok: true });
-});
-
-app.get("*", (req, res, next) => {
-  if (req.path.startsWith("/api/")) {
-    return res.status(404).json({
-      success: false,
-      error: "API endpoint not found."
-    });
-  }
-
-  res.sendFile(path.join(__dirname, "index.html"), (error) => {
-    if (error) next(error);
+// Health check
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "ok"
   });
 });
 
-// Central error handler
-app.use((error, _req, res, _next) => {
-  console.error("Server error:", error?.message || error);
-
-  if (res.headersSent) return;
-
-  res.status(error?.status || 500).json({
-    success: false,
-    error: "Internal server error."
-  });
+// Frontend fallback
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.listen(port, () => {
