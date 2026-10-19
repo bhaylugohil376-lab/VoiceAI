@@ -1,16 +1,27 @@
+
 {
   "name": "voiceai",
   "version": "1.0.0",
+  "private": true,
   "description": "VoiceAI Studio & SaaS platform",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "check": "node --check server.js",
+    "check:tts": "node --check api/tts.js",
+    "check:usage": "node --check api/_lib/usage.js",
+    "check:supabase": "node --check api/_lib/supabase.js"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
     "dotenv": "^16.4.0",
     "express": "^4.19.2",
+    "formidable": "^3.5.2",
     "stripe": "^14.14.0"
   }
 }
