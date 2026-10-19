@@ -1,9 +1,9 @@
-
 require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const { pathToFileURL } = require("node:url");
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -11,13 +11,12 @@ const ROOT_DIR = __dirname;
 
 app.disable("x-powered-by");
 
-// Protect private configuration and backend source files.
+// Block private files, but allow API requests to reach their routes.
 app.use((req, res, next) => {
   let pathname;
 
   try {
-    pathname = decodeURIComponent(req.path || "/")
-      .replace(/\\/g, "/");
+    pathname = decodeURIComponent(req.path || "/").replace(/\\/g, "/");
   } catch {
     return res.status(400).json({ error: "Invalid URL" });
   }
@@ -28,8 +27,6 @@ app.use((req, res, next) => {
     pathname === "/package.json" ||
     pathname === "/package-lock.json" ||
     pathname === "/server.js" ||
-    pathname.startsWith("/api/") ||
-    pathname === "/api" ||
     pathname.startsWith("/node_modules/") ||
     pathname.startsWith("/.git/");
 
@@ -40,15 +37,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// Stripe needs the original, unparsed request body.
-// Keep this route before express.json().
+// Stripe webhook: preserve the raw request body for signature verification.
 app.post(
   "/api/stripe-webhook",
   express.raw({ type: "application/json", limit: "1mb" }),
   async (req, res, next) => {
     try {
-      const module = await import("./api/stripe-webhook.js");
-      const handler = module.default;
+      const loaded = await import(
+        pathToFileURL(
+          path.join(ROOT_DIR, "api/stripe-webhook.js")
+        ).href
+      );
+
+      const handler = loaded.default;
 
       if (typeof handler !== "function") {
         return res.status(500).json({
@@ -63,11 +64,11 @@ app.post(
   }
 );
 
-// Parse JSON for other API routes.
+// Parse request bodies for the other API routes.
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: false, limit: "1mb" }));
 
-// Adapt existing serverless-style API handlers to Express.
+// Load and run an API handler.
 function mountHandler(route, file) {
   app.all(route, async (req, res, next) => {
     try {
@@ -75,16 +76,17 @@ function mountHandler(route, file) {
         pathToFileURL(path.join(ROOT_DIR, file)).href
       );
 
+      // Supports standard ESM default exports and CommonJS exports.
       const handler =
         typeof loaded.default === "function"
           ? loaded.default
-          : typeof loaded === "function"
-            ? loaded
+          : typeof loaded.handler === "function"
+            ? loaded.handler
             : null;
 
       if (!handler) {
         return res.status(500).json({
-          error: "API handler unavailable"
+          error: `Invalid API handler: ${route}`
         });
       }
 
@@ -95,14 +97,11 @@ function mountHandler(route, file) {
   });
 }
 
-const { pathToFileURL } = require("url");
-
-// These routes use the existing project API files.
 mountHandler("/api/voices", "api/voices.js");
 mountHandler("/api/tts", "api/tts.js");
 mountHandler("/api/health", "api/health.js");
 
-// Prevent unknown API requests from returning index.html.
+// Unknown API paths must return JSON, not the frontend.
 app.use("/api", (req, res) => {
   res.status(404).json({
     error: "API endpoint not found",
@@ -110,7 +109,7 @@ app.use("/api", (req, res) => {
   });
 });
 
-// Serve public frontend files only.
+// Serve frontend files.
 app.use(express.static(ROOT_DIR, {
   dotfiles: "deny",
   index: "index.html",
@@ -131,7 +130,7 @@ app.get("*", (req, res, next) => {
 
 // Central error handler.
 app.use((error, req, res, next) => {
-  console.error("Server error:", error.message);
+  console.error("Server error:", error.stack || error.message);
 
   if (res.headersSent) {
     return next(error);
