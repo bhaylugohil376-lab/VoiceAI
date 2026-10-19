@@ -5,7 +5,7 @@ The source code does not contain private provider secrets. Add these in Vercel P
 SUPABASE_URL
 SUPABASE_SERVICE_ROLE_KEY
 ELEVENLABS_API_KEY
-OPENAI_API_KEY (image generation)
+GEMINI_API_KEY and GEMINI_IMAGE_MODEL (image generation)
 STRIPE_SECRET_KEY
 STRIPE_WEBHOOK_SECRET
 STRIPE_PREMIUM_MONTHLY_PRICE_ID
