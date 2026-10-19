@@ -44,12 +44,15 @@ export async function checkAndUseAI(user, action) {
   try {
     const supabaseAdmin = getSupabaseAdmin();
 
-    const { data: profile, error: profileError } =
-      await supabaseAdmin
-        .from("profiles")
-        .select("plan")
-        .eq("id", user.id)
-        .maybeSingle();
+    // Verify the user's subscription.
+    const {
+      data: profile,
+      error: profileError
+    } = await supabaseAdmin
+      .from("profiles")
+      .select("plan")
+      .eq("id", user.id)
+      .maybeSingle();
 
     if (profileError) {
       console.error(
@@ -68,6 +71,7 @@ export async function checkAndUseAI(user, action) {
       .trim()
       .toLowerCase();
 
+    // Premium users bypass the free usage limit.
     if (plan === "premium") {
       return {
         allowed: true,
@@ -76,15 +80,16 @@ export async function checkAndUseAI(user, action) {
       };
     }
 
-    const { data, error } = await supabaseAdmin.rpc(
-      "check_and_use_ai",
-      {
-        p_user_id: user.id,
-        p_action: action,
-        p_limit: FREE_LIMIT,
-        p_window_hours: WINDOW_HOURS
-      }
-    );
+    // Atomically check and record usage in Supabase.
+    const {
+      data,
+      error
+    } = await supabaseAdmin.rpc("check_and_use_ai", {
+      p_user_id: user.id,
+      p_action: action,
+      p_limit: FREE_LIMIT,
+      p_window_hours: WINDOW_HOURS
+    });
 
     if (error) {
       console.error(
@@ -110,7 +115,7 @@ export async function checkAndUseAI(user, action) {
         allowed: false,
         status: 429,
         error:
-          "Free limit reached for this tool. Try again after the 24-hour usage window resets, or upgrade to Premium.",
+          "Free usage limit reached. Try again after the 24-hour window resets, or upgrade to Premium.",
         remaining: 0
       };
     }
