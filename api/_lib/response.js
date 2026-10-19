@@ -13,8 +13,8 @@ export function sendError(res, status, message) {
   });
 }
 
-export function sendSuccess(res, data = {}) {
-  return res.status(200).json({
+export function sendSuccess(res, data = {}, status = 200) {
+  return res.status(status).json({
     success: true,
     ...data
   });
