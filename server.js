@@ -1,92 +1,81 @@
-require('dotenv').config();
 
-const express = require('express');
-const path = require('path');
+import express from "express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import dotenv from "dotenv";
 
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
-const port = process.env.PORT || 3000;
-const ROOT_DIR = __dirname;
+const port = Number(process.env.PORT || 3000);
 
-// Stripe webhook ko JSON middleware se pehle register karna zaroori hai.
+// Stripe webhook ko raw body chahiye signature verify karne ke liye.
+const stripeWebhook = (await import("./api/stripe-webhook.js")).default;
+
 app.post(
-  '/api/stripe-webhook',
-  express.raw({ type: 'application/json' }),
-  async (req, res) => {
-    try {
-      const stripeModule = await import(
-        path.join(ROOT_DIR, 'api', 'stripe-webhook.js')
-      );
-
-      const handler =
-        typeof stripeModule.default === 'function'
-          ? stripeModule.default
-          : stripeModule.handler;
-
-      if (typeof handler !== 'function') {
-        return res.status(500).json({
-          error: 'Stripe webhook handler export is invalid.'
-        });
-      }
-
-      return await handler(req, res);
-    } catch (error) {
-      console.error('Stripe webhook error:', error);
-      return res.status(500).json({
-        error: 'Stripe webhook failed to load.'
-      });
-    }
-  }
+  "/api/stripe-webhook",
+  express.raw({ type: "application/json", limit: "2mb" }),
+  (req, res, next) =>
+    Promise.resolve(stripeWebhook(req, res)).catch(next)
 );
 
-// JSON/form middleware
-app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ extended: true }));
+// Normal API requests
+app.use(express.json({ limit: "2mb" }));
+app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 
-// API handlers ko dynamic import se load karo.
-function mountHandler(route, file) {
-  app.all(route, async (req, res) => {
-    try {
-      const loaded = await import(path.join(ROOT_DIR, file));
+// Load API handlers from api/*.js
+const apiFiles = [
+  "voices",
+  "tts"
+];
 
-      const handler =
-        typeof loaded.default === 'function'
-          ? loaded.default
-          : typeof loaded.handler === 'function'
-            ? loaded.handler
-            : null;
+for (const name of apiFiles) {
+  const mod = await import(`./api/${name}.js`);
+  const handler = mod.default;
 
-      if (!handler) {
-        return res.status(500).json({
-          error: 'API handler export is invalid.'
-        });
-      }
+  if (typeof handler !== "function") {
+    throw new TypeError(`API handler is not a function: ${name}`);
+  }
 
-      return await handler(req, res);
-    } catch (error) {
-      console.error(`${route} error:`, error);
-      return res.status(500).json({
-        error: 'API failed to load. Check the server logs.'
-      });
-    }
+  app.all(`/api/${name}`, (req, res, next) => {
+    Promise.resolve(handler(req, res)).catch(next);
   });
 }
 
-mountHandler('/api/voices', 'api/voices.js');
-mountHandler('/api/tts', 'api/tts.js');
+// Static website files
+app.use(express.static(__dirname, { index: "index.html" }));
 
-// Frontend static files
-app.use(express.static(ROOT_DIR));
-
-// Unknown API routes should return JSON, not index.html.
-app.use('/api', (req, res) => {
-  res.status(404).json({ error: 'API endpoint not found.' });
+app.get("/healthz", (_req, res) => {
+  res.status(200).json({ ok: true });
 });
 
-// Frontend fallback
-app.get('*', (req, res) => {
-  res.sendFile(path.join(ROOT_DIR, 'index.html'));
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api/")) {
+    return res.status(404).json({
+      success: false,
+      error: "API endpoint not found."
+    });
+  }
+
+  res.sendFile(path.join(__dirname, "index.html"), (error) => {
+    if (error) next(error);
+  });
 });
 
-app.listen(port, '0.0.0.0', () => {
+// Central error handler
+app.use((error, _req, res, _next) => {
+  console.error("Server error:", error?.message || error);
+
+  if (res.headersSent) return;
+
+  res.status(error?.status || 500).json({
+    success: false,
+    error: "Internal server error."
+  });
+});
+
+app.listen(port, () => {
   console.log(`VoiceAI server running on port ${port}`);
 });
