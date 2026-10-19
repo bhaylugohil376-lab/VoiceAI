@@ -1316,39 +1316,56 @@
         document.getElementById("heroGenerateBtn");
 
       if (generateButton) {
-
         generateButton.addEventListener("click", () => {
-
+          const text = document.getElementById("heroText")?.value.trim() || "";
+          const voice = document.getElementById("heroVoice")?.value || "";
+          if (!text) {
+            document.getElementById("heroText")?.focus();
+            document.getElementById("heroText")?.setCustomValidity("Please enter your script first.");
+            document.getElementById("heroText")?.reportValidity();
+            return;
+          }
+          document.getElementById("heroText")?.setCustomValidity("");
+          try {
+            sessionStorage.setItem("voiceai_tts_text", text);
+            sessionStorage.setItem("voiceai_tts_voice", voice);
+          } catch (error) {
+            console.warn("Could not save the voice draft for the next page.", error);
+          }
           window.location.href = "tts.html";
-
         });
-
       }
 
-
-      const agentButton =
-        document.getElementById("agentSendBtn");
-
-      const agentInput =
-        document.getElementById("agentInput");
-
+      const agentButton = document.getElementById("agentSendBtn");
+      const agentInput = document.getElementById("agentInput");
       if (agentButton && agentInput) {
-
-        agentButton.addEventListener("click", () => {
-
-          const text =
-            agentInput.value.trim();
-
+        const sendAgentDraft = () => {
+          const text = agentInput.value.trim();
           if (!text) {
             agentInput.focus();
             return;
           }
-
-          window.location.href =
-            "agents.html";
-
+          try {
+            sessionStorage.setItem("voiceai_agent_draft", text);
+          } catch (error) {
+            console.warn("Could not save the agent draft.", error);
+          }
+          window.location.href = "agents.html";
+        };
+        agentButton.addEventListener("click", sendAgentDraft);
+        agentInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            sendAgentDraft();
+          }
         });
+      }
 
+      const chooseSampleButton = document.querySelector(".upload-card .upload-box button");
+      if (chooseSampleButton) {
+        chooseSampleButton.addEventListener("click", () => {
+          window.location.href = "clone.html";
+        });
       }
 
     });
