@@ -1883,6 +1883,18 @@ function setupChat() {
 
   if (!button || !input) return;
 
+  // Carry the message typed on the homepage into the agent workspace.
+  try {
+    const draft = sessionStorage.getItem("voiceai_agent_draft");
+    if (draft) {
+      input.value = draft;
+      sessionStorage.removeItem("voiceai_agent_draft");
+      input.focus();
+    }
+  } catch (error) {
+    console.warn("Could not restore the homepage agent draft.", error);
+  }
+
 
   async function sendMessage() {
 
