@@ -1,14 +1,14 @@
 import express from "express";
 import path from "node:path";
 import fs from "node:fs";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
-const ROOT = __dirname;
+const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const API_DIR = path.join(ROOT, "api");
 
 // Stripe requires the untouched request body for signature verification.
