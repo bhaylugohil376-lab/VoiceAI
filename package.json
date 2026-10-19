@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "check": "node --check server.js"
+    "check": "node --check server.js && node --check api/health.js && node --check api/generate.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
@@ -15,5 +15,6 @@
     "formidable": "^3.5.2",
     "openai": "^5.20.0",
     "stripe": "^14.14.0"
-  }
+  },
+  "type": "module"
 }
