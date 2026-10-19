@@ -1,49 +1,28 @@
-
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const anonKey = process.env.SUPABASE_ANON_KEY;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+let supabase = null;
 let supabaseAdmin = null;
-let supabasePublic = null;
 
-if (supabaseUrl && serviceRoleKey) {
-  supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
+if (supabaseUrl && supabaseAnonKey) {
+  supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
-      autoRefreshToken: false,
-      persistSession: false
+      persistSession: false,
+      autoRefreshToken: false
     }
   });
 }
 
-if (supabaseUrl && anonKey) {
-  supabasePublic = createClient(supabaseUrl, anonKey, {
+if (supabaseUrl && supabaseServiceKey) {
+  supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
     auth: {
-      autoRefreshToken: false,
-      persistSession: false
+      persistSession: false,
+      autoRefreshToken: false
     }
   });
 }
 
-export function getSupabaseAdmin() {
-  if (!supabaseAdmin) {
-    throw new Error(
-      "Supabase admin is not configured. Check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY."
-    );
-  }
-
-  return supabaseAdmin;
-}
-
-export function getSupabasePublic() {
-  if (!supabasePublic) {
-    throw new Error(
-      "Supabase public client is not configured. Check SUPABASE_URL and SUPABASE_ANON_KEY."
-    );
-  }
-
-  return supabasePublic;
-}
-
-export default supabaseAdmin;
+export { supabase, supabaseAdmin };
