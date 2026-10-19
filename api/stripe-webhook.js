@@ -1,175 +1,291 @@
 
 import Stripe from "stripe";
-import { buffer } from "node:stream/consumers";
-import { supabaseAdmin } from "./_lib/supabase.js";
-import { sendError } from "./_lib/response.js";
+import { createClient } from "@supabase/supabase-js";
 
-export const config = {
-  api: {
-    bodyParser: false
+let stripe = null;
+let supabaseAdmin = null;
+
+function getStripe() {
+  if (stripe) return stripe;
+
+  const secret = process.env.STRIPE_SECRET_KEY;
+
+  if (!secret) {
+    throw new Error("STRIPE_SECRET_KEY is not configured.");
   }
-};
 
-function isPremiumStatus(status) {
-  return status === "active" || status === "trialing";
+  stripe = new Stripe(secret);
+  return stripe;
 }
 
-async function syncSubscription(subscription, customerId = null) {
-  const subscriptionId = subscription.id;
+function getSupabaseAdmin() {
+  if (supabaseAdmin) return supabaseAdmin;
 
-  let userId = subscription.metadata?.user_id || null;
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  // If metadata is missing, find the existing subscription record.
-  if (!userId) {
-    const { data: existing, error } = await supabaseAdmin
-      .from("subscriptions")
-      .select("user_id")
-      .eq("stripe_subscription_id", subscriptionId)
-      .maybeSingle();
-
-    if (error) throw error;
-    userId = existing?.user_id || null;
-  }
-
-  if (!userId) {
-    throw new Error("Could not associate subscription with a user.");
-  }
-
-  const priceId =
-    subscription.items?.data?.[0]?.price?.id || null;
-
-  const premium = isPremiumStatus(subscription.status);
-
-  const { error: subscriptionError } = await supabaseAdmin
-    .from("subscriptions")
-    .upsert(
-      {
-        user_id: userId,
-        stripe_customer_id:
-          customerId || String(subscription.customer || ""),
-        stripe_subscription_id: subscriptionId,
-        status: subscription.status,
-        price_id: priceId,
-        current_period_end: subscription.current_period_end
-          ? new Date(
-              subscription.current_period_end * 1000
-            ).toISOString()
-          : null,
-        updated_at: new Date().toISOString()
-      },
-      {
-        onConflict: "stripe_subscription_id"
-      }
+  if (!url || !key) {
+    throw new Error(
+      "Supabase server credentials are not configured."
     );
+  }
 
-  if (subscriptionError) throw subscriptionError;
+  supabaseAdmin = createClient(url, key, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  });
 
-  const { error: profileError } = await supabaseAdmin
-    .from("profiles")
-    .update({
-      plan: premium ? "premium" : "free"
-    })
-    .eq("id", userId);
+  return supabaseAdmin;
+}
 
-  if (profileError) throw profileError;
+function getUserId(object) {
+  const metadataUserId = object?.metadata?.user_id;
+
+  if (
+    typeof metadataUserId === "string" &&
+    metadataUserId.trim()
+  ) {
+    return metadataUserId.trim();
+  }
+
+  return null;
 }
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
-    return sendError(res, 405, "Method not allowed.");
-  }
 
-  const secretKey = process.env.STRIPE_SECRET_KEY;
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-  if (!secretKey || !webhookSecret) {
-    return sendError(res, 503, "Stripe webhook is not configured.");
+    return res.status(405).json({
+      success: false,
+      error: "Method not allowed."
+    });
   }
 
   const signature = req.headers["stripe-signature"];
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-  if (!signature) {
-    return sendError(res, 400, "Missing Stripe signature.");
+  if (!signature || !webhookSecret) {
+    return res.status(400).json({
+      success: false,
+      error: "Stripe webhook signature configuration is missing."
+    });
   }
 
-  const stripe = new Stripe(secretKey);
+  let event;
 
   try {
-    const rawBody = Buffer.isBuffer(req.body)
-      ? req.body
-      : typeof req.body === "string"
-        ? Buffer.from(req.body)
-        : await buffer(req);
+    const stripeClient = getStripe();
 
-    let event;
-
-    try {
-      event = stripe.webhooks.constructEvent(
-        rawBody,
-        signature,
-        webhookSecret
-      );
-    } catch {
-      return sendError(res, 400, "Invalid webhook signature.");
+    if (!Buffer.isBuffer(req.body)) {
+      return res.status(400).json({
+        success: false,
+        error: "Webhook requires the raw request body."
+      });
     }
 
+    event = stripeClient.webhooks.constructEvent(
+      req.body,
+      signature,
+      webhookSecret
+    );
+  } catch (error) {
+    console.error(
+      "Stripe signature verification failed:",
+      error.message
+    );
+
+    return res.status(400).json({
+      success: false,
+      error: "Invalid Stripe webhook signature."
+    });
+  }
+
+  try {
+    const db = getSupabaseAdmin();
+
+    // Process only events this handler explicitly supports.
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object;
 
-        if (session.mode !== "subscription" || !session.subscription) {
+        // Only activate Premium for a paid checkout.
+        if (
+          session.mode !== "subscription" ||
+          session.payment_status !== "paid"
+        ) {
           break;
         }
 
-        const subscription = await stripe.subscriptions.retrieve(
-          String(session.subscription)
-        );
+        const userId = getUserId(session);
 
-        // Use server-created checkout metadata, not frontend plan claims.
-        if (
-          session.metadata?.plan !== "premium" ||
-          !session.metadata?.user_id
-        ) {
-          throw new Error("Checkout session metadata is missing.");
+        if (!userId) {
+          console.error(
+            "Checkout session is missing metadata.user_id:",
+            session.id
+          );
+
+          return res.status(400).json({
+            success: false,
+            error: "Checkout session has no associated user."
+          });
         }
 
-        if (
-          subscription.metadata?.user_id !== session.metadata.user_id
-        ) {
-          throw new Error("Subscription user metadata mismatch.");
+        const subscriptionId =
+          typeof session.subscription === "string"
+            ? session.subscription
+            : session.subscription?.id;
+
+        if (!subscriptionId) {
+          return res.status(400).json({
+            success: false,
+            error: "Subscription ID is missing."
+          });
         }
 
-        await syncSubscription(
-          subscription,
-          String(session.customer || "")
+        const subscription = await getStripe().subscriptions.retrieve(
+          subscriptionId
         );
+
+        // Do not trust client-provided plan details.
+        if (
+          subscription.status !== "active" &&
+          subscription.status !== "trialing"
+        ) {
+          break;
+        }
+
+        const subscriptionUserId = getUserId(subscription);
+
+        if (
+          subscriptionUserId &&
+          subscriptionUserId !== userId
+        ) {
+          return res.status(400).json({
+            success: false,
+            error: "Subscription user does not match checkout user."
+          });
+        }
+
+        const { error } = await db
+          .from("profiles")
+          .update({
+            plan: "premium",
+            stripe_customer_id:
+              typeof session.customer === "string"
+                ? session.customer
+                : session.customer?.id,
+            stripe_subscription_id: subscription.id
+          })
+          .eq("id", userId);
+
+        if (error) {
+          console.error(
+            "Premium activation failed:",
+            error.message
+          );
+
+          return res.status(500).json({
+            success: false,
+            error: "Unable to update subscription."
+          });
+        }
 
         break;
       }
 
-      case "customer.subscription.created":
-      case "customer.subscription.updated":
+      case "customer.subscription.updated": {
+        const subscription = event.data.object;
+        const userId = getUserId(subscription);
+
+        if (!userId) {
+          console.warn(
+            "Subscription update missing metadata.user_id:",
+            subscription.id
+          );
+          break;
+        }
+
+        const active =
+          subscription.status === "active" ||
+          subscription.status === "trialing";
+
+        const { error } = await db
+          .from("profiles")
+          .update({
+            plan: active ? "premium" : "free",
+            stripe_subscription_id: subscription.id
+          })
+          .eq("id", userId);
+
+        if (error) {
+          console.error(
+            "Subscription update failed:",
+            error.message
+          );
+
+          return res.status(500).json({
+            success: false,
+            error: "Unable to update subscription."
+          });
+        }
+
+        break;
+      }
+
       case "customer.subscription.deleted": {
-        await syncSubscription(
-          event.data.object,
-          String(event.data.object.customer || "")
-        );
+        const subscription = event.data.object;
+        const userId = getUserId(subscription);
+
+        if (!userId) {
+          console.warn(
+            "Deleted subscription missing metadata.user_id:",
+            subscription.id
+          );
+          break;
+        }
+
+        const { error } = await db
+          .from("profiles")
+          .update({ plan: "free" })
+          .eq("id", userId)
+          .eq("stripe_subscription_id", subscription.id);
+
+        if (error) {
+          console.error(
+            "Subscription cancellation update failed:",
+            error.message
+          );
+
+          return res.status(500).json({
+            success: false,
+            error: "Unable to update cancelled subscription."
+          });
+        }
+
         break;
       }
 
       default:
-        // Acknowledge unrelated Stripe events.
+        // Unknown or unrelated events need no action.
         break;
     }
 
     return res.status(200).json({
-      received: true
+      success: true,
+      received: true,
+      event_id: event.id
     });
   } catch (error) {
-    console.error("Stripe webhook processing failed:", error.message);
+    console.error(
+      "Stripe webhook processing error:",
+      error.message
+    );
 
-    // A non-2xx response allows Stripe to retry delivery.
-    return sendError(res, 500, "Webhook processing failed.");
+    return res.status(500).json({
+      success: false,
+      error: "Webhook processing failed."
+    });
   }
 }
