@@ -3,12 +3,12 @@
   "name": "voiceai",
   "version": "1.0.0",
   "private": true,
-  "description": "VoiceAI Studio & SaaS platform",
+  "type": "module",
+  "description": "VoiceAI application and API server",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js",
-    "check": "node --check server.js && node --check api/tts.js && node --check api/_lib/supabase.js && node --check api/_lib/usage.js"
+    "check": "node check-project.js"
   },
   "engines": {
     "node": ">=20"
