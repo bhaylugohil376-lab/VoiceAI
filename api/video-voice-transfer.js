@@ -140,6 +140,16 @@ export default async function handler(req, res) {
       return sendError(res, 400, "Settings must be between 0 and 100.");
     }
 
+    const usage = await checkAndUseAI(user, "video_voice_transfer");
+
+    if (!usage?.allowed) {
+      return sendError(
+        res,
+        usage?.status || 429,
+        usage?.error || "Usage limit reached."
+      );
+    }
+
     const videoBuffer = await readFile(uploaded.filepath);
 
     const form = new FormData();
@@ -170,7 +180,7 @@ export default async function handler(req, res) {
           Accept: "application/json, video/*"
         },
         body: form,
-        signal: AbortSignal.timeout(180000)
+        signal: AbortSignal.timeout(55000)
       });
     } catch (error) {
       console.error("Video provider request failed:", error?.name || "NetworkError");
@@ -253,16 +263,6 @@ export default async function handler(req, res) {
     }
 
     await cleanup(uploaded);
-
-    const usage = await checkAndUseAI(user, "video_voice_transfer");
-
-    if (!usage?.allowed) {
-      return sendError(
-        res,
-        usage?.status || 429,
-        usage?.error || "Usage limit reached."
-      );
-    }
 
     return sendSuccess(res, {
       ...output,
