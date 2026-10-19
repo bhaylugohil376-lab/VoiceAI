@@ -1,10 +1,10 @@
 VoiceAI — AI Voice Studio
-Production-oriented multi-page AI voice SaaS starter with separate HTML, CSS and JavaScript files, Vercel serverless APIs, Supabase authentication/database, ElevenLabs TTS/voice features and Stripe billing hooks.
+Production-oriented multi-page AI voice SaaS starter with separate HTML, CSS and JavaScript files, Vercel serverless APIs, Supabase authentication/database, OpenAI speech and transcription features, and Stripe billing hooks.
 Important production setup
 The source code does not contain private provider secrets. Add these in Vercel Project Settings → Environment Variables:
 SUPABASE_URL
 SUPABASE_SERVICE_ROLE_KEY
-ELEVENLABS_API_KEY
+OPENAI_API_KEY
 GEMINI_API_KEY and GEMINI_IMAGE_MODEL (image generation)
 STRIPE_SECRET_KEY
 STRIPE_WEBHOOK_SECRET
@@ -23,7 +23,7 @@ Deployment
 The included vercel.json intentionally does not declare a legacy/invalid Node runtime. Vercel detects the Node.js runtime for /api functions. 
 
 Media-provider notes
-TTS, STT, voice cloning, dubbing and image generation are wired to their server APIs. Music and Sound Effects use configurable provider endpoints. Studio export and Video Voice Transfer create authenticated jobs/queues; a real production media worker/provider is required to render the final media file.
+TTS and STT use OpenAI APIs; image generation is wired to its server API. Voice cloning and other provider-specific voice tools require a separately implemented provider and are not part of the OpenAI TTS flow. Music and Sound Effects use configurable provider endpoints. Studio export and Video Voice Transfer create authenticated jobs/queues; a real production media worker/provider is required to render the final media file.
 Security
 Provider API keys stay server-side.
 Browser uses Supabase publishable key only.
@@ -32,6 +32,4 @@ Agent deletion verifies ownership.
 AI usage enforcement is server-side through Supabase RPC.
 Large voice library
 The Voices page is designed for a large real voice library. It loads voices from Supabase in pages rather than loading thousands of records into the browser at once.
-To sync up to 10,000 real ElevenLabs voices into Supabase, configure ELEVENLABS_API_KEY and VOICE_SYNC_SECRET, run supabase/voices_library.sql, then POST to /api/voices/sync with:
-{"max_voices":10000}
-Use the Authorization: Bearer <VOICE_SYNC_SECRET> header. The sync endpoint follows ElevenLabs v2 voice pagination using has_more and next_page_token. It never invents placeholder voices. Provider availability and account permissions determine how many real voices can actually be synced.
+Text-to-speech uses OpenAI's built-in voice set. The /api/voices endpoint returns the supported voice options without requiring a separate voice-library provider.
