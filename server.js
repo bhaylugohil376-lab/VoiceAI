@@ -1,7 +1,10 @@
-const express = require("express");
-const path = require("path");
-const fs = require("fs");
-require("dotenv").config();
+import express from "express";
+import path from "node:path";
+import fs from "node:fs";
+import { pathToFileURL } from "node:url";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -58,7 +61,7 @@ app.all("/api/*", async (req, res, next) => {
   }
 
   try {
-    const moduleUrl = require("url").pathToFileURL(handlerPath).href;
+    const moduleUrl = pathToFileURL(handlerPath).href;
     const { default: handler } = await import(moduleUrl);
     if (typeof handler !== "function") {
       return res.status(500).json({ success: false, error: "API handler is invalid." });
@@ -86,4 +89,4 @@ app.listen(port, () => {
   console.log(`VoiceAI server running on port ${port}`);
 });
 
-module.exports = app;
+export default app;
