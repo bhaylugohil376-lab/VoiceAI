@@ -27,7 +27,7 @@
 <body>
 <main class="wrap">
   <h1>VoiceAI Text to Speech</h1>
-  <p>Generate speech with OpenAI's available voices.</p>
+  <p>Generate real speech with available ElevenLabs voices.</p>
 
   <section class="card">
     <label for="textInput">Text to convert</label>
@@ -47,11 +47,10 @@
         </select>
       </div>
       <div>
-        <label for="formatSelect">Speech model</label>
+        <label for="formatSelect">Audio quality</label>
         <select id="formatSelect">
-          <option value="gpt-4o-mini-tts">OpenAI Mini TTS</option>
-          <option value="tts-1">OpenAI TTS-1</option>
-          <option value="tts-1-hd">OpenAI TTS-1 HD</option>
+          <option value="mp3_44100_128">MP3 High Quality</option>
+          <option value="mp3_22050_32">MP3 Small File</option>
         </select>
       </div>
     </div>
@@ -212,7 +211,7 @@
     }
 
     $("voiceCount").textContent =
-      `${voices.size} unique voices loaded` +
+      `${voices.size} unique real voices loaded` +
       (query ? `; ${Math.max(0, voiceSelect.options.length - 1)} match search` : "");
   }
 
@@ -227,10 +226,10 @@
     if (!loadMore) {
       voices.clear();
       nextPageToken = null;
-      voiceSelect.replaceChildren(new Option("Loading available voices...", ""));
+      voiceSelect.replaceChildren(new Option("Loading real voices...", ""));
     }
 
-    setStatus(loadMore ? "Refreshing voice list..." : "Loading available voices...");
+    setStatus(loadMore ? "Loading next voice page..." : "Loading real voices...");
 
     try {
       const params = new URLSearchParams({ page_size: "100" });
@@ -288,14 +287,14 @@
     }
 
     if (!voiceId) {
-      setStatus("Select a voice first.", "error");
+      setStatus("Select a real voice first.", "error");
       return;
     }
 
     generating = true;
     generateBtn.disabled = true;
     resultCard.hidden = true;
-    setStatus("Generating audio with OpenAI...");
+    setStatus("Generating audio from ElevenLabs...");
 
     try {
       const response = await authorizedFetch("/api/tts", {
@@ -304,7 +303,7 @@
         body: JSON.stringify({
           text,
           voice_id: voiceId,
-          model_id: formatSelect.value
+          output_format: formatSelect.value
         })
       });
 
