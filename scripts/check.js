@@ -22,7 +22,7 @@ for (const configPath of ["package.json", "vercel.json"]) {
     JSON.parse(readFileSync(configPath, "utf8"));
   } catch (error) {
     failed = true;
-    process.stderr.write("FAIL " + configPath + ": invalid JSON (" + error.message + ")\\n");
+    process.stderr.write("FAIL " + configPath + ": invalid JSON (" + error.message + ")\n");
   }
 }
 
@@ -37,7 +37,7 @@ for (const requiredPath of [
 ]) {
   if (!existsSync(requiredPath)) {
     failed = true;
-    process.stderr.write("FAIL missing required project file: " + requiredPath + "\\n");
+    process.stderr.write("FAIL missing required project file: " + requiredPath + "\n");
   }
 }
 
@@ -45,7 +45,7 @@ const envTemplate = readFileSync(".env.example", "utf8");
 for (const key of ["SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY", "GEMINI_API_KEY", "ELEVENLABS_API_KEY"]) {
   if (!new RegExp("^" + key + "=", "m").test(envTemplate)) {
     failed = true;
-    process.stderr.write("FAIL .env.example is missing " + key + "\\n");
+    process.stderr.write("FAIL .env.example is missing " + key + "\n");
   }
 }
 for (const file of files.sort()) {
