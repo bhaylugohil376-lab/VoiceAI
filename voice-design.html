@@ -254,6 +254,31 @@
         grid-template-columns: 1fr;
       }
     }
+    .voice-preview-list {
+      display: grid;
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .voice-preview-card {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid rgba(120, 150, 190, .2);
+      border-radius: 12px;
+      background: rgba(8, 19, 38, .55);
+    }
+
+    .voice-preview-card strong {
+      color: #eaf4ff;
+      font-size: 13px;
+    }
+
+    .voice-preview-card audio {
+      width: 100%;
+      max-width: 100%;
+    }
+
   </style>
 </head>
 
@@ -595,6 +620,8 @@
           <p id="designResultText">
             Your custom voice configuration is ready.
           </p>
+
+          <div id="voicePreviewList" class="voice-preview-list" aria-live="polite"></div>
 
           <div class="result-actions">
 
@@ -985,7 +1012,35 @@
 
             resultText.textContent =
               data?.message ||
-              "Your custom voice configuration is ready.";
+              "Voice preview generated. Listen to the available samples.";
+
+            const previewList = document.getElementById("voicePreviewList");
+            previewList.replaceChildren();
+
+            for (const [index, preview] of (Array.isArray(data?.previews) ? data.previews : []).entries()) {
+              if (!preview?.audio_base64) continue;
+
+              const card = document.createElement("div");
+              card.className = "voice-preview-card";
+
+              const title = document.createElement("strong");
+              title.textContent = `Voice preview ${index + 1}`;
+
+              const audio = document.createElement("audio");
+              audio.controls = true;
+              audio.preload = "none";
+              const mediaType = /^audio\/[a-z0-9.+-]+$/i.test(preview.media_type || "")
+                ? preview.media_type
+                : "audio/mpeg";
+              audio.src = `data:${mediaType};base64,${preview.audio_base64}`;
+
+              card.append(title, audio);
+              previewList.append(card);
+            }
+
+            if (!previewList.childElementCount) {
+              resultText.textContent = "The provider returned no playable previews. Check the provider response and try again.";
+            }
 
 
             result.hidden = false;
