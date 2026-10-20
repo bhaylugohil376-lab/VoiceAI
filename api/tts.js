@@ -151,7 +151,7 @@ export default async function handler(req, res) {
       );
     }
 
-    res.setHeader("Content-Type", "audio/mpeg");
+    res.setHeader("Content-Type", outputFormat.startsWith("pcm_") ? "audio/pcm" : "audio/mpeg");
     res.setHeader("Content-Length", String(audioBuffer.length));
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("X-Content-Type-Options", "nosniff");
