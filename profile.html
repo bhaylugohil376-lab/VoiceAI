@@ -1457,26 +1457,8 @@
       if (!currentUser) return;
 
       try {
+        // Always use the freshest Supabase access token; avoid a duplicate request.
 
-        const response =
-          await fetch(
-            "./api/usage",
-            {
-              method: "GET",
-              headers: {
-                "Authorization":
-                  `Bearer ${currentUser.access_token || ""}`
-              }
-            }
-          );
-
-
-        /*
-         * The API may expect the current
-         * Supabase access token.
-         *
-         * Get the latest token explicitly.
-         */
 
         const {
           data

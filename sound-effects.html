@@ -1229,6 +1229,16 @@
     @media (max-width: 650px) {
 
       .nav-links {
+        display:flex;
+        flex-wrap:nowrap;
+        gap:14px;
+        max-width:100%;
+        overflow-x:auto;
+        white-space:nowrap;
+        scrollbar-width:none;
+      }
+
+      .nav-links::-webkit-scrollbar {
         display:none;
       }
 

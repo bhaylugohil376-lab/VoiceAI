@@ -114,15 +114,8 @@ function initHeroGenerator() {
      * through the protected /api/tts endpoint.
      */
 
-    sessionStorage.setItem(
-      "voiceai_tts_text",
-      text
-    );
-
-    sessionStorage.setItem(
-      "voiceai_tts_voice",
-      voice.value
-    );
+    window.VoiceAI?.save("tts_text", text);
+    window.VoiceAI?.save("tts_voice", voice.value);
 
     window.location.href =
       "tts.html";
@@ -158,10 +151,7 @@ function initAgent() {
       return;
     }
 
-    sessionStorage.setItem(
-      "voiceai_agent_message",
-      message
-    );
+    window.VoiceAI?.save("agent_message", message);
 
     window.location.href =
       "agents.html";
@@ -364,25 +354,31 @@ function showToast(message) {
 window.VoiceAI = {
 
   save(key, value) {
-
-    sessionStorage.setItem(
-      `voiceai_${key}`,
-      value
-    );
+    try {
+      sessionStorage.setItem(`voiceai_${key}`, String(value ?? ""));
+      return true;
+    } catch (error) {
+      console.warn("VoiceAI could not save session data:", error);
+      showToast("Your browser blocked temporary storage. Please continue on the tool page.");
+      return false;
+    }
   },
 
   get(key) {
-
-    return sessionStorage.getItem(
-      `voiceai_${key}`
-    );
+    try {
+      return sessionStorage.getItem(`voiceai_${key}`);
+    } catch (error) {
+      console.warn("VoiceAI could not read session data:", error);
+      return null;
+    }
   },
 
   remove(key) {
-
-    sessionStorage.removeItem(
-      `voiceai_${key}`
-    );
+    try {
+      sessionStorage.removeItem(`voiceai_${key}`);
+    } catch (error) {
+      console.warn("VoiceAI could not clear session data:", error);
+    }
   },
 
   toast(message) {

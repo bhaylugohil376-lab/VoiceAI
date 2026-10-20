@@ -7,6 +7,16 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
+
+// Keep local Express responses aligned with the security headers used by Vercel.
+app.disable("x-powered-by");
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  next();
+});
 const port = process.env.PORT || 3000;
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const API_DIR = path.join(ROOT, "api");
