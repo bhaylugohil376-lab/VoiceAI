@@ -1705,12 +1705,6 @@ select {
   max-width: 100%;
 }
 
-input,
-textarea,
-select {
-  color: inherit;
-}
-
 img,
 video,
 canvas,
