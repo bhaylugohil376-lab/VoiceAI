@@ -30,7 +30,7 @@ create or replace function public.check_and_use_ai(
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = pg_catalog, public
 as $$
 declare
   v_used integer;
@@ -43,7 +43,7 @@ begin
     raise exception 'Invalid user or action';
   end if;
 
-  if p_limit < 1 or p_window_hours < 1 then
+  if p_limit is null or p_window_hours is null or p_limit < 1 or p_window_hours < 1 then
     raise exception 'Invalid usage limits';
   end if;
 
