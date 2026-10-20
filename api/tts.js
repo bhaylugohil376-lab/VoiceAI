@@ -40,6 +40,20 @@ export default async function handler(req, res) {
         ? body.model_id.trim()
         : "eleven_multilingual_v2";
 
+    const outputFormat =
+      typeof body.output_format === "string" && body.output_format.trim()
+        ? body.output_format.trim()
+        : "mp3_44100_128";
+
+    const allowedOutputFormats = new Set([
+      "mp3_44100_128",
+      "mp3_22050_32",
+      "pcm_16000",
+      "pcm_22050",
+      "pcm_24000",
+      "pcm_44100"
+    ]);
+
     if (!text) {
       return sendError(res, 400, "Text is required.");
     }
@@ -66,6 +80,10 @@ export default async function handler(req, res) {
       return sendError(res, 400, "Unsupported TTS model.");
     }
 
+    if (!allowedOutputFormats.has(outputFormat)) {
+      return sendError(res, 400, "Unsupported audio output format.");
+    }
+
     const apiKey = process.env.ELEVENLABS_API_KEY;
 
     if (!apiKey) {
@@ -87,13 +105,13 @@ export default async function handler(req, res) {
     }
 
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}?output_format=${encodeURIComponent(outputFormat)}`,
       {
         method: "POST",
         headers: {
           "xi-api-key": apiKey,
           "Content-Type": "application/json",
-          Accept: "audio/mpeg"
+          Accept: outputFormat.startsWith("pcm_") ? "audio/pcm" : "audio/mpeg"
         },
         body: JSON.stringify({
           text,
