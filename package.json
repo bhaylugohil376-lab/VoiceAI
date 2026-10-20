@@ -8,8 +8,9 @@
     "dev": "node --watch server.js",
     "check": "node scripts/check.js",
     "test": "npm run check",
-    "check:api": "node --check api/health.js && node --check api/tts.js && node --check api/voices.js && node --check api/assistant.js && node --check api/generate.js && node --check api/stt.js && node --check api/captions.js && node --check api/_lib/auth.js && node --check api/_lib/usage.js && node --check api/_lib/supabase.js",
-    "build": "npm run check"
+    "check:api": "node scripts/check.js",
+    "build": "npm run check",
+    "check:config": "node scripts/check.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
