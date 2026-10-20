@@ -1,0 +1,2487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050b18">
+
+  <title>Speech to Text — VoiceAI</title>
+
+  <meta
+    name="description"
+    content="Convert speech and audio into accurate text with VoiceAI."
+  />
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="site-header">
+    <div class="nav-container">
+
+      <a href="index.html" class="logo">
+        <span class="logo-mark">
+          <i data-lucide="audio-lines"></i>
+        </span>
+        <span>VoiceAI</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="tools.html" class="active">AI Tools</a>
+        <a href="voices.html">Voices</a>
+        <a href="studio.html">Studio</a>
+        <a href="pricing.html">Pricing</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="login.html" class="nav-login">Login</a>
+
+        <a href="signup.html" class="primary-btn nav-get-started">
+          Get Started
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+
+  <!-- ================= MAIN ================= -->
+  <main class="stt-page">
+
+    <!-- HERO -->
+    <section class="stt-hero">
+
+      <div class="stt-badge">
+        <i data-lucide="file-text"></i>
+        AI Speech to Text
+      </div>
+
+      <h1>
+        Turn speech into
+        <span>accurate text</span>
+      </h1>
+
+      <p>
+        Upload audio or video and convert spoken words into clean,
+        searchable text with VoiceAI.
+      </p>
+
+    </section>
+
+
+    <!-- ================= WORKSPACE ================= -->
+    <section class="stt-workspace">
+
+      <!-- LEFT PANEL -->
+      <div class="stt-panel">
+
+        <div class="panel-heading">
+
+          <div>
+            <h2>
+              <i data-lucide="upload-cloud"></i>
+              Upload Media
+            </h2>
+
+            <p>
+              Supported audio and video files
+            </p>
+          </div>
+
+          <div class="stt-usage" id="usageBadge">
+            <i data-lucide="gauge"></i>
+            <span id="usageText">5 free uses</span>
+          </div>
+
+        </div>
+
+
+        <!-- DROP ZONE -->
+        <label
+          for="sttFile"
+          class="upload-zone"
+          id="uploadZone"
+        >
+
+          <input
+            type="file"
+            id="sttFile"
+            accept="
+              audio/*,
+              video/*
+            "
+            hidden
+          />
+
+          <div class="upload-icon">
+            <i data-lucide="cloud-upload"></i>
+          </div>
+
+          <h3>Drop your file here</h3>
+
+          <p>
+            or click to browse from your device
+          </p>
+
+          <span class="upload-formats">
+            MP3 · WAV · M4A · MP4 · MOV · WEBM
+          </span>
+
+          <span class="upload-limit">
+            Maximum file size: 50 MB
+          </span>
+
+        </label>
+
+
+        <!-- SELECTED FILE -->
+        <div
+          class="selected-file"
+          id="selectedFile"
+          hidden
+        >
+
+          <div class="file-icon">
+            <i data-lucide="file-audio"></i>
+          </div>
+
+          <div class="file-details">
+
+            <strong id="fileName">
+              Audio file
+            </strong>
+
+            <span id="fileSize">
+              0 MB
+            </span>
+
+          </div>
+
+          <button
+            type="button"
+            id="removeFile"
+            class="icon-btn"
+            aria-label="Remove file"
+          >
+            <i data-lucide="x"></i>
+          </button>
+
+        </div>
+
+
+        <!-- OPTIONS -->
+        <div class="stt-options">
+
+          <div class="stt-option">
+
+            <label for="language">
+              <i data-lucide="languages"></i>
+              Language
+            </label>
+
+            <select id="language">
+
+              <option value="auto">
+                Auto Detect
+              </option>
+
+              <option value="en">
+                English
+              </option>
+
+              <option value="hi">
+                Hindi
+              </option>
+
+              <option value="gu">
+                Gujarati
+              </option>
+
+              <option value="mr">
+                Marathi
+              </option>
+
+              <option value="bn">
+                Bengali
+              </option>
+
+              <option value="ta">
+                Tamil
+              </option>
+
+              <option value="te">
+                Telugu
+              </option>
+
+              <option value="kn">
+                Kannada
+              </option>
+
+              <option value="es">
+                Spanish
+              </option>
+
+              <option value="fr">
+                French
+              </option>
+
+              <option value="de">
+                German
+              </option>
+
+              <option value="ja">
+                Japanese
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="stt-option">
+
+            <label for="model">
+              <i data-lucide="cpu"></i>
+              Model
+            </label>
+
+            <select id="model">
+
+              <option value="default">
+                Standard
+              </option>
+
+              <option value="accurate">
+                High Accuracy
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- CHECKBOX OPTIONS -->
+        <div class="advanced-options">
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              id="timestamps"
+              checked
+            />
+
+            <span class="custom-check">
+              <i data-lucide="check"></i>
+            </span>
+
+            <span>
+              Include timestamps
+            </span>
+
+          </label>
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              id="speakerLabels"
+            />
+
+            <span class="custom-check">
+              <i data-lucide="check"></i>
+            </span>
+
+            <span>
+              Detect speakers
+            </span>
+
+          </label>
+
+        </div>
+
+
+        <!-- BUTTON -->
+        <button
+          type="button"
+          class="primary-btn transcribe-btn"
+          id="transcribeBtn"
+        >
+          <i data-lucide="play"></i>
+          Transcribe Audio
+        </button>
+
+      </div>
+
+
+      <!-- RIGHT PANEL -->
+      <div class="transcript-panel">
+
+        <div class="panel-heading">
+
+          <div>
+            <h2>
+              <i data-lucide="file-text"></i>
+              Transcript
+            </h2>
+
+            <p>
+              Your generated transcription appears here.
+            </p>
+          </div>
+
+          <div class="transcript-actions">
+
+            <button
+              type="button"
+              class="small-action"
+              id="copyTranscript"
+              disabled
+            >
+              <i data-lucide="copy"></i>
+              Copy
+            </button>
+
+            <button
+              type="button"
+              class="small-action"
+              id="downloadTranscript"
+              disabled
+            >
+              <i data-lucide="download"></i>
+              Download
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- EMPTY STATE -->
+        <div
+          class="transcript-empty"
+          id="transcriptEmpty"
+        >
+
+          <div class="transcript-empty-icon">
+            <i data-lucide="file-search"></i>
+          </div>
+
+          <h3>No transcript yet</h3>
+
+          <p>
+            Upload an audio or video file and click
+            “Transcribe Audio” to begin.
+          </p>
+
+        </div>
+
+
+        <!-- LOADING -->
+        <div
+          class="transcript-loading"
+          id="transcriptLoading"
+          hidden
+        >
+
+          <div class="loading-spinner"></div>
+
+          <h3>Transcribing your media...</h3>
+
+          <p>
+            VoiceAI is processing the speech.
+          </p>
+
+        </div>
+
+
+        <!-- RESULT -->
+        <div
+          class="transcript-result"
+          id="transcriptResult"
+          hidden
+        >
+
+          <div class="result-top">
+
+            <div class="result-status">
+
+              <span class="status-dot"></span>
+
+              Transcription complete
+
+            </div>
+
+            <span
+              class="word-count"
+              id="wordCount"
+            >
+              0 words
+            </span>
+
+          </div>
+
+
+          <div
+            class="transcript-content"
+            id="transcriptContent"
+          ></div>
+
+        </div>
+
+
+        <!-- ERROR -->
+        <div
+          class="error-box"
+          id="errorBox"
+          hidden
+        >
+
+          <i data-lucide="triangle-alert"></i>
+
+          <span id="errorText"></span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= FEATURES ================= -->
+    <section class="stt-features">
+
+      <div class="feature-card">
+
+        <div class="feature-icon">
+          <i data-lucide="languages"></i>
+        </div>
+
+        <h3>Multi-language</h3>
+
+        <p>
+          Transcribe supported languages including English,
+          Hindi, Gujarati and more.
+        </p>
+
+      </div>
+
+
+      <div class="feature-card">
+
+        <div class="feature-icon">
+          <i data-lucide="users"></i>
+        </div>
+
+        <h3>Speaker Detection</h3>
+
+        <p>
+          Separate different speakers when supported by
+          your transcription provider.
+        </p>
+
+      </div>
+
+
+      <div class="feature-card">
+
+        <div class="feature-icon">
+          <i data-lucide="clock-3"></i>
+        </div>
+
+        <h3>Timestamps</h3>
+
+        <p>
+          Add timestamps to make long recordings easier
+          to navigate.
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer">
+
+    <div class="footer-inner">
+
+      <div>
+
+        <a
+          href="index.html"
+          class="logo footer-logo"
+        >
+
+          <span class="logo-mark">
+            <i data-lucide="audio-lines"></i>
+          </span>
+
+          <span>VoiceAI</span>
+
+        </a>
+
+        <p>
+          AI voice tools for creators, businesses and teams.
+        </p>
+
+      </div>
+
+
+      <div class="footer-links">
+
+        <a href="about.html">About</a>
+
+        <a href="faq.html">FAQ</a>
+
+        <a href="contact.html">Contact</a>
+
+        <a href="pricing.html">Pricing</a>
+
+      </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+      © 2026 VoiceAI. All rights reserved.
+    </div>
+
+  </footer>
+
+
+  <!-- ================= SUPABASE ================= -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="./supabase-config.js"></script>
+
+  <script src="./script.js"></script>
+
+
+  <!-- ================= STT SCRIPT ================= -->
+  <script>
+
+    "use strict";
+
+
+    let selectedAudioFile = null;
+    let lastTranscript = "";
+
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+        setupFileUpload();
+        setupTranscription();
+        setupTranscriptActions();
+        loadUsage();
+
+      }
+    );
+
+
+    /* =========================================
+       FILE UPLOAD
+    ========================================= */
+
+    function setupFileUpload() {
+
+      const input =
+        document.getElementById("sttFile");
+
+      const zone =
+        document.getElementById("uploadZone");
+
+      const remove =
+        document.getElementById("removeFile");
+
+
+      if (!input || !zone) return;
+
+
+      input.addEventListener(
+        "change",
+        () => {
+
+          const file = input.files?.[0];
+
+          if (!file) return;
+
+          handleSelectedFile(file);
+
+        }
+      );
+
+
+      zone.addEventListener(
+        "dragover",
+        (event) => {
+
+          event.preventDefault();
+
+          zone.classList.add(
+            "drag-over"
+          );
+
+        }
+      );
+
+
+      zone.addEventListener(
+        "dragleave",
+        () => {
+
+          zone.classList.remove(
+            "drag-over"
+          );
+
+        }
+      );
+
+
+      zone.addEventListener(
+        "drop",
+        (event) => {
+
+          event.preventDefault();
+
+          zone.classList.remove(
+            "drag-over"
+          );
+
+
+          const file =
+            event.dataTransfer.files?.[0];
+
+          if (!file) return;
+
+
+          handleSelectedFile(file);
+
+        }
+      );
+
+
+      if (remove) {
+
+        remove.addEventListener(
+          "click",
+          clearSelectedFile
+        );
+
+      }
+
+    }
+
+
+    /* =========================================
+       FILE VALIDATION
+    ========================================= */
+
+    function handleSelectedFile(file) {
+
+      const maxSize =
+        50 * 1024 * 1024;
+
+
+      if (file.size > maxSize) {
+
+        showError(
+          "File is too large. Maximum allowed size is 50 MB."
+        );
+
+        return;
+
+      }
+
+
+      const validTypes = [
+
+        "audio/mpeg",
+        "audio/mp3",
+        "audio/wav",
+        "audio/x-wav",
+        "audio/mp4",
+        "audio/x-m4a",
+        "audio/aac",
+        "audio/ogg",
+        "audio/webm",
+
+        "video/mp4",
+        "video/webm",
+        "video/quicktime",
+        "video/x-matroska"
+
+      ];
+
+
+      const extension =
+        file.name
+          .split(".")
+          .pop()
+          .toLowerCase();
+
+
+      const validExtensions = [
+        "mp3",
+        "wav",
+        "m4a",
+        "aac",
+        "ogg",
+        "webm",
+        "mp4",
+        "mov",
+        "mkv"
+      ];
+
+
+      if (
+        !validTypes.includes(file.type) &&
+        !validExtensions.includes(extension)
+      ) {
+
+        showError(
+          "Unsupported file type. Please upload an audio or video file."
+        );
+
+        return;
+
+      }
+
+
+      selectedAudioFile = file;
+
+      displaySelectedFile(file);
+
+      hideError();
+
+    }
+
+
+    /* =========================================
+       DISPLAY FILE
+    ========================================= */
+
+    function displaySelectedFile(file) {
+
+      const selected =
+        document.getElementById(
+          "selectedFile"
+        );
+
+      const name =
+        document.getElementById(
+          "fileName"
+        );
+
+      const size =
+        document.getElementById(
+          "fileSize"
+        );
+
+
+      name.textContent =
+        file.name;
+
+
+      size.textContent =
+        formatFileSize(file.size);
+
+
+      selected.hidden = false;
+
+
+      document
+        .getElementById("uploadZone")
+        .classList.add("has-file");
+
+    }
+
+
+    /* =========================================
+       CLEAR FILE
+    ========================================= */
+
+    function clearSelectedFile() {
+
+      selectedAudioFile = null;
+
+
+      const input =
+        document.getElementById("sttFile");
+
+      const selected =
+        document.getElementById(
+          "selectedFile"
+        );
+
+
+      if (input) {
+        input.value = "";
+      }
+
+
+      if (selected) {
+        selected.hidden = true;
+      }
+
+
+      document
+        .getElementById("uploadZone")
+        .classList.remove("has-file");
+
+
+      hideError();
+
+    }
+
+
+    /* =========================================
+       FORMAT FILE SIZE
+    ========================================= */
+
+    function formatFileSize(bytes) {
+
+      if (!bytes) {
+        return "0 KB";
+      }
+
+
+      const mb =
+        bytes / (1024 * 1024);
+
+
+      if (mb >= 1) {
+
+        return `${mb.toFixed(2)} MB`;
+
+      }
+
+
+      return `${(
+        bytes / 1024
+      ).toFixed(1)} KB`;
+
+    }
+
+
+    /* =========================================
+       TRANSCRIBE
+    ========================================= */
+
+    function setupTranscription() {
+
+      const button =
+        document.getElementById(
+          "transcribeBtn"
+        );
+
+
+      if (!button) return;
+
+
+      button.addEventListener(
+        "click",
+        transcribe
+      );
+
+    }
+
+
+    async function transcribe() {
+
+      if (!selectedAudioFile) {
+
+        showError(
+          "Please upload an audio or video file first."
+        );
+
+        return;
+
+      }
+
+
+      const session =
+        await getSession();
+
+
+      if (!session) {
+
+        window.location.href =
+          "login.html?redirect=stt.html";
+
+        return;
+
+      }
+
+
+      const language =
+        document.getElementById(
+          "language"
+        ).value;
+
+
+      const model =
+        document.getElementById(
+          "model"
+        ).value;
+
+
+      const timestamps =
+        document.getElementById(
+          "timestamps"
+        ).checked;
+
+
+      const speakerLabels =
+        document.getElementById(
+          "speakerLabels"
+        ).checked;
+
+
+      const button =
+        document.getElementById(
+          "transcribeBtn"
+        );
+
+
+      button.disabled = true;
+
+      button.innerHTML = `
+        <span class="button-spinner"></span>
+        Transcribing...
+      `;
+
+
+      showLoading();
+
+      hideError();
+
+
+      try {
+
+        const formData =
+          new FormData();
+
+
+        formData.append(
+          "file",
+          selectedAudioFile
+        );
+
+
+        formData.append(
+          "language",
+          language
+        );
+
+
+        formData.append(
+          "model",
+          model
+        );
+
+
+        formData.append(
+          "timestamps",
+          String(timestamps)
+        );
+
+
+        formData.append(
+          "speaker_labels",
+          String(speakerLabels)
+        );
+
+
+        const response =
+          await fetch(
+            "/api/stt",
+            {
+
+              method: "POST",
+
+              headers: {
+                "Authorization":
+                  `Bearer ${session.access_token}`
+              },
+
+              body: formData
+
+            }
+          );
+
+
+        let data = {};
+
+        try {
+
+          data =
+            await response.json();
+
+        } catch {
+
+          data = {};
+
+        }
+
+
+        if (!response.ok) {
+
+          if (
+            response.status === 401
+          ) {
+
+            window.location.href =
+              "login.html?redirect=stt.html";
+
+            return;
+
+          }
+
+
+          if (
+            response.status === 429
+          ) {
+
+            throw new Error(
+              data.error ||
+              "Daily limit reached. You have used all 5 free uses for this section. Please try again after 24 hours."
+            );
+
+          }
+
+
+          throw new Error(
+            data.error ||
+            "Speech transcription failed."
+          );
+
+        }
+
+
+        const transcript =
+          extractTranscript(data);
+
+
+        if (!transcript) {
+
+          throw new Error(
+            "The server returned an empty transcript."
+          );
+
+        }
+
+
+        lastTranscript =
+          transcript;
+
+
+        showTranscript(
+          transcript
+        );
+
+
+        await loadUsage();
+
+      } catch (error) {
+
+        console.error(
+          "STT error:",
+          error
+        );
+
+
+        showError(
+          error.message ||
+          "Unable to transcribe this file."
+        );
+
+        showEmpty();
+
+      } finally {
+
+        button.disabled = false;
+
+        button.innerHTML = `
+          <i data-lucide="play"></i>
+          Transcribe Audio
+        `;
+
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+      }
+
+    }
+
+
+    /* =========================================
+       EXTRACT TRANSCRIPT
+    ========================================= */
+
+    function extractTranscript(data) {
+
+      if (!data) {
+        return "";
+      }
+
+
+      if (
+        typeof data.transcript ===
+        "string"
+      ) {
+
+        return data.transcript.trim();
+
+      }
+
+
+      if (
+        typeof data.text ===
+        "string"
+      ) {
+
+        return data.text.trim();
+
+      }
+
+
+      if (
+        typeof data.result?.text ===
+        "string"
+      ) {
+
+        return data.result.text.trim();
+
+      }
+
+
+      if (
+        typeof data.output?.text ===
+        "string"
+      ) {
+
+        return data.output.text.trim();
+
+      }
+
+
+      if (
+        Array.isArray(
+          data.segments
+        )
+      ) {
+
+        return data.segments
+          .map(
+            segment => {
+
+              const start =
+                formatTimestamp(
+                  segment.start
+                );
+
+              const text =
+                segment.text || "";
+
+              return start
+                ? `[${start}] ${text}`
+                : text;
+
+            }
+          )
+          .join("\n")
+          .trim();
+
+      }
+
+
+      return "";
+
+    }
+
+
+    /* =========================================
+       TIMESTAMP
+    ========================================= */
+
+    function formatTimestamp(seconds) {
+
+      if (
+        typeof seconds !==
+        "number"
+      ) {
+
+        return "";
+
+      }
+
+
+      const total =
+        Math.floor(seconds);
+
+
+      const hours =
+        Math.floor(
+          total / 3600
+        );
+
+
+      const minutes =
+        Math.floor(
+          (total % 3600) / 60
+        );
+
+
+      const secs =
+        total % 60;
+
+
+      if (hours > 0) {
+
+        return [
+          String(hours).padStart(2, "0"),
+          String(minutes).padStart(2, "0"),
+          String(secs).padStart(2, "0")
+        ].join(":");
+
+      }
+
+
+      return [
+        String(minutes).padStart(2, "0"),
+        String(secs).padStart(2, "0")
+      ].join(":");
+
+    }
+
+
+    /* =========================================
+       SHOW TRANSCRIPT
+    ========================================= */
+
+    function showTranscript(text) {
+
+      const empty =
+        document.getElementById(
+          "transcriptEmpty"
+        );
+
+
+      const loading =
+        document.getElementById(
+          "transcriptLoading"
+        );
+
+
+      const result =
+        document.getElementById(
+          "transcriptResult"
+        );
+
+
+      const content =
+        document.getElementById(
+          "transcriptContent"
+        );
+
+
+      const copy =
+        document.getElementById(
+          "copyTranscript"
+        );
+
+
+      const download =
+        document.getElementById(
+          "downloadTranscript"
+        );
+
+
+      empty.hidden = true;
+
+      loading.hidden = true;
+
+      result.hidden = false;
+
+
+      content.textContent =
+        text;
+
+
+      copy.disabled = false;
+
+      download.disabled = false;
+
+
+      const words =
+        text
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean)
+          .length;
+
+
+      document.getElementById(
+        "wordCount"
+      ).textContent =
+        `${words} ${words === 1 ? "word" : "words"}`;
+
+
+      result.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
+
+    }
+
+
+    /* =========================================
+       LOADING
+    ========================================= */
+
+    function showLoading() {
+
+      document.getElementById(
+        "transcriptEmpty"
+      ).hidden = true;
+
+
+      document.getElementById(
+        "transcriptResult"
+      ).hidden = true;
+
+
+      document.getElementById(
+        "transcriptLoading"
+      ).hidden = false;
+
+    }
+
+
+    function showEmpty() {
+
+      document.getElementById(
+        "transcriptLoading"
+      ).hidden = true;
+
+
+      document.getElementById(
+        "transcriptResult"
+      ).hidden = true;
+
+
+      document.getElementById(
+        "transcriptEmpty"
+      ).hidden = false;
+
+    }
+
+
+    /* =========================================
+       ACTIONS
+    ========================================= */
+
+    function setupTranscriptActions() {
+
+      const copy =
+        document.getElementById(
+          "copyTranscript"
+        );
+
+
+      const download =
+        document.getElementById(
+          "downloadTranscript"
+        );
+
+
+      copy.addEventListener(
+        "click",
+        async () => {
+
+          if (!lastTranscript) {
+            return;
+          }
+
+
+          try {
+
+            await navigator.clipboard.writeText(
+              lastTranscript
+            );
+
+
+            showToast(
+              "Transcript copied."
+            );
+
+          } catch {
+
+            showToast(
+              "Unable to copy transcript."
+            );
+
+          }
+
+        }
+      );
+
+
+      download.addEventListener(
+        "click",
+        () => {
+
+          if (!lastTranscript) {
+            return;
+          }
+
+
+          const blob =
+            new Blob(
+              [lastTranscript],
+              {
+                type: "text/plain;charset=utf-8"
+              }
+            );
+
+
+          const url =
+            URL.createObjectURL(blob);
+
+
+          const link =
+            document.createElement("a");
+
+
+          link.href = url;
+
+          link.download =
+            "voiceai-transcript.txt";
+
+
+          document.body.appendChild(link);
+
+          link.click();
+
+          link.remove();
+
+
+          URL.revokeObjectURL(url);
+
+        }
+      );
+
+    }
+
+
+    /* =========================================
+       SUPABASE
+    ========================================= */
+
+    async function getSession() {
+
+      if (!window.supabaseClient) {
+
+        console.error(
+          "Supabase client unavailable."
+        );
+
+        return null;
+
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await window.supabaseClient.auth.getSession();
+
+
+      if (error) {
+
+        console.error(
+          "Session error:",
+          error
+        );
+
+        return null;
+
+      }
+
+
+      return data?.session || null;
+
+    }
+
+
+    /* =========================================
+       USAGE
+    ========================================= */
+
+    async function loadUsage() {
+
+      const usageText =
+        document.getElementById(
+          "usageText"
+        );
+
+
+      const session =
+        await getSession();
+
+
+      if (!session) {
+
+        usageText.textContent =
+          "Login required";
+
+        return;
+
+      }
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/usage?action=stt",
+            {
+              method: "GET",
+
+              headers: {
+                "Authorization":
+                  `Bearer ${session.access_token}`
+              }
+            }
+          );
+
+
+        if (!response.ok) {
+
+          usageText.textContent =
+            "5 free uses";
+
+          return;
+
+        }
+
+
+        const data =
+          await response.json();
+
+
+        if (
+          data.unlimited ||
+          data.plan === "premium"
+        ) {
+
+          usageText.textContent =
+            "Unlimited";
+
+          return;
+
+        }
+
+
+        const used =
+          Number(
+            data.used || 0
+          );
+
+
+        const limit =
+          Number(
+            data.limit || 5
+          );
+
+
+        const remaining =
+          Math.max(
+            0,
+            limit - used
+          );
+
+
+        usageText.textContent =
+          `${remaining} free uses`;
+
+      } catch (error) {
+
+        console.error(
+          "Usage loading error:",
+          error
+        );
+
+        usageText.textContent =
+          "5 free uses";
+
+      }
+
+    }
+
+
+    /* =========================================
+       ERROR
+    ========================================= */
+
+    function showError(message) {
+
+      const box =
+        document.getElementById(
+          "errorBox"
+        );
+
+
+      const text =
+        document.getElementById(
+          "errorText"
+        );
+
+
+      text.textContent =
+        message;
+
+
+      box.hidden = false;
+
+    }
+
+
+    function hideError() {
+
+      const box =
+        document.getElementById(
+          "errorBox"
+        );
+
+
+      box.hidden = true;
+
+    }
+
+
+    /* =========================================
+       TOAST
+    ========================================= */
+
+    function showToast(message) {
+
+      if (
+        window.VoiceAI &&
+        typeof window.VoiceAI.toast ===
+          "function"
+      ) {
+
+        window.VoiceAI.toast(
+          message
+        );
+
+        return;
+
+      }
+
+
+      alert(message);
+
+    }
+
+  </script>
+
+
+  <!-- ================= PAGE CSS ================= -->
+  <style>
+
+    .stt-page {
+      min-height: 100vh;
+      padding: 80px 5% 70px;
+    }
+
+
+    .stt-hero {
+      max-width: 850px;
+      margin: 0 auto 45px;
+      text-align: center;
+    }
+
+
+    .stt-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border: 1px solid rgba(56,189,248,.25);
+      border-radius: 999px;
+      color: #7dd3fc;
+      background: rgba(14,165,233,.08);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+
+    .stt-badge svg {
+      width: 15px;
+      height: 15px;
+    }
+
+
+    .stt-hero h1 {
+      margin: 20px 0 14px;
+      font-size: clamp(38px, 5vw, 64px);
+      line-height: 1.05;
+      letter-spacing: -2px;
+    }
+
+
+    .stt-hero h1 span {
+      color: #38bdf8;
+    }
+
+
+    .stt-hero p {
+      max-width: 680px;
+      margin: auto;
+      color: #8da5c1;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+
+    .stt-workspace {
+      max-width: 1350px;
+      margin: auto;
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+
+    .stt-panel,
+    .transcript-panel {
+      background: rgba(10,22,43,.82);
+      border: 1px solid rgba(100,160,220,.16);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 25px 70px rgba(0,0,0,.22);
+    }
+
+
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 24px;
+      border-bottom: 1px solid rgba(100,160,220,.12);
+    }
+
+
+    .panel-heading h2 {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 5px;
+      color: #eef7ff;
+      font-size: 18px;
+    }
+
+
+    .panel-heading h2 svg {
+      width: 19px;
+      color: #38bdf8;
+    }
+
+
+    .panel-heading p {
+      margin: 0;
+      color: #6f88a5;
+      font-size: 12px;
+    }
+
+
+    .stt-usage {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 11px;
+      white-space: nowrap;
+      border: 1px solid rgba(56,189,248,.18);
+      border-radius: 999px;
+      background: rgba(56,189,248,.08);
+      color: #7dd3fc;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+
+    .stt-usage svg {
+      width: 14px;
+    }
+
+
+    .upload-zone {
+      min-height: 235px;
+      margin: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      border: 1px dashed rgba(56,189,248,.32);
+      border-radius: 18px;
+      background:
+        radial-gradient(
+          circle at center,
+          rgba(56,189,248,.08),
+          rgba(4,13,29,.25)
+        );
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+
+    .upload-zone:hover,
+    .upload-zone.drag-over {
+      border-color: rgba(56,189,248,.75);
+      background: rgba(56,189,248,.08);
+      transform: translateY(-1px);
+    }
+
+
+    .upload-zone.has-file {
+      border-color: rgba(34,197,94,.45);
+    }
+
+
+    .upload-icon {
+      width: 60px;
+      height: 60px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 15px;
+      border-radius: 17px;
+      color: #38bdf8;
+      background: rgba(56,189,248,.09);
+      border: 1px solid rgba(56,189,248,.15);
+    }
+
+
+    .upload-icon svg {
+      width: 27px;
+    }
+
+
+    .upload-zone h3 {
+      margin: 0 0 7px;
+      color: #dcecff;
+      font-size: 16px;
+    }
+
+
+    .upload-zone p {
+      margin: 0 0 10px;
+      color: #637b98;
+      font-size: 12px;
+    }
+
+
+    .upload-formats {
+      color: #7dd3fc;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+
+    .upload-limit {
+      margin-top: 7px;
+      color: #526984;
+      font-size: 10px;
+    }
+
+
+    .selected-file {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 25px 20px;
+      padding: 13px;
+      border: 1px solid rgba(34,197,94,.2);
+      border-radius: 13px;
+      background: rgba(34,197,94,.045);
+    }
+
+
+    .file-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      color: #86efac;
+      background: rgba(34,197,94,.1);
+    }
+
+
+    .file-icon svg {
+      width: 18px;
+    }
+
+
+    .file-details {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+
+    .file-details strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #dcecff;
+      font-size: 12px;
+    }
+
+
+    .file-details span {
+      color: #637b98;
+      font-size: 10px;
+    }
+
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(100,160,220,.15);
+      border-radius: 9px;
+      background: rgba(255,255,255,.025);
+      color: #8099b5;
+      cursor: pointer;
+    }
+
+
+    .icon-btn:hover {
+      color: #f87171;
+      border-color: rgba(248,113,113,.3);
+    }
+
+
+    .icon-btn svg {
+      width: 15px;
+    }
+
+
+    .stt-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 0 25px 18px;
+    }
+
+
+    .stt-option {
+      padding: 14px;
+      border: 1px solid rgba(100,160,220,.12);
+      border-radius: 14px;
+      background: rgba(4,13,29,.4);
+    }
+
+
+    .stt-option label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 9px;
+      color: #a9bfd8;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+
+    .stt-option label svg {
+      width: 15px;
+      color: #38bdf8;
+    }
+
+
+    .stt-option select {
+      width: 100%;
+      height: 42px;
+      padding: 0 11px;
+      border: 1px solid rgba(100,160,220,.18);
+      border-radius: 10px;
+      outline: none;
+      background: #08162c;
+      color: #dcecff;
+      font: inherit;
+      font-size: 12px;
+    }
+
+
+    .stt-option select:focus {
+      border-color: rgba(56,189,248,.6);
+    }
+
+
+    .advanced-options {
+      display: flex;
+      gap: 20px;
+      margin: 0 25px 20px;
+      flex-wrap: wrap;
+    }
+
+
+    .check-option {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #8da5c1;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+
+    .check-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+
+    .custom-check {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(100,160,220,.28);
+      border-radius: 5px;
+      background: #08162c;
+    }
+
+
+    .custom-check svg {
+      width: 12px;
+      opacity: 0;
+      color: #071323;
+    }
+
+
+    .check-option input:checked + .custom-check {
+      border-color: #38bdf8;
+      background: #38bdf8;
+    }
+
+
+    .check-option input:checked + .custom-check svg {
+      opacity: 1;
+    }
+
+
+    .transcribe-btn {
+      width: calc(100% - 50px);
+      min-height: 50px;
+      margin: 0 25px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+    }
+
+
+    .transcribe-btn svg {
+      width: 17px;
+    }
+
+
+    .transcript-actions {
+      display: flex;
+      gap: 7px;
+    }
+
+
+    .small-action {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 10px;
+      border: 1px solid rgba(100,160,220,.16);
+      border-radius: 9px;
+      background: rgba(255,255,255,.025);
+      color: #8da5c1;
+      font: inherit;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+
+    .small-action:not(:disabled):hover {
+      color: #7dd3fc;
+      border-color: rgba(56,189,248,.35);
+    }
+
+
+    .small-action:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+
+
+    .small-action svg {
+      width: 14px;
+    }
+
+
+    .transcript-empty,
+    .transcript-loading {
+      min-height: 430px;
+      padding: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+
+    .transcript-empty-icon {
+      width: 66px;
+      height: 66px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      border-radius: 18px;
+      color: #38bdf8;
+      background: rgba(56,189,248,.08);
+      border: 1px solid rgba(56,189,248,.16);
+    }
+
+
+    .transcript-empty-icon svg {
+      width: 28px;
+    }
+
+
+    .transcript-empty h3,
+    .transcript-loading h3 {
+      margin: 0 0 8px;
+      color: #dcecff;
+      font-size: 17px;
+    }
+
+
+    .transcript-empty p,
+    .transcript-loading p {
+      max-width: 300px;
+      margin: 0;
+      color: #637b98;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+
+    .transcript-loading {
+      gap: 12px;
+    }
+
+
+    .loading-spinner,
+    .button-spinner {
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.15);
+      border-top-color: #38bdf8;
+      animation: spin .8s linear infinite;
+    }
+
+
+    .loading-spinner {
+      width: 42px;
+      height: 42px;
+      margin-bottom: 8px;
+    }
+
+
+    .button-spinner {
+      width: 15px;
+      height: 15px;
+    }
+
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+
+    .transcript-result {
+      padding: 24px;
+    }
+
+
+    .result-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+
+    .result-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #86efac;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 12px rgba(34,197,94,.7);
+    }
+
+
+    .word-count {
+      color: #637b98;
+      font-size: 10px;
+    }
+
+
+    .transcript-content {
+      min-height: 350px;
+      max-height: 500px;
+      overflow: auto;
+      padding: 18px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid rgba(100,160,220,.13);
+      border-radius: 14px;
+      background: rgba(4,13,29,.5);
+      color: #c9d9ea;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+
+    .error-box {
+      margin: 0 24px 24px;
+      padding: 13px;
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      border: 1px solid rgba(239,68,68,.2);
+      border-radius: 12px;
+      background: rgba(239,68,68,.08);
+      color: #fecaca;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+
+    .error-box svg {
+      width: 17px;
+      min-width: 17px;
+      color: #f87171;
+    }
+
+
+    .stt-features {
+      max-width: 1350px;
+      margin: 25px auto 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+
+    .feature-card {
+      padding: 20px;
+      border: 1px solid rgba(100,160,220,.12);
+      border-radius: 16px;
+      background: rgba(10,22,43,.6);
+    }
+
+
+    .feature-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 13px;
+      border-radius: 10px;
+      color: #38bdf8;
+      background: rgba(56,189,248,.08);
+    }
+
+
+    .feature-icon svg {
+      width: 19px;
+    }
+
+
+    .feature-card h3 {
+      margin: 0 0 6px;
+      color: #dcecff;
+      font-size: 13px;
+    }
+
+
+    .feature-card p {
+      margin: 0;
+      color: #637b98;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+
+    .footer-logo {
+      text-decoration: none;
+    }
+
+
+    @media (max-width: 1000px) {
+
+      .stt-workspace {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+
+    @media (max-width: 760px) {
+
+      .stt-page {
+        padding: 55px 16px 50px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .nav-get-started {
+        display: none;
+      }
+
+      .stt-hero h1 {
+        font-size: 39px;
+      }
+
+      .panel-heading {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .stt-options {
+        grid-template-columns: 1fr;
+      }
+
+      .stt-features {
+        grid-template-columns: 1fr;
+      }
+
+      .transcript-actions {
+        width: 100%;
+      }
+
+      .small-action {
+        flex: 1;
+        justify-content: center;
+      }
+
+    }
+
+
+    @media (max-width: 430px) {
+
+      .stt-page {
+        padding-left: 11px;
+        padding-right: 11px;
+      }
+
+      .stt-hero h1 {
+        font-size: 32px;
+        letter-spacing: -1px;
+      }
+
+      .stt-hero p {
+        font-size: 13px;
+      }
+
+      .stt-panel,
+      .transcript-panel {
+        border-radius: 17px;
+      }
+
+      .panel-heading {
+        padding: 18px;
+      }
+
+      .upload-zone {
+        margin: 15px;
+      }
+
+      .selected-file {
+        margin-left: 15px;
+        margin-right: 15px;
+      }
+
+      .stt-options,
+      .advanced-options {
+        margin-left: 15px;
+        margin-right: 15px;
+      }
+
+      .transcribe-btn {
+        width: calc(100% - 30px);
+        margin-left: 15px;
+        margin-right: 15px;
+      }
+
+      .error-box {
+        margin-left: 15px;
+        margin-right: 15px;
+      }
+
+      .transcript-result {
+        padding: 15px;
+      }
+
+    }
+
+  </style>
+
+</body>
+</html>

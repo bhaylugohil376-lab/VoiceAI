@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050b18">
+
+  <title>Studio Editor — VoiceAI</title>
+  <meta
+    name="description"
+    content="Create, edit and export professional AI voice projects with VoiceAI Studio."
+  >
+
+  <link rel="stylesheet" href="./style.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./script.js"></script>
+
+  <style>
+    .studio-page {
+      width: min(1400px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 34px 0 50px;
+    }
+
+    .studio-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .studio-heading h1 {
+      margin: 0;
+      font-size: 27px;
+      letter-spacing: -.7px;
+    }
+
+    .studio-heading p {
+      margin: 6px 0 0;
+      color: #7188a4;
+      font-size: 12px;
+    }
+
+    .studio-actions {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+    }
+
+    .studio-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 13px;
+      border: 1px solid rgba(96,165,250,.16);
+      border-radius: 10px;
+      background: #0c1d37;
+      color: #cfe0f5;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .studio-btn:hover {
+      border-color: rgba(34,211,238,.35);
+    }
+
+    .studio-btn.primary {
+      border: 0;
+      background: linear-gradient(90deg,#2563eb,#0891b2);
+      color: white;
+    }
+
+    .studio-layout {
+      display: grid;
+      grid-template-columns: 230px minmax(0,1fr) 270px;
+      min-height: 720px;
+      overflow: hidden;
+      border: 1px solid rgba(96,165,250,.14);
+      border-radius: 18px;
+      background: #07152a;
+      box-shadow: 0 25px 70px rgba(0,0,0,.28);
+    }
+
+    .studio-sidebar {
+      border-right: 1px solid rgba(148,163,184,.09);
+      background: #08182f;
+    }
+
+    .sidebar-head {
+      padding: 17px;
+      border-bottom: 1px solid rgba(148,163,184,.09);
+      color: #d9e8f8;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .sidebar-section {
+      padding: 15px 12px;
+    }
+
+    .sidebar-label {
+      margin: 0 7px 8px;
+      color: #526984;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .9px;
+      text-transform: uppercase;
+    }
+
+    .tool-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 9px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: #8ca4bf;
+      text-align: left;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    .tool-item:hover,
+    .tool-item.active {
+      background: rgba(59,130,246,.09);
+      color: #dcecff;
+    }
+
+    .tool-item i {
+      color: #5fa7ff;
+    }
+
+    .asset-list {
+      display: grid;
+      gap: 7px;
+    }
+
+    .asset {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px;
+      border: 1px solid rgba(96,165,250,.08);
+      border-radius: 9px;
+      background: rgba(5,15,30,.5);
+      color: #8198b2;
+      font-size: 10px;
+    }
+
+    .asset i {
+      color: #22d3ee;
+    }
+
+    .editor-area {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      background: #061327;
+    }
+
+    .editor-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 10px;
+      border-bottom: 1px solid rgba(148,163,184,.08);
+      background: #08182f;
+      overflow-x: auto;
+    }
+
+    .toolbar-btn {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #7890aa;
+      cursor: pointer;
+    }
+
+    .toolbar-btn:hover {
+      background: rgba(96,165,250,.09);
+      color: #dbeafe;
+    }
+
+    .toolbar-divider {
+      width: 1px;
+      height: 21px;
+      margin: 0 5px;
+      background: rgba(148,163,184,.12);
+      flex: 0 0 auto;
+    }
+
+    .preview-wrap {
+      flex: 1;
+      min-height: 390px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      background:
+        radial-gradient(
+          circle at center,
+          rgba(37,99,235,.09),
+          transparent 55%
+        );
+    }
+
+    .preview-card {
+      width: min(720px,100%);
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 34px;
+      border: 1px solid rgba(96,165,250,.14);
+      border-radius: 17px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(13,35,66,.92),
+          rgba(5,16,33,.95)
+        );
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+
+    .preview-badge {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(34,211,238,.07);
+      color: #67e8f9;
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .preview-card h2 {
+      margin: 19px 0 10px;
+      max-width: 600px;
+      font-size: clamp(24px,3vw,40px);
+      line-height: 1.1;
+      letter-spacing: -1px;
+    }
+
+    .preview-card p {
+      max-width: 580px;
+      margin: 0;
+      color: #7890aa;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .waveform {
+      height: 75px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      margin-top: 30px;
+      overflow: hidden;
+    }
+
+    .wave-bar {
+      width: 3px;
+      min-height: 8px;
+      border-radius: 5px;
+      background: linear-gradient(
+        180deg,
+        #22d3ee,
+        #2563eb
+      );
+      opacity: .75;
+    }
+
+    .transport {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .play-btn {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#2563eb,#0891b2);
+      color: white;
+      cursor: pointer;
+    }
+
+    .time-label {
+      color: #607894;
+      font-size: 10px;
+    }
+
+    .timeline {
+      min-height: 215px;
+      border-top: 1px solid rgba(148,163,184,.08);
+      background: #07172c;
+    }
+
+    .timeline-head {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 12px;
+      border-bottom: 1px solid rgba(148,163,184,.07);
+      color: #667e99;
+      font-size: 10px;
+    }
+
+    .timeline-track {
+      position: relative;
+      height: 52px;
+      margin: 10px 12px;
+      border: 1px solid rgba(96,165,250,.08);
+      border-radius: 8px;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(96,165,250,.025) 0,
+          rgba(96,165,250,.025) 49px,
+          rgba(96,165,250,.07) 50px
+        );
+    }
+
+    .clip {
+      position: absolute;
+      top: 7px;
+      left: 8%;
+      width: 42%;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 10px;
+      border: 1px solid rgba(34,211,238,.25);
+      border-radius: 7px;
+      background: rgba(8,145,178,.15);
+      color: #bdeffc;
+      font-size: 9px;
+    }
+
+    .clip.second {
+      left: 52%;
+      width: 27%;
+      background: rgba(37,99,235,.15);
+      border-color: rgba(96,165,250,.2);
+    }
+
+    .properties {
+      border-left: 1px solid rgba(148,163,184,.09);
+      background: #08182f;
+    }
+
+    .property-head {
+      padding: 17px;
+      border-bottom: 1px solid rgba(148,163,184,.09);
+      color: #d9e8f8;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .property-body {
+      padding: 17px;
+    }
+
+    .property-group {
+      margin-bottom: 20px;
+    }
+
+    .property-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #607894;
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .property-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      border: 1px solid rgba(96,165,250,.12);
+      border-radius: 8px;
+      outline: none;
+      background: #061429;
+      color: #cfe0f5;
+      font-size: 11px;
+    }
+
+    .property-input:focus {
+      border-color: rgba(34,211,238,.4);
+    }
+
+    .range-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .range-wrap input {
+      flex: 1;
+      accent-color: #22d3ee;
+    }
+
+    .range-value {
+      width: 32px;
+      color: #7890aa;
+      font-size: 9px;
+      text-align: right;
+    }
+
+    .save-status {
+      display: none;
+      margin: 0 17px 17px;
+      padding: 10px;
+      border-radius: 8px;
+      color: #bbf7d0;
+      background: rgba(20,83,45,.2);
+      border: 1px solid rgba(74,222,128,.12);
+      font-size: 10px;
+    }
+
+    .save-status.show {
+      display: block;
+    }
+
+    .usage-note {
+      margin-top: 15px;
+      padding: 11px;
+      border-radius: 9px;
+      background: rgba(59,130,246,.05);
+      border: 1px solid rgba(96,165,250,.09);
+      color: #607894;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+
+    .mobile-menu {
+      display: none;
+    }
+
+    @media (max-width: 1050px) {
+      .studio-layout {
+        grid-template-columns: 190px minmax(0,1fr);
+      }
+
+      .properties {
+        display: none;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .studio-page {
+        width: calc(100% - 18px);
+        padding-top: 24px;
+      }
+
+      .studio-top {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .studio-actions {
+        width: 100%;
+      }
+
+      .studio-actions .studio-btn {
+        flex: 1;
+      }
+
+      .studio-layout {
+        display: block;
+      }
+
+      .studio-sidebar {
+        display: none;
+      }
+
+      .preview-wrap {
+        min-height: 340px;
+        padding: 15px;
+      }
+
+      .preview-card {
+        min-height: 290px;
+        padding: 24px;
+      }
+
+      .timeline {
+        min-height: 175px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .studio-heading h1 {
+        font-size: 23px;
+      }
+
+      .studio-btn {
+        padding: 0 9px;
+        font-size: 10px;
+      }
+
+      .preview-card h2 {
+        font-size: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="nav-inner">
+
+    <a href="index.html" class="logo">
+      <span class="logo-mark">
+        <i data-lucide="audio-lines"></i>
+      </span>
+      <span>VoiceAI</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="tools.html">AI Tools</a>
+      <a href="voices.html">Voices</a>
+      <a href="studio.html" class="active">Studio</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="login.html" class="secondary-btn">Login</a>
+      <a href="signup.html" class="primary-btn">Get Started</a>
+    </div>
+
+  </div>
+</header>
+
+<main class="studio-page">
+
+  <div class="studio-top">
+
+    <div class="studio-heading">
+      <h1>Studio Editor</h1>
+      <p>Create, arrange and export your AI voice projects.</p>
+    </div>
+
+    <div class="studio-actions">
+
+      <button
+        type="button"
+        class="studio-btn"
+        id="newProjectBtn"
+      >
+        <i data-lucide="plus" size="14"></i>
+        New
+      </button>
+
+      <button
+        type="button"
+        class="studio-btn"
+        id="saveProjectBtn"
+      >
+        <i data-lucide="save" size="14"></i>
+        Save
+      </button>
+
+      <button
+        type="button"
+        class="studio-btn primary"
+        id="exportProjectBtn"
+      >
+        <i data-lucide="download" size="14"></i>
+        Export
+      </button>
+
+    </div>
+
+  </div>
+
+  <section class="studio-layout">
+
+    <!-- LEFT SIDEBAR -->
+
+    <aside class="studio-sidebar">
+
+      <div class="sidebar-head">
+        Project Tools
+      </div>
+
+      <div class="sidebar-section">
+
+        <div class="sidebar-label">
+          Add
+        </div>
+
+        <button class="tool-item active" data-tool="voice">
+          <i data-lucide="mic-2" size="15"></i>
+          Voice Track
+        </button>
+
+        <button class="tool-item" data-tool="music">
+          <i data-lucide="music" size="15"></i>
+          Music
+        </button>
+
+        <button class="tool-item" data-tool="sfx">
+          <i data-lucide="sparkles" size="15"></i>
+          Sound Effects
+        </button>
+
+        <button class="tool-item" data-tool="text">
+          <i data-lucide="type" size="15"></i>
+          Text
+        </button>
+
+      </div>
+
+      <div class="sidebar-section">
+
+        <div class="sidebar-label">
+          Assets
+        </div>
+
+        <div class="asset-list">
+
+          <div class="asset">
+            <i data-lucide="volume-2" size="13"></i>
+            Narration.wav
+          </div>
+
+          <div class="asset">
+            <i data-lucide="music-2" size="13"></i>
+            Background.mp3
+          </div>
+
+          <div class="asset">
+            <i data-lucide="audio-waveform" size="13"></i>
+            Intro.wav
+          </div>
+
+        </div>
+
+      </div>
+
+    </aside>
+
+    <!-- EDITOR -->
+
+    <section class="editor-area">
+
+      <div class="editor-toolbar">
+
+        <button class="toolbar-btn" title="Undo" data-action="undo">
+          <i data-lucide="undo-2" size="15"></i>
+        </button>
+
+        <button class="toolbar-btn" title="Redo" data-action="redo">
+          <i data-lucide="redo-2" size="15"></i>
+        </button>
+
+        <div class="toolbar-divider"></div>
+
+        <button class="toolbar-btn" title="Cut" data-action="cut">
+          <i data-lucide="scissors" size="15"></i>
+        </button>
+
+        <button class="toolbar-btn" title="Copy" data-action="copy">
+          <i data-lucide="copy" size="15"></i>
+        </button>
+
+        <button class="toolbar-btn" title="Delete" data-action="delete">
+          <i data-lucide="trash-2" size="15"></i>
+        </button>
+
+        <div class="toolbar-divider"></div>
+
+        <button class="toolbar-btn" title="Zoom out" data-action="zoom-out">
+          <i data-lucide="zoom-out" size="15"></i>
+        </button>
+
+        <button class="toolbar-btn" title="Zoom in" data-action="zoom-in">
+          <i data-lucide="zoom-in" size="15"></i>
+        </button>
+
+        <button class="toolbar-btn" title="Settings" data-action="settings">
+          <i data-lucide="settings-2" size="15"></i>
+        </button>
+
+      </div>
+
+      <div class="preview-wrap">
+
+        <div class="preview-card">
+
+          <div class="preview-badge">
+            <i data-lucide="radio" size="11"></i>
+            Studio Preview
+          </div>
+
+          <h2 id="previewTitle">
+            Your AI voice project starts here.
+          </h2>
+
+          <p id="previewDescription">
+            Arrange narration, music and effects on the timeline.
+            Fine-tune your project and export the final production.
+          </p>
+
+          <div class="waveform" id="waveform"></div>
+
+          <div class="transport">
+
+            <span class="time-label" id="currentTime">
+              00:00
+            </span>
+
+            <button
+              type="button"
+              class="play-btn"
+              id="playBtn"
+              aria-label="Play"
+            >
+              <i data-lucide="play" size="19"></i>
+            </button>
+
+            <span class="time-label">
+              00:30
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="timeline">
+
+        <div class="timeline-head">
+          <i data-lucide="layers-3" size="14"></i>
+          Timeline
+          <span id="timelineStatus">
+            3 tracks
+          </span>
+        </div>
+
+        <div class="timeline-track">
+
+          <div class="clip">
+            <i data-lucide="mic-2" size="12"></i>
+            Narration
+          </div>
+
+        </div>
+
+       

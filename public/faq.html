@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>FAQ — VoiceAI</title>
+  <meta
+    name="description"
+    content="Frequently asked questions about VoiceAI, AI voice generation, voice cloning, Gemini tools, billing, usage limits and more."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg: #06101f;
+      --bg-soft: #09182b;
+      --card: #0b1b31;
+      --card-2: #0d2139;
+      --border: rgba(113, 163, 220, 0.16);
+      --border-hover: rgba(45, 212, 191, 0.38);
+
+      --text: #f4f8ff;
+      --muted: #91a6c1;
+      --muted-2: #7188a5;
+
+      --cyan: #22d3ee;
+      --cyan-soft: rgba(34, 211, 238, 0.12);
+      --blue: #3b82f6;
+      --green: #2dd4bf;
+
+      --danger: #fb7185;
+
+      --radius: 18px;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at 15% 0%,
+          rgba(37, 99, 235, 0.14),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 85% 15%,
+          rgba(34, 211, 238, 0.09),
+          transparent 25%
+        ),
+        var(--bg);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(18px);
+      background: rgba(6, 16, 31, 0.86);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 19px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      color: #03131e;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      box-shadow: 0 8px 25px rgba(34, 211, 238, 0.2);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      padding: 9px 11px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.055);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .nav-btn {
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .nav-btn.primary {
+      border-color: transparent;
+      color: #03131e;
+      background: linear-gradient(135deg, var(--cyan), #60a5fa);
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .faq-hero {
+      padding: 82px 0 45px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 11px;
+      border: 1px solid rgba(34, 211, 238, 0.22);
+      border-radius: 999px;
+      color: #9cecf6;
+      background: rgba(34, 211, 238, 0.08);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .faq-hero h1 {
+      max-width: 800px;
+      margin: 20px auto 14px;
+      font-size: clamp(34px, 5vw, 60px);
+      line-height: 1.04;
+      letter-spacing: -0.045em;
+    }
+
+    .faq-hero h1 span {
+      background: linear-gradient(90deg, #fff, #7dd3fc, #22d3ee);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .faq-hero p {
+      max-width: 690px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    /* =========================
+       SEARCH
+    ========================= */
+
+    .search-wrap {
+      max-width: 760px;
+      margin: 30px auto 0;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 17px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 19px;
+      color: #6f88a8;
+    }
+
+    #faqSearch {
+      width: 100%;
+      height: 56px;
+      padding: 0 48px;
+      border-radius: 15px;
+      border: 1px solid rgba(106, 155, 212, 0.22);
+      outline: none;
+      color: var(--text);
+      background: rgba(11, 27, 49, 0.88);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+    }
+
+    #faqSearch::placeholder {
+      color: #66809e;
+    }
+
+    #faqSearch:focus {
+      border-color: rgba(34, 211, 238, 0.5);
+      box-shadow:
+        0 0 0 3px rgba(34, 211, 238, 0.07),
+        0 15px 45px rgba(0, 0, 0, 0.22);
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 31px;
+      height: 31px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 9px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .clear-search:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* =========================
+       CATEGORIES
+    ========================= */
+
+    .categories {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 34px auto 48px;
+    }
+
+    .category-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 13px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.025);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .category-btn:hover {
+      color: var(--text);
+      border-color: rgba(34, 211, 238, 0.25);
+    }
+
+    .category-btn.active {
+      color: #03131e;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--cyan), #60a5fa);
+    }
+
+    /* =========================
+       FAQ
+    ========================= */
+
+    .faq-layout {
+      max-width: 930px;
+      margin: 0 auto 85px;
+    }
+
+    .faq-category {
+      margin-bottom: 38px;
+    }
+
+    .category-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 13px;
+      color: #dcecff;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .category-heading i {
+      color: var(--cyan);
+      width: 20px;
+    }
+
+    .faq-count {
+      margin-left: auto;
+      color: var(--muted-2);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .faq-item {
+      overflow: hidden;
+      margin-bottom: 9px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(11, 27, 49, 0.72);
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .faq-item:hover {
+      border-color: rgba(96, 165, 250, 0.24);
+    }
+
+    .faq-item.open {
+      border-color: rgba(34, 211, 238, 0.3);
+      background: rgba(13, 33, 57, 0.88);
+    }
+
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 18px 19px;
+      border: 0;
+      color: var(--text);
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .faq-question span {
+      flex: 1;
+    }
+
+    .faq-question i {
+      flex: 0 0 auto;
+      width: 18px;
+      color: #7189a8;
+      transition: transform 0.25s ease;
+    }
+
+    .faq-item.open .faq-question i {
+      transform: rotate(180deg);
+      color: var(--cyan);
+    }
+
+    .faq-answer {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.28s ease;
+    }
+
+    .faq-answer-inner {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .faq-answer p {
+      padding: 0 19px 19px 19px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .faq-item.open .faq-answer {
+      grid-template-rows: 1fr;
+    }
+
+    .faq-empty {
+      display: none;
+      padding: 55px 20px;
+      text-align: center;
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+      color: var(--muted);
+    }
+
+    .faq-empty i {
+      width: 30px;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .faq-empty h3 {
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+
+    /* =========================
+       CONTACT CTA
+    ========================= */
+
+    .contact-card {
+      max-width: 930px;
+      margin: 0 auto 80px;
+      padding: 34px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(34, 211, 238, 0.17);
+      border-radius: 22px;
+      background:
+        radial-gradient(
+          circle at 85% 20%,
+          rgba(34, 211, 238, 0.12),
+          transparent 32%
+        ),
+        linear-gradient(
+          135deg,
+          rgba(14, 38, 67, 0.9),
+          rgba(8, 23, 42, 0.92)
+        );
+    }
+
+    .contact-card h2 {
+      margin-bottom: 8px;
+      font-size: 25px;
+      letter-spacing: -0.02em;
+    }
+
+    .contact-card p {
+      max-width: 620px;
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .contact-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .cta-btn.primary {
+      color: #03131e;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--cyan), #60a5fa);
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    .site-footer {
+      padding: 35px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted-2);
+      font-size: 11px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a:hover {
+      color: var(--text);
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
+      }
+
+      .faq-hero {
+        padding-top: 62px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: min(var(--max), calc(100% - 24px));
+      }
+
+      .nav {
+        min-height: 64px;
+      }
+
+      .nav-btn.login {
+        display: none;
+      }
+
+      .nav-btn.primary {
+        padding: 8px 11px;
+      }
+
+      .faq-hero {
+        padding: 54px 0 30px;
+      }
+
+      .faq-hero h1 {
+        font-size: 38px;
+      }
+
+      .faq-hero p {
+        font-size: 13px;
+      }
+
+      .categories {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 5px;
+        margin-bottom: 35px;
+      }
+
+      .category-btn {
+        flex: 0 0 auto;
+      }
+
+      .faq-question {
+        padding: 16px;
+        font-size: 13px;
+      }
+
+      .faq-answer p {
+        padding: 0 16px 17px;
+        font-size: 12px;
+      }
+
+      .contact-card {
+        padding: 24px 20px;
+      }
+
+      .contact-card h2 {
+        font-size: 21px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+
+  <header class="site-header">
+    <div class="container nav">
+
+      <a class="brand" href="index.html">
+        <span class="brand-mark">
+          <i data-lucide="waves"></i>
+        </span>
+        <span>VoiceAI</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="tools.html">AI Tools</a>
+        <a href="voices.html">Voices</a>
+        <a href="studio.html">Studio</a>
+        <a href="pricing.html">Pricing</a>
+        <a class="active" href="faq.html">FAQ</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a class="nav-btn login" href="login.html">Login</a>
+        <a class="nav-btn primary" href="signup.html">Get Started</a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- =========================
+       HERO
+  ========================== -->
+
+  <main>
+
+    <section class="faq-hero">
+      <div class="container">
+
+        <div class="eyebrow">
+          <i data-lucide="circle-help"></i>
+          Help Center
+        </div>
+
+        <h1>
+          Frequently asked <span>questions.</span>
+        </h1>
+
+        <p>
+          Find answers about VoiceAI, AI voice generation, voice cloning,
+          Gemini tools, projects, usage limits, billing and more.
+        </p>
+
+        <div class="search-wrap">
+
+          <i class="search-icon" data-lucide="search"></i>
+
+          <input
+            id="faqSearch"
+            type="search"
+            autocomplete="off"
+            placeholder="Search questions, voice cloning, billing, Gemini..."
+          />
+
+          <button
+            id="clearSearch"
+            class="clear-search"
+            type="button"
+            aria-label="Clear search"
+          >
+            <i data-lucide="x"></i>
+          </button>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================
+         CATEGORY FILTER
+    ========================== -->
+
+    <div class="container">
+      <div id="categories" class="categories"></div>
+    </div>
+
+    <!-- =========================
+         FAQ CONTENT
+    ========================== -->
+
+    <section class="container faq-layout">
+
+      <div id="faqContainer"></div>
+
+      <div id="faqEmpty" class="faq-empty">
+        <i data-lucide="search-x"></i>
+        <h3>No matching questions</h3>
+        <p>
+          Try another keyword or choose a different category.
+        </p>
+      </div>
+
+    </section>
+
+    <!-- =========================
+         CONTACT CTA
+    ========================== -->
+
+    <section class="container">
+
+      <div class="contact-card">
+
+        <h2>Still need help?</h2>
+
+        <p>
+          If you cannot find your answer here, contact the VoiceAI team.
+          We can help with account issues, API configuration, billing,
+          provider setup and technical problems.
+        </p>
+
+        <div class="contact-actions">
+
+          <a class="cta-btn primary" href="contact.html">
+            <i data-lucide="message-circle"></i>
+            Contact Support
+          </a>
+
+          <a class="cta-btn" href="about.html">
+            <i data-lucide="info"></i>
+            About VoiceAI
+          </a>
+
+          <a class="cta-btn" href="pricing.html">
+            <i data-lucide="credit-card"></i>
+            View Pricing
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+
+      <div>
+        © 2026 VoiceAI. All rights reserved.
+      </div>
+
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="login.html">Login</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+
+  <script>
+    "use strict";
+
+    /*
+     * ============================================================
+     * VOICEAI FAQ DATA
+     * ============================================================
+     *
+     * Static fallback data is intentionally included.
+     *
+     * If faq_items table contains records, those can be loaded
+     * from Supabase.
+     */
+
+    const FAQ_DATA = [
+
+      /* =========================
+         GENERAL
+      ========================== */
+
+      {
+        category: "General",
+        icon: "sparkles",
+        question: "What is VoiceAI?",
+        answer:
+          "VoiceAI is an AI-powered voice studio for creating professional voice content. It brings together Text to Speech, voice selection, voice cloning, voice design, voice changing, speech recognition, studio editing, dubbing, captions, AI assistants and other creative tools in one platform."
+      },
+
+      {
+        category: "General",
+        icon: "layers-3",
+        question: "What can I create with VoiceAI?",
+        answer:
+          "You can create voiceovers, advertisements, narration, podcasts, dialogue, cloned voices, AI-generated images, music and sound effects, captions, dubbed content and conversational AI experiences. The platform is designed for creators, businesses, marketers, developers and professional production workflows."
+      },
+
+      {
+        category: "General",
+        icon: "monitor-smartphone",
+        question: "Does VoiceAI work on mobile and PC?",
+        answer:
+          "Yes. The interface is designed to be responsive for desktop, tablet and mobile screens. Some advanced production workflows are more comfortable on desktop, especially Studio and timeline-based editing."
+      },
+
+      {
+        category: "General",
+        icon: "cloud",
+        question: "Do I need to install software?",
+        answer:
+          "No. VoiceAI is designed as a web application. You can access the supported features through a modern browser without installing a separate desktop application."
+      },
+
+      {
+        category: "General",
+        icon: "languages",
+        question: "Does VoiceAI support multiple languages?",
+        answer:
+          "Language availability depends on the connected AI and voice providers. The application is designed so supported languages and voice models can be expanded without redesigning the main interface."
+      },
+
+      /* =========================
+         ACCOUNT
+      ========================== */
+
+      {
+        category: "Account & Security",
+        icon: "user-round",
+        question: "How do I create a VoiceAI account?",
+        answer:
+          "Open the Sign Up page, enter your name, email and password, accept the required terms and create your account. If email verification is enabled, verify your email before signing in."
+      },
+
+      {
+        category: "Account & Security",
+        icon: "shield-check",
+        question: "Is my account data protected?",
+        answer:
+          "VoiceAI is designed around authenticated access, Supabase authentication and database security policies. Production deployments should keep server-side provider secrets out of browser code and use Row Level Security for user-owned data."
+      },
+
+      {
+        category: "Account & Security",
+        icon: "key-round",
+        question: "What if I forget my password?",
+        answer:
+          "Use the Forgot Password page from the Login screen. Enter your account email and follow the password-reset link sent to your inbox."
+      },
+
+      {
+        category: "Account & Security",
+        icon: "log-out",
+        question: "Can I log out from all sessions?",
+        answer:
+          "The application supports authenticated sign-out. For production deployments, session management should also be configured according to the authentication provider's recommended security settings."
+      },
+
+      /* =========================
+         TTS
+      ========================== */
+
+      {
+        category: "AI Voice & TTS",
+        icon: "audio-lines",
+        question: "What is Text to Speech?",
+        answer:
+          "Text to Speech converts written text into spoken audio using an AI voice model. In VoiceAI, you can provide a script, select a supported voice and generate an audio result through the configured voice provider."
+      },
+
+      {
+        category: "AI Voice & TTS",
+        icon: "volume-2",
+        question: "Can I preview voices before generating?",
+        answer:
+          "Yes. The Voice Library is designed to provide voice previews where the configured provider supplies preview audio. You can then select a voice and send it to the Text to Speech workflow."
+      },
+
+      {
+        category: "AI Voice & TTS",
+        icon: "sliders-horizontal",
+        question: "Can I control the generated voice?",
+        answer:
+          "Available controls depend on the connected voice provider. Typical controls can include voice selection, stability, similarity, style and output format."
+      },
+
+      {
+        category: "AI Voice & TTS",
+        icon: "download",
+        question: "Can I download generated audio?",
+        answer:
+          "Yes, when the generation endpoint returns a downloadable audio result. The TTS page provides an audio player and download action for supported output formats."
+      },
+
+      {
+        category: "AI Voice & TTS",
+        icon: "mic-vocal",
+        question: "Can VoiceAI be used for advertisements?",
+        answer:
+          "Yes. The platform is suitable for advertisement voiceovers, social media videos, product narration, explainers, reels and other marketing content, subject to the licensing terms of the selected voice provider."
+      },
+
+      /* =========================
+         CLONING
+      ========================== */
+
+      {
+        category: "Voice Cloning",
+        icon: "copy",
+        question: "What is Voice Cloning?",
+        answer:
+          "Voice Cloning creates a synthetic voice model based on an uploaded voice sample. The exact quality, supported duration and verification requirements depend on the connected voice provider."
+      },
+
+      {
+        category: "Voice Cloning",
+        icon: "file-audio",
+        question: "Can I clone anyone's voice?",
+        answer:
+          "You should only clone a voice when you have the necessary permission and rights. VoiceAI should not be used to impersonate people without authorization or to create deceptive or fraudulent content."
+      },
+
+      {
+        category: "Voice Cloning",
+        icon: "badge-check",
+        question: "Why is consent required for cloning?",
+        answer:
+          "Consent helps establish that the uploaded voice can legally and ethically be used for cloning. Production implementations should retain appropriate consent information and follow the provider's voice-cloning policies."
+      },
+
+      {
+        category: "Voice Cloning",
+        icon: "upload",
+        question: "What audio file should I upload?",
+        answer:
+          "Use a clear recording with minimal background noise and a single speaker whenever possible. Supported file types and size limits are ultimately determined by the connected voice provider and backend configuration."
+      },
+
+      /* =========================
+         STUDIO
+      ========================== */
+
+      {
+        category: "Studio & Projects",
+        icon: "wand-sparkles",
+        question: "What is Studio?",
+        answer:
+          "Studio is the editing workspace for arranging voice and media content. The planned workflow supports projects, timeline-based editing, saving and exporting production work."
+      },
+
+      {
+        category: "Studio & Projects",
+        icon: "folder-kanban",
+        question: "Where are my projects stored?",
+        answer:
+          "Authenticated project metadata can be stored in Supabase under the user's account. Generated media may be stored using a configured storage or provider system depending on the final deployment."
+      },
+
+      {
+        category: "Studio & Projects",
+        icon: "save",
+        question: "Can I save a project and continue later?",
+        answer:
+          "Yes. The project architecture supports saving project information and reopening it later while signed into the same account."
+      },
+
+      {
+        category: "Studio & Projects",
+        icon: "trash-2",
+        question: "Can I delete projects?",
+        answer:
+          "The Projects page supports deleting user-owned project records. Production deployments should also configure storage cleanup if a project has associated media files."
+      },
+
+      /* =========================
+         GEMINI
+      ========================== */
+
+      {
+        category: "Gemini AI",
+        icon: "bot",
+        question: "What is the Gemini Assistant?",
+        answer:
+          "The Gemini Assistant provides AI text assistance through the configured Gemini API. It can be used for brainstorming, scripts, rewriting, content planning, prompts and other supported text workflows."
+      },
+
+      {
+        category: "Gemini AI",
+        icon: "image",
+        question: "Does VoiceAI have an AI Image Generator?",
+        answer:
+          "Yes. VoiceAI includes an Image Generator page designed for Gemini image generation. The actual image model and endpoint are configured through server-side environment variables."
+      },
+
+      {
+        category: "Gemini AI",
+        icon: "wand-2",
+        question: "Can I choose image style and aspect ratio?",
+        answer:
+          "Yes. The Image Generator interface can collect style, aspect ratio and quality preferences and send them to the configured Gemini image generation endpoint."
+      },
+
+      {
+        category: "Gemini AI",
+        icon: "shield-alert",
+        question: "Is my Gemini API key visible to users?",
+        answer:
+          "It should not be. GEMINI_API_KEY must remain server-side in environment variables. Browser JavaScript should call your backend endpoint instead of exposing the Gemini secret."
+      },
+
+      /* =========================
+         USAGE
+      ========================== */
+
+      {
+        category: "Usage Limits",
+        icon: "gauge",
+        question: "How does the free usage limit work?",
+        answer:
+          "The planned Free tier uses an independent five-use limit per AI action over a rolling 24-hour window. This means TTS, Assistant, Image generation and other supported AI actions can have their own usage counters rather than sharing one global counter."
+      },
+
+      {
+        category: "Usage Limits",
+        icon: "timer",
+        question: "When does my 24-hour usage window reset?",
+        answer:
+          "The usage system is designed around a 24-hour window for each action. The exact reset behavior is controlled by the backend usage function and database timestamps rather than the browser clock."
+      },
+
+      {
+        category: "Usage Limits",
+        icon: "crown",
+        question: "Does Premium remove the five-use limit?",
+        answer:
+          "Yes. The planned Premium application tier does not enforce the internal five-use-per-action restriction. However, external provider limits, API quotas, fair-use policies and infrastructure limits can still apply."
+      },
+
+      {
+        category: "Usage Limits",
+        icon: "bar-chart-3",
+        question: "Where can I see my usage?",
+        answer:
+          "Usage information can be shown on supported tool pages and the Profile dashboard. The backend usage endpoint reads authenticated account information and action-specific usage data."
+      },
+
+      /* =========================
+         BILLING
+      ========================== */
+
+      {
+        category: "Billing & Premium",
+        icon: "credit-card",
+        question: "How much does Premium cost?",
+        answer:
+          "The current planned pricing is $20 per month or $200 per year. The yearly plan effectively provides two months of savings compared with paying $20 every month for twelve months."
+      },
+
+      {
+        category: "Billing & Premium",
+        icon: "calendar-days",
+        question: "Can I choose monthly or yearly billing?",
+        answer:
+          "Yes. The Pricing page provides monthly and yearly Premium options. Stripe checkout is designed to process the selected billing interval."
+      },
+
+      {
+        category: "Billing & Premium",
+        icon: "test-tube",
+        question: "Can I test payments before launch?",
+        answer:
+          "Yes. Stripe Test Mode can be used during development. Production payments should only be enabled after the Stripe account, price IDs, webhook endpoint and environment variables are correctly configured."
+      },
+
+      {
+        category: "Billing & Premium",
+        icon: "receipt",
+        question: "How is Premium status updated?",
+        answer:
+          "Stripe checkout and webhook processing can update the subscription record in Supabase. The backend should treat the verified webhook as the source of truth rather than trusting browser-side payment information."
+      },
+
+      /* =========================
+         API
+      ========================== */
+
+      {
+        category: "API & Providers",
+        icon: "server",
+        question: "Which AI providers does VoiceAI use?",
+        answer:
+          "The architecture is provider-based. ElevenLabs can power voice features, Gemini can power assistant and image generation, Stripe handles payments, and additional music or sound-effect providers can be configured through environment variables."
+      },
+
+      {
+        category: "API & Providers",
+        icon: "key",
+        question: "Where should API keys be stored?",
+        answer:
+          "Secret provider keys should be stored as server-side environment variables. They should never be hard-coded into HTML, CSS or browser JavaScript."
+      },
+
+      {
+        category: "API & Providers",
+        icon: "workflow",
+        question: "Can I replace an AI provider later?",
+        answer:
+          "Yes. The backend is structured around API routes so provider integrations can be replaced or extended without rebuilding every frontend page."
+      },
+
+      {
+        category: "API & Providers",
+        icon: "database",
+        question: "Why does VoiceAI use Supabase?",
+        answer:
+          "Supabase provides authentication, PostgreSQL database capabilities, Row Level Security and other backend services. It is used to keep account, project, usage and application data associated with authenticated users."
+      },
+
+      /* =========================
+         TROUBLESHOOTING
+      ========================== */
+
+      {
+        category: "Troubleshooting",
+        icon: "bug",
+        question: "Why is an AI generation failing?",
+        answer:
+          "Check authentication, provider API keys, model configuration, API endpoint configuration, server logs and usage limits. A provider can also reject requests because of quota, unsupported parameters, content policy or temporary service errors."
+      },
+
+      {
+        category: "Troubleshooting",
+        icon: "wifi-off",
+        question: "Why does the page load but generation does not work?",
+        answer:
+          "The frontend can load successfully even when the backend API is not configured. Verify that the deployed /api route exists, environment variables are present and the browser request is reaching the correct server endpoint."
+      },
+
+      {
+        category: "Troubleshooting",
+        icon: "key-round",
+        question: "Why does Supabase authentication fail?",
+        answer:
+          "Check the Supabase project URL, publishable key, email verification settings, redirect URLs and browser console errors. Never replace the publishable key with the Supabase service-role key in browser code."
+      },
+
+      {
+        category: "Troubleshooting",
+        icon: "triangle-alert",
+        question: "Why am I getting a usage limit error?",
+        answer:
+          "Free accounts are subject to the configured five-use-per-action 24-hour limit. Premium accounts bypass the internal application limit, but provider quotas can still return their own errors."
+      }
+
+    ];
+
+    /*
+     * ============================================================
+     * STATE
+     * ============================================================
+     */
+
+    let allFaqs = [...FAQ_DATA];
+
+    let activeCategory = "All";
+    let searchTerm = "";
+
+    const faqContainer =
+      document.getElementById("faqContainer");
+
+    const categoriesContainer =
+      document.getElementById("categories");
+
+    const searchInput =
+      document.getElementById("faqSearch");
+
+    const clearSearch =
+      document.getElementById("clearSearch");
+
+    const emptyState =
+      document.getElementById("faqEmpty");
+
+
+    /*
+     * ============================================================
+     * SUPABASE FAQ LOAD
+     * ============================================================
+     *
+     * Static FAQ_DATA always remains as fallback.
+     *
+     * Expected table:
+     *
+     * faq_items
+     * - id
+     * - category
+     * - question
+     * - answer
+     * - is_published
+     * - sort_order
+     *
+     */
+
+    async function loadSupabaseFaqs() {
+
+      if (!window.supabaseClient) {
+        return;
+      }
+
+      try {
+
+        const {
+          data,
+          error
+        } = await window.supabaseClient
+          .from("faq_items")
+          .select(
+            "id, category, question, answer, is_published, sort_order"
+          )
+          .eq("is_published", true)
+          .order("sort_order", {
+            ascending: true
+          });
+
+        if (error) {
+          console.warn(
+            "FAQ database unavailable. Using built-in FAQ data.",
+            error
+          );
+          return;
+        }
+
+        if (Array.isArray(data) && data.length > 0) {
+
+          allFaqs = data.map((item) => ({
+            category: item.category || "General",
+            icon: iconForCategory(
+              item.category || "General"
+            ),
+            question: item.question,
+            answer: item.answer
+          }));
+
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "FAQ load failed. Using static FAQ data.",
+          error
+        );
+
+      }
+
+    }
+
+
+    /*
+     * ============================================================
+     * CATEGORY ICON
+     * ============================================================
+     */
+
+    function iconForCategory(category) {
+
+      const icons = {
+        "General": "sparkles",
+        "Account & Security": "shield-check",
+        "AI Voice & TTS": "audio-lines",
+        "Voice Cloning": "copy",
+        "Studio & Projects": "folder-kanban",
+        "Gemini AI": "bot",
+        "Usage Limits": "gauge",
+        "Billing & Premium": "credit-card",
+        "API & Providers": "server",
+        "Troubleshooting": "triangle-alert"
+      };
+
+      return icons[category] || "circle-help";
+    }
+
+
+    /*
+     * ============================================================
+     * RENDER CATEGORIES
+     * ============================================================
+     */
+
+    function renderCategories() {
+
+      const categories = [
+        "All",
+        ...new Set(
+          allFaqs.map((faq) => faq.category)
+        )
+      ];
+
+      categoriesContainer.innerHTML = categories
+        .map((category) => {
+
+          const icon =
+            category === "All"
+              ? "grid-2x2"
+              : iconForCategory(category);
+
+          return `
+            <button
+              type="button"
+              class="category-btn ${
+                activeCategory === category
+                  ? "active"
+                  : ""
+              }"
+              data-category="${escapeHtml(category)}"
+            >
+              <i data-lucide="${icon}"></i>
+              ${escapeHtml(category)}
+            </button>
+          `;
+
+        })
+        .join("");
+
+      categoriesContainer
+        .querySelectorAll(".category-btn")
+        .forEach((button) => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              activeCategory =
+                button.dataset.category;
+
+              renderCategories();
+              renderFaqs();
+
+            }
+          );
+
+        });
+
+      refreshIcons();
+
+    }
+
+
+    /*
+     * ============================================================
+     * FILTER
+     * ============================================================
+     */
+
+    function getFilteredFaqs() {
+
+      return allFaqs.filter((faq) => {
+
+        const categoryMatch =
+          activeCategory === "All" ||
+          faq.category === activeCategory;
+
+        if (!categoryMatch) {
+          return false;
+        }
+
+        if (!searchTerm) {
+          return true;
+        }
+
+        const searchable =
+          `${faq.category} ${faq.question} ${faq.answer}`
+            .toLowerCase();
+
+        return searchable.includes(
+          searchTerm.toLowerCase()
+        );
+
+      });
+
+    }
+
+
+    /*
+     * ============================================================
+     * RENDER FAQ
+     * ============================================================
+     */
+
+    function renderFaqs() {
+
+      const filtered =
+        getFilteredFaqs();
+
+      if (!filtered.length) {
+
+        faqContainer.innerHTML = "";
+        emptyState.style.display = "block";
+
+        refreshIcons();
+        return;
+
+      }
+
+      emptyState.style.display = "none";
+
+      const groups = {};
+
+      filtered.forEach((faq) => {
+
+        if (!groups[faq.category]) {
+          groups[faq.category] = [];
+        }
+
+        groups[faq.category].push(faq);
+
+      });
+
+      faqContainer.innerHTML =
+        Object.entries(groups)
+          .map(([category, items]) => {
+
+            return `
+              <section
+                class="faq-category"
+                data-category-section="${escapeHtml(category)}"
+              >
+
+                <div class="category-heading">
+
+                  <i
+                    data-lucide="${iconForCategory(category)}"
+                  ></i>
+
+                  <span>
+                    ${escapeHtml(category)}
+                  </span>
+
+                  <span class="faq-count">
+                    ${items.length} ${
+                      items.length === 1
+                        ? "question"
+                        : "questions"
+                    }
+                  </span>
+
+                </div>
+
+                ${items
+                  .map((faq, index) =>
+                    faqItemTemplate(
+                      faq,
+                      index
+                    )
+                  )
+                  .join("")}
+
+              </section>
+            `;
+
+          })
+          .join("");
+
+      bindFaqAccordion();
+      refreshIcons();
+
+    }
+
+
+    /*
+     * ============================================================
+     * FAQ TEMPLATE
+     * ============================================================
+     */
+
+    function faqItemTemplate(faq, index) {
+
+      const id =
+        `faq-${Date.now()}-${index}`;
+
+      return `
+        <article
+          class="faq-item"
+          data-faq-item
+        >
+
+          <button
+            type="button"
+            class="faq-question"
+            aria-expanded="false"
+            aria-controls="${id}"
+          >
+
+            <span>
+              ${escapeHtml(faq.question)}
+            </span>
+
+            <i data-lucide="chevron-down"></i>
+
+          </button>
+
+          <div
+            id="${id}"
+            class="faq-answer"
+          >
+
+            <div class="faq-answer-inner">
+
+              <p>
+                ${escapeHtml(faq.answer)}
+              </p>
+
+            </div>
+
+          </div>
+
+        </article>
+      `;
+
+    }
+
+
+    /*
+     * ============================================================
+     * ACCORDION
+     * ============================================================
+     */
+
+    function bindFaqAccordion() {
+
+      document
+        .querySelectorAll(".faq-question")
+        .forEach((button) => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              const item =
+                button.closest(".faq-item");
+
+              const isOpen =
+                item.classList.contains("open");
+
+              document
+                .querySelectorAll(".faq-item.open")
+                .forEach((other) => {
+
+                  if (other !== item) {
+
+                    other.classList.remove(
+                      "open"
+                    );
+
+                    const otherButton =
+                      other.querySelector(
+                        ".faq-question"
+                      );
+
+                    if (otherButton) {
+                      otherButton.setAttribute(
+                        "aria-expanded",
+                        "false"
+                      );
+                    }
+
+                  }
+
+                });
+
+              item.classList.toggle(
+                "open",
+                !isOpen
+              );
+
+              button.setAttribute(
+                "aria-expanded",
+                String(!isOpen)
+              );
+
+            }
+          );
+
+        });
+
+    }
+
+
+    /*
+     * ============================================================
+     * SEARCH
+     * ============================================================
+     */
+
+    searchInput.addEventListener(
+      "input",
+      () => {
+
+        searchTerm =
+          searchInput.value.trim();
+
+        renderFaqs();
+
+      }
+    );
+
+
+    clearSearch.addEventListener(
+      "click",
+      () => {
+
+        searchInput.value = "";
+        searchTerm = "";
+
+        renderFaqs();
+        searchInput.focus();
+
+      }
+    );
+
+
+    /*
+     * ============================================================
+     * SECURITY ESCAPE
+     * ============================================================
+     */
+
+    function escapeHtml(value) {
+
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+    }
+
+
+    /*
+     * ============================================================
+     * LUCIDE
+     * ============================================================
+     */
+
+    function refreshIcons() {
+
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+
+    }
+
+
+    /*
+     * ============================================================
+     * INITIALIZE
+     * ============================================================
+     */
+
+    async function initFaqPage() {
+
+      await loadSupabaseFaqs();
+
+      renderCategories();
+      renderFaqs();
+
+      refreshIcons();
+
+    }
+
+    initFaqPage();
+
+  </script>
+
+  <script src="./script.js"></script>
+
+</body>
+</html>

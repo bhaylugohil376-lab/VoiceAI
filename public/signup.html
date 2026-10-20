@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <meta name="theme-color" content="#050b18">
+
+  <title>Create Account — VoiceAI</title>
+
+  <meta
+    name="description"
+    content="Create your VoiceAI account and start creating AI voices."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      color: #eaf4ff;
+      background:
+        radial-gradient(
+          circle at 15% 15%,
+          rgba(37, 99, 235, 0.18),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 85% 80%,
+          rgba(6, 182, 212, 0.12),
+          transparent 30%
+        ),
+        #050b18;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ================= HEADER ================= */
+
+    .topbar {
+      height: 72px;
+      padding: 0 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      background: rgba(5, 11, 24, 0.78);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+    }
+
+    .brand-mark svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    .top-login {
+      color: #9eb1c9;
+      font-size: 13px;
+    }
+
+    .top-login a {
+      color: #67e8f9;
+      font-weight: 700;
+      margin-left: 5px;
+    }
+
+    .top-login a:hover {
+      color: #a5f3fc;
+    }
+
+    /* ================= MAIN ================= */
+
+    .main {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 55px 20px 70px;
+    }
+
+    .signup-layout {
+      width: 100%;
+      max-width: 1050px;
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 55px;
+      align-items: center;
+    }
+
+    /* ================= LEFT ================= */
+
+    .intro {
+      padding: 20px 10px;
+    }
+
+    .eyebrow {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 11px;
+      margin-bottom: 22px;
+      border: 1px solid rgba(34, 211, 238, 0.22);
+      border-radius: 999px;
+      color: #67e8f9;
+      background: rgba(8, 47, 73, 0.35);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .eyebrow svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .intro h1 {
+      max-width: 470px;
+      font-size: clamp(34px, 4vw, 53px);
+      line-height: 1.04;
+      letter-spacing: -2.2px;
+      margin-bottom: 20px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #60a5fa, #22d3ee);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .intro-description {
+      max-width: 460px;
+      color: #8fa4bf;
+      font-size: 15px;
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+
+    .benefits {
+      display: grid;
+      gap: 14px;
+    }
+
+    .benefit {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #b9c8da;
+      font-size: 13px;
+    }
+
+    .benefit-icon {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      color: #67e8f9;
+      background: rgba(8, 47, 73, 0.42);
+      border: 1px solid rgba(34, 211, 238, 0.14);
+      flex-shrink: 0;
+    }
+
+    .benefit-icon svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    /* ================= CARD ================= */
+
+    .signup-card {
+      width: 100%;
+      max-width: 470px;
+      margin-left: auto;
+      padding: 32px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 22px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(15, 28, 51, 0.96),
+          rgba(8, 17, 34, 0.96)
+        );
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+    }
+
+    .card-header {
+      margin-bottom: 25px;
+    }
+
+    .card-header h2 {
+      font-size: 25px;
+      letter-spacing: -0.8px;
+      margin-bottom: 8px;
+    }
+
+    .card-header p {
+      color: #8297b1;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ================= FORM ================= */
+
+    .form {
+      display: grid;
+      gap: 17px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field label {
+      color: #b9c8da;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #60758e;
+      pointer-events: none;
+    }
+
+    .input-icon svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .field input {
+      width: 100%;
+      height: 48px;
+      padding: 0 44px;
+      color: #edf7ff;
+      background: rgba(4, 11, 25, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 12px;
+      outline: none;
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .field input::placeholder {
+      color: #52657c;
+    }
+
+    .field input:focus {
+      border-color: rgba(34, 211, 238, 0.55);
+      background: rgba(4, 12, 27, 0.92);
+      box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.08);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 8px;
+      color: #70859d;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .password-toggle:hover {
+      color: #a5f3fc;
+      background: rgba(148, 163, 184, 0.08);
+    }
+
+    .password-toggle svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .password-help {
+      color: #62758d;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    /* ================= TERMS ================= */
+
+    .terms {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      color: #71859d;
+      font-size: 11px;
+      line-height: 1.55;
+      margin-top: 1px;
+    }
+
+    .terms input {
+      width: 15px;
+      height: 15px;
+      margin-top: 1px;
+      accent-color: #06b6d4;
+      flex-shrink: 0;
+    }
+
+    .terms a {
+      color: #67e8f9;
+    }
+
+    /* ================= BUTTON ================= */
+
+    .submit-btn {
+      width: 100%;
+      height: 49px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin-top: 3px;
+      border: 0;
+      border-radius: 12px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #2563eb, #0891b2);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.23);
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 34px rgba(37, 99, 235, 0.31);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .submit-btn svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    /* ================= DIVIDER ================= */
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 22px 0;
+      color: #53677f;
+      font-size: 10px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(148, 163, 184, 0.12);
+    }
+
+    /* ================= LOGIN ================= */
+
+    .login-text {
+      text-align: center;
+      color: #7e92aa;
+      font-size: 12px;
+    }
+
+    .login-text a {
+      color: #67e8f9;
+      font-weight: 700;
+    }
+
+    /* ================= MESSAGE ================= */
+
+    .message {
+      display: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.error {
+      color: #fecaca;
+      background: rgba(127, 29, 29, 0.22);
+      border: 1px solid rgba(248, 113, 113, 0.22);
+    }
+
+    .message.success {
+      color: #a7f3d0;
+      background: rgba(6, 78, 59, 0.22);
+      border: 1px solid rgba(52, 211, 153, 0.22);
+    }
+
+    /* ================= FOOTER ================= */
+
+    .footer {
+      padding: 20px;
+      text-align: center;
+      color: #53677f;
+      font-size: 10px;
+      border-top: 1px solid rgba(148, 163, 184, 0.08);
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media (max-width: 850px) {
+      .signup-layout {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+      }
+
+      .intro {
+        text-align: center;
+        padding: 0;
+      }
+
+      .eyebrow {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .intro h1,
+      .intro-description {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .benefits {
+        text-align: left;
+        max-width: 360px;
+        margin: 0 auto;
+      }
+
+      .signup-card {
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .topbar {
+        height: 64px;
+        padding: 0 17px;
+      }
+
+      .brand {
+        font-size: 18px;
+      }
+
+      .brand-mark {
+        width: 31px;
+        height: 31px;
+      }
+
+      .top-login {
+        font-size: 11px;
+      }
+
+      .main {
+        padding: 35px 15px 50px;
+      }
+
+      .intro h1 {
+        font-size: 35px;
+        letter-spacing: -1.5px;
+      }
+
+      .intro-description {
+        font-size: 13px;
+      }
+
+      .signup-card {
+        padding: 24px 18px;
+        border-radius: 18px;
+      }
+
+      .card-header h2 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="topbar">
+
+    <a href="index.html" class="brand">
+      <span class="brand-mark">
+        <i data-lucide="audio-lines"></i>
+      </span>
+
+      <span>VoiceAI</span>
+    </a>
+
+    <div class="top-login">
+      Already have an account?
+      <a href="login.html">Sign in</a>
+    </div>
+
+  </header>
+
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="signup-layout">
+
+      <!-- LEFT INTRO -->
+      <section class="intro">
+
+        <div class="eyebrow">
+          <i data-lucide="sparkles"></i>
+          AI Voice Studio
+        </div>
+
+        <h1>
+          Create your
+          <span class="gradient-text">VoiceAI</span>
+          account.
+        </h1>
+
+        <p class="intro-description">
+          Build realistic AI voices, create voiceovers, generate images,
+          edit projects and explore powerful AI tools from one studio.
+        </p>
+
+        <div class="benefits">
+
+          <div class="benefit">
+            <span class="benefit-icon">
+              <i data-lucide="mic-2"></i>
+            </span>
+            <span>Professional AI voice generation</span>
+          </div>
+
+          <div class="benefit">
+            <span class="benefit-icon">
+              <i data-lucide="library"></i>
+            </span>
+            <span>Large voice library with voice previews</span>
+          </div>
+
+          <div class="benefit">
+            <span class="benefit-icon">
+              <i data-lucide="wand-sparkles"></i>
+            </span>
+            <span>AI tools for audio, video and content</span>
+          </div>
+
+          <div class="benefit">
+            <span class="benefit-icon">
+              <i data-lucide="shield-check"></i>
+            </span>
+            <span>Secure Supabase authentication</span>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- SIGNUP CARD -->
+      <section class="signup-card">
+
+        <div class="card-header">
+
+          <h2>Create account</h2>
+
+          <p>
+            Start with your free VoiceAI account. You can upgrade anytime.
+          </p>
+
+        </div>
+
+
+        <form id="signupForm" class="form">
+
+          <!-- NAME -->
+          <div class="field">
+
+            <label for="fullName">
+              Full name
+            </label>
+
+            <div class="input-wrap">
+
+              <span class="input-icon">
+                <i data-lucide="user-round"></i>
+              </span>
+
+              <input
+                id="fullName"
+                type="text"
+                placeholder="Your name"
+                autocomplete="name"
+                required
+              />
+
+            </div>
+
+          </div>
+
+
+          <!-- EMAIL -->
+          <div class="field">
+
+            <label for="email">
+              Email address
+            </label>
+
+            <div class="input-wrap">
+
+              <span class="input-icon">
+                <i data-lucide="mail"></i>
+              </span>
+
+              <input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+              />
+
+            </div>
+
+          </div>
+
+
+          <!-- PASSWORD -->
+          <div class="field">
+
+            <label for="password">
+              Password
+            </label>
+
+            <div class="input-wrap">
+
+              <span class="input-icon">
+                <i data-lucide="lock-keyhole"></i>
+              </span>
+
+              <input
+                id="password"
+                type="password"
+                placeholder="Create a password"
+                autocomplete="new-password"
+                minlength="8"
+                required
+              />
+
+              <button
+                type="button"
+                class="password-toggle"
+                id="passwordToggle"
+                aria-label="Show password"
+              >
+                <i data-lucide="eye"></i>
+              </button>
+
+            </div>
+
+            <div class="password-help">
+              Use at least 8 characters.
+            </div>
+
+          </div>
+
+
+          <!-- CONFIRM PASSWORD -->
+          <div class="field">
+
+            <label for="confirmPassword">
+              Confirm password
+            </label>
+
+            <div class="input-wrap">
+
+              <span class="input-icon">
+                <i data-lucide="shield-check"></i>
+              </span>
+
+              <input
+                id="confirmPassword"
+                type="password"
+                placeholder="Repeat your password"
+                autocomplete="new-password"
+                minlength="8"
+                required
+              />
+
+            </div>
+
+          </div>
+
+
+          <!-- TERMS -->
+          <label class="terms">
+
+            <input
+              id="terms"
+              type="checkbox"
+              required
+            />
+
+            <span>
+              I agree to the
+              <a href="about.html">VoiceAI terms</a>
+              and understand the service usage limits.
+            </span>
+
+          </label>
+
+
+          <!-- MESSAGE -->
+          <div id="message" class="message"></div>
+
+
+          <!-- SUBMIT -->
+          <button
+            id="signupBtn"
+            class="submit-btn"
+            type="submit"
+          >
+            <i data-lucide="user-plus"></i>
+            <span>Create account</span>
+          </button>
+
+        </form>
+
+
+        <div class="divider">
+          OR
+        </div>
+
+
+        <div class="login-text">
+          Already registered?
+          <a href="login.html">Sign in to VoiceAI</a>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    © 2026 VoiceAI — AI Voice Studio
+  </footer>
+
+</div>
+
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-config.js"></script>
+
+
+<script>
+  "use strict";
+
+  document.addEventListener("DOMContentLoaded", () => {
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+
+    const form = document.getElementById("signupForm");
+    const fullName = document.getElementById("fullName");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const confirmPassword =
+      document.getElementById("confirmPassword");
+
+    const terms = document.getElementById("terms");
+    const signupBtn = document.getElementById("signupBtn");
+    const message = document.getElementById("message");
+
+    const passwordToggle =
+      document.getElementById("passwordToggle");
+
+
+    function showMessage(text, type) {
+
+      message.textContent = text;
+
+      message.className = "message show " + type;
+
+    }
+
+
+    function hideMessage() {
+
+      message.textContent = "";
+
+      message.className = "message";
+
+    }
+
+
+    /* PASSWORD SHOW/HIDE */
+
+    passwordToggle.addEventListener("click", () => {
+
+      const isPassword =
+        password.type === "password";
+
+      password.type =
+        isPassword ? "text" : "password";
+
+      passwordToggle.innerHTML =
+        isPassword
+          ? '<i data-lucide="eye-off"></i>'
+          : '<i data-lucide="eye"></i>';
+
+      passwordToggle.setAttribute(
+        "aria-label",
+        isPassword
+          ? "Hide password"
+          : "Show password"
+      );
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+    });
+
+
+    /* SIGNUP */
+
+    form.addEventListener("submit", async (event) => {
+
+      event.preventDefault();
+
+      hideMessage();
+
+
+      const name = fullName.value.trim();
+      const userEmail = email.value.trim();
+      const userPassword = password.value;
+      const userConfirmPassword =
+        confirmPassword.value;
+
+
+      if (!name) {
+
+        showMessage(
+          "Please enter your full name.",
+          "error"
+        );
+
+        fullName.focus();
+
+        return;
+      }
+
+
+      if (userPassword.length < 8) {
+
+        showMessage(
+          "Password must contain at least 8 characters.",
+          "error"
+        );
+
+        password.focus();
+
+        return;
+      }
+
+
+      if (userPassword !== userConfirmPassword) {
+
+        showMessage(
+          "Passwords do not match.",
+          "error"
+        );
+
+        confirmPassword.focus();
+
+        return;
+      }
+
+
+      if (!terms.checked) {
+
+        showMessage(
+          "Please accept the terms to continue.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (!window.supabaseClient) {
+
+        showMessage(
+          "Supabase is not connected. Check supabase-config.js.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      signupBtn.disabled = true;
+
+      signupBtn.innerHTML = `
+        <i data-lucide="loader-circle"></i>
+        <span>Creating account...</span>
+      `;
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+
+      try {
+
+        const {
+          data,
+          error
+        } = await window.supabaseClient.auth.signUp({
+
+          email: userEmail,
+
+          password: userPassword,
+
+          options: {
+            data: {
+              full_name: name
+            },
+
+            emailRedirectTo:
+              `${window.location.origin}/login.html`
+          }
+
+        });
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        /*
+         * Supabase handle_new_user()
+         * trigger should create the profile row.
+         */
+
+
+        if (data?.session) {
+
+          showMessage(
+            "Account created successfully. Redirecting...",
+            "success"
+          );
+
+          setTimeout(() => {
+
+            window.location.href =
+              "index.html";
+
+          }, 1000);
+
+          return;
+
+        }
+
+
+        showMessage(
+          "Account created. Please check your email to verify your account.",
+          "success"
+        );
+
+
+        signupBtn.disabled = false;
+
+        signupBtn.innerHTML = `
+          <i data-lucide="check-circle-2"></i>
+          <span>Account created</span>
+        `;
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+
+      } catch (error) {
+
+        console.error(
+          "VoiceAI signup error:",
+          error
+        );
+
+
+        let errorMessage =
+          error?.message ||
+          "Unable to create your account.";
+
+
+        if (
+          errorMessage
+            .toLowerCase()
+            .includes("already registered")
+        ) {
+
+          errorMessage =
+            "This email is already registered. Please sign in.";
+
+        }
+
+
+        showMessage(
+          errorMessage,
+          "error"
+        );
+
+
+        signupBtn.disabled = false;
+
+        signupBtn.innerHTML = `
+          <i data-lucide="user-plus"></i>
+          <span>Create account</span>
+        `;
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+      }
+
+    });
+
+
+    /* AUTO FOCUS */
+
+    setTimeout(() => {
+
+      if (window.innerWidth > 600) {
+        fullName.focus();
+      }
+
+    }, 300);
+
+  });
+</script>
+
+</body>
+</html>

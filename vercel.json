@@ -1,10 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
+  "framework": "express",
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
-    "api/**/*.js": {
+    "server.js": {
+      "includeFiles": "handlers/**/*.js",
       "maxDuration": 60
     }
   },
@@ -26,7 +28,7 @@
         },
         {
           "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=()"
+          "value": "camera=(self), microphone=(self), geolocation=()"
         }
       ]
     }

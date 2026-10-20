@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Profile — VoiceAI</title>
+  <meta
+    name="description"
+    content="Manage your VoiceAI profile, account, subscription and usage."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Lucide -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <style>
+    /* =========================================================
+       VOICEAI PROFILE PAGE
+       ========================================================= */
+
+    .profile-page {
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at 85% 10%,
+          rgba(34, 211, 238, 0.08),
+          transparent 28%
+        ),
+        radial-gradient(
+          circle at 10% 40%,
+          rgba(59, 130, 246, 0.07),
+          transparent 30%
+        ),
+        #06101f;
+      color: #eaf4ff;
+    }
+
+    .profile-container {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 42px 0 80px;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .profile-header-copy {
+      max-width: 720px;
+    }
+
+    .profile-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #67e8f9;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .profile-header h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .profile-header p {
+      margin: 12px 0 0;
+      color: #8fa7c2;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .profile-btn {
+      min-height: 42px;
+      padding: 0 15px;
+      border-radius: 11px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(11, 23, 45, 0.75);
+      color: #dcecff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.2s ease;
+    }
+
+    .profile-btn:hover {
+      border-color: rgba(103, 232, 249, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .profile-btn.primary {
+      border-color: rgba(34, 211, 238, 0.28);
+      background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+      color: #02111f;
+    }
+
+    .profile-btn.danger {
+      border-color: rgba(248, 113, 113, 0.25);
+      color: #fca5a5;
+    }
+
+    .profile-btn.danger:hover {
+      border-color: rgba(248, 113, 113, 0.55);
+      background: rgba(127, 29, 29, 0.18);
+    }
+
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 330px minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .profile-card {
+      background:
+        linear-gradient(
+          180deg,
+          rgba(13, 29, 52, 0.94),
+          rgba(7, 18, 34, 0.94)
+        );
+      border: 1px solid rgba(148, 163, 184, 0.13);
+      border-radius: 20px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.24);
+    }
+
+    .profile-sidebar {
+      padding: 24px;
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+
+    .avatar-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .avatar {
+      width: 108px;
+      height: 108px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 3px solid rgba(34, 211, 238, 0.35);
+      background:
+        linear-gradient(
+          135deg,
+          rgba(14, 165, 233, 0.3),
+          rgba(6, 182, 212, 0.12)
+        );
+      color: #67e8f9;
+      font-size: 36px;
+      font-weight: 800;
+      box-shadow: 0 0 0 8px rgba(34, 211, 238, 0.04);
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-name {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: #f5fbff;
+    }
+
+    .profile-email {
+      text-align: center;
+      margin-top: 5px;
+      color: #8198b2;
+      font-size: 12px;
+      word-break: break-word;
+    }
+
+    .plan-pill {
+      width: fit-content;
+      margin: 14px auto 22px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: rgba(34, 211, 238, 0.08);
+      border: 1px solid rgba(34, 211, 238, 0.18);
+      color: #67e8f9;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .profile-side-nav {
+      display: grid;
+      gap: 5px;
+      border-top: 1px solid rgba(148, 163, 184, 0.1);
+      padding-top: 18px;
+    }
+
+    .side-link {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #91a8c0;
+      padding: 11px 12px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-align: left;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .side-link:hover,
+    .side-link.active {
+      background: rgba(34, 211, 238, 0.07);
+      color: #dffaff;
+    }
+
+    .profile-main {
+      min-width: 0;
+    }
+
+    .profile-section {
+      display: none;
+      padding: 25px;
+    }
+
+    .profile-section.active {
+      display: block;
+    }
+
+    .section-heading {
+      margin-bottom: 22px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 20px;
+      color: #f2f8ff;
+    }
+
+    .section-heading p {
+      margin: 7px 0 0;
+      color: #8198b2;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .form-group {
+      display: grid;
+      gap: 7px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      color: #9fb4ca;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .profile-input,
+    .profile-textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      background: rgba(3, 12, 25, 0.72);
+      color: #eaf4ff;
+      border-radius: 11px;
+      padding: 12px 13px;
+      outline: none;
+      font: inherit;
+      font-size: 13px;
+      transition: 0.2s ease;
+    }
+
+    .profile-input {
+      min-height: 44px;
+    }
+
+    .profile-textarea {
+      min-height: 105px;
+      resize: vertical;
+    }
+
+    .profile-input:focus,
+    .profile-textarea:focus {
+      border-color: rgba(34, 211, 238, 0.45);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.05);
+    }
+
+    .profile-input:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .form-footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      padding: 17px;
+      border-radius: 14px;
+      background: rgba(3, 12, 25, 0.5);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+    }
+
+    .stat-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      color: #67e8f9;
+      background: rgba(34, 211, 238, 0.07);
+      margin-bottom: 13px;
+    }
+
+    .stat-label {
+      color: #7890aa;
+      font-size: 11px;
+      font-weight: 650;
+    }
+
+    .stat-value {
+      margin-top: 4px;
+      color: #f2f8ff;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .usage-list {
+      margin-top: 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .usage-row {
+      padding: 15px;
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      background: rgba(3, 12, 25, 0.45);
+      border-radius: 13px;
+    }
+
+    .usage-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 9px;
+    }
+
+    .usage-name {
+      color: #dcecff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .usage-number {
+      color: #8fa7c2;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .usage-bar {
+      height: 6px;
+      border-radius: 99px;
+      overflow: hidden;
+      background: rgba(148, 163, 184, 0.1);
+    }
+
+    .usage-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #0ea5e9, #22d3ee);
+      transition: width 0.35s ease;
+    }
+
+    .plan-box {
+      padding: 22px;
+      border-radius: 15px;
+      border: 1px solid rgba(34, 211, 238, 0.18);
+      background:
+        radial-gradient(
+          circle at 90% 10%,
+          rgba(34, 211, 238, 0.11),
+          transparent 35%
+        ),
+        rgba(3, 12, 25, 0.55);
+    }
+
+    .plan-box-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .plan-box h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .plan-box p {
+      margin: 7px 0 0;
+      color: #8198b2;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .premium-badge {
+      padding: 6px 9px;
+      border-radius: 8px;
+      color: #cffafe;
+      background: rgba(34, 211, 238, 0.1);
+      border: 1px solid rgba(34, 211, 238, 0.2);
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .security-list {
+      display: grid;
+      gap: 11px;
+    }
+
+    .security-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 15px;
+      border-radius: 13px;
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      background: rgba(3, 12, 25, 0.45);
+    }
+
+    .security-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .security-icon {
+      width: 35px;
+      height: 35px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: rgba(34, 211, 238, 0.07);
+      color: #67e8f9;
+    }
+
+    .security-title {
+      color: #dcecff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .security-desc {
+      color: #7189a3;
+      margin-top: 3px;
+      font-size: 11px;
+    }
+
+    .security-status {
+      color: #86efac;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .loading-state {
+      color: #7f96af;
+      text-align: center;
+      padding: 35px 15px;
+      font-size: 13px;
+    }
+
+    .profile-message {
+      display: none;
+      margin-bottom: 16px;
+      padding: 11px 13px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .profile-message.success {
+      display: block;
+      color: #bbf7d0;
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.18);
+    }
+
+    .profile-message.error {
+      display: block;
+      color: #fecaca;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.18);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      .profile-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-sidebar {
+        position: static;
+      }
+
+      .profile-side-nav {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .side-link {
+        justify-content: center;
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+        padding: 10px 5px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .profile-container {
+        width: min(100% - 24px, 1180px);
+        padding-top: 25px;
+      }
+
+      .profile-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .profile-actions {
+        width: 100%;
+      }
+
+      .profile-actions .profile-btn {
+        flex: 1;
+      }
+
+      .profile-sidebar,
+      .profile-section {
+        padding: 18px;
+      }
+
+      .profile-side-nav {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .form-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full {
+        grid-column: auto;
+      }
+
+      .plan-box-header {
+        flex-direction: column;
+      }
+
+      .security-item {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .form-footer {
+        justify-content: stretch;
+      }
+
+      .form-footer .profile-btn {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="profile-page">
+
+    <!-- NAVBAR -->
+    <header class="site-header">
+      <div class="container">
+        <a href="./index.html" class="logo">
+          <span class="logo-mark">∿</span>
+          <span>VoiceAI</span>
+        </a>
+
+        <nav class="nav-links">
+          <a href="./index.html">Home</a>
+          <a href="./tools.html">AI Tools</a>
+          <a href="./voices.html">Voices</a>
+          <a href="./studio.html">Studio</a>
+          <a href="./pricing.html">Pricing</a>
+        </nav>
+
+        <div class="header-actions">
+          <a href="./profile.html" class="header-login active">
+            Profile
+          </a>
+          <a href="./tts.html" class="header-cta">
+            Create Voice
+          </a>
+        </div>
+      </div>
+    </header>
+
+
+    <main class="profile-container">
+
+      <!-- HEADER -->
+      <div class="profile-header">
+        <div class="profile-header-copy">
+          <div class="profile-eyebrow">
+            <i data-lucide="user-round"></i>
+            Account
+          </div>
+
+          <h1>Your Profile</h1>
+
+          <p>
+            Manage your personal information, VoiceAI plan, usage and account
+            security from one place.
+          </p>
+        </div>
+
+        <div class="profile-actions">
+          <a href="./pricing.html" class="profile-btn primary">
+            <i data-lucide="sparkles"></i>
+            Upgrade
+          </a>
+
+          <button id="logoutBtn" class="profile-btn danger" type="button">
+            <i data-lucide="log-out"></i>
+            Logout
+          </button>
+        </div>
+      </div>
+
+
+      <div id="profileLoading" class="profile-card loading-state">
+        Loading your account...
+      </div>
+
+
+      <div id="profileContent" class="profile-layout hidden">
+
+        <!-- SIDEBAR -->
+        <aside class="profile-card profile-sidebar">
+
+          <div class="avatar-wrap">
+            <div id="avatar" class="avatar">
+              <span id="avatarInitial">V</span>
+            </div>
+          </div>
+
+          <div id="profileNameDisplay" class="profile-name">
+            VoiceAI User
+          </div>
+
+          <div id="profileEmailDisplay" class="profile-email">
+            —
+          </div>
+
+          <div id="planPill" class="plan-pill">
+            Free Plan
+          </div>
+
+
+          <div class="profile-side-nav">
+
+            <button
+              class="side-link active"
+              data-section="accountSection"
+              type="button"
+            >
+              <i data-lucide="user-round"></i>
+              Account
+            </button>
+
+            <button
+              class="side-link"
+              data-section="usageSection"
+              type="button"
+            >
+              <i data-lucide="chart-no-axes-combined"></i>
+              Usage
+            </button>
+
+            <button
+              class="side-link"
+              data-section="planSection"
+              type="button"
+            >
+              <i data-lucide="crown"></i>
+              Plan
+            </button>
+
+            <button
+              class="side-link"
+              data-section="securitySection"
+              type="button"
+            >
+              <i data-lucide="shield-check"></i>
+              Security
+            </button>
+
+          </div>
+
+        </aside>
+
+
+        <!-- MAIN -->
+        <section class="profile-card profile-main">
+
+          <!-- ACCOUNT -->
+          <div
+            id="accountSection"
+            class="profile-section active"
+          >
+
+            <div class="section-heading">
+              <h2>Personal information</h2>
+              <p>
+                Update the information associated with your VoiceAI account.
+              </p>
+            </div>
+
+            <div
+              id="accountMessage"
+              class="profile-message"
+            ></div>
+
+            <form id="profileForm">
+
+              <div class="form-grid">
+
+                <div class="form-group">
+                  <label for="fullName">
+                    Full name
+                  </label>
+
+                  <input
+                    id="fullName"
+                    class="profile-input"
+                    type="text"
+                    maxlength="100"
+                    placeholder="Your name"
+                  />
+                </div>
+
+
+                <div class="form-group">
+                  <label for="email">
+                    Email address
+                  </label>
+
+                  <input
+                    id="email"
+                    class="profile-input"
+                    type="email"
+                    disabled
+                  />
+                </div>
+
+
+                <div class="form-group full">
+                  <label for="bio">
+                    Bio
+                  </label>
+
+                  <textarea
+                    id="bio"
+                    class="profile-textarea"
+                    maxlength="500"
+                    placeholder="Tell us a little about yourself..."
+                  ></textarea>
+                </div>
+
+              </div>
+
+
+              <div class="form-footer">
+
+                <button
+                  id="saveProfileBtn"
+                  class="profile-btn primary"
+                  type="submit"
+                >
+                  <i data-lucide="save"></i>
+                  Save changes
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+
+          <!-- USAGE -->
+          <div
+            id="usageSection"
+            class="profile-section"
+          >
+
+            <div class="section-heading">
+              <h2>Usage overview</h2>
+              <p>
+                Your AI usage is tracked independently for each tool.
+              </p>
+            </div>
+
+
+            <div class="stats-grid">
+
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i data-lucide="audio-lines"></i>
+                </div>
+
+                <div class="stat-label">
+                  Generations
+                </div>
+
+                <div id="generationCount" class="stat-value">
+                  —
+                </div>
+              </div>
+
+
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i data-lucide="folder-kanban"></i>
+                </div>
+
+                <div class="stat-label">
+                  Projects
+                </div>
+
+                <div id="projectCount" class="stat-value">
+                  —
+                </div>
+              </div>
+
+
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i data-lucide="zap"></i>
+                </div>
+
+                <div class="stat-label">
+                  Plan
+                </div>
+
+                <div id="usagePlan" class="stat-value">
+                  Free
+                </div>
+              </div>
+
+            </div>
+
+
+            <div class="usage-list">
+
+              <div class="usage-row">
+                <div class="usage-top">
+                  <span class="usage-name">
+                    Text to Speech
+                  </span>
+
+                  <span
+                    id="usageTtsText"
+                    class="usage-number"
+                  >
+                    0 / 5
+                  </span>
+                </div>
+
+                <div class="usage-bar">
+                  <div
+                    id="usageTts"
+                    class="usage-fill"
+                  ></div>
+                </div>
+              </div>
+
+
+              <div class="usage-row">
+                <div class="usage-top">
+                  <span class="usage-name">
+                    AI Assistant
+                  </span>
+
+                  <span
+                    id="usageAssistantText"
+                    class="usage-number"
+                  >
+                    0 / 5
+                  </span>
+                </div>
+
+                <div class="usage-bar">
+                  <div
+                    id="usageAssistant"
+                    class="usage-fill"
+                  ></div>
+                </div>
+              </div>
+
+
+              <div class="usage-row">
+                <div class="usage-top">
+                  <span class="usage-name">
+                    Image Generator
+                  </span>
+
+                  <span
+                    id="usageImageText"
+                    class="usage-number"
+                  >
+                    0 / 5
+                  </span>
+                </div>
+
+                <div class="usage-bar">
+                  <div
+                    id="usageImage"
+                    class="usage-fill"
+                  ></div>
+                </div>
+              </div>
+
+
+              <div class="usage-row">
+                <div class="usage-top">
+                  <span class="usage-name">
+                    Voice Cloning
+                  </span>
+
+                  <span
+                    id="usageCloneText"
+                    class="usage-number"
+                  >
+                    0 / 5
+                  </span>
+                </div>
+
+                <div class="usage-bar">
+                  <div
+                    id="usageClone"
+                    class="usage-fill"
+                  ></div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- PLAN -->
+          <div
+            id="planSection"
+            class="profile-section"
+          >
+
+            <div class="section-heading">
+              <h2>Subscription</h2>
+              <p>
+                Manage your VoiceAI plan and premium access.
+              </p>
+            </div>
+
+
+            <div class="plan-box">
+
+              <div class="plan-box-header">
+
+                <div>
+                  <h3 id="planName">
+                    Free Plan
+                  </h3>
+
+                  <p id="planDescription">
+                    5 AI uses per tool every 24 hours.
+                  </p>
+                </div>
+
+                <div
+                  id="premiumBadge"
+                  class="premium-badge"
+                >
+                  FREE
+                </div>
+
+              </div>
+
+
+              <div class="form-footer">
+
+                <a
+                  href="./pricing.html"
+                  id="planAction"
+                  class="profile-btn primary"
+                >
+                  <i data-lucide="arrow-up-right"></i>
+                  View Premium
+                </a>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- SECURITY -->
+          <div
+            id="securitySection"
+            class="profile-section"
+          >
+
+            <div class="section-heading">
+              <h2>Security</h2>
+              <p>
+                Review your authentication and account security status.
+              </p>
+            </div>
+
+
+            <div class="security-list">
+
+              <div class="security-item">
+
+                <div class="security-left">
+
+                  <div class="security-icon">
+                    <i data-lucide="mail-check"></i>
+                  </div>
+
+                  <div>
+                    <div class="security-title">
+                      Email authentication
+                    </div>
+
+                    <div class="security-desc">
+                      Your account uses Supabase authentication.
+                    </div>
+                  </div>
+
+                </div>
+
+                <span
+                  id="emailStatus"
+                  class="security-status"
+                >
+                  Active
+                </span>
+
+              </div>
+
+
+              <div class="security-item">
+
+                <div class="security-left">
+
+                  <div class="security-icon">
+                    <i data-lucide="lock-keyhole"></i>
+                  </div>
+
+                  <div>
+                    <div class="security-title">
+                      Session security
+                    </div>
+
+                    <div class="security-desc">
+                      Your authenticated session is protected by Supabase.
+                    </div>
+                  </div>
+
+                </div>
+
+                <span class="security-status">
+                  Protected
+                </span>
+
+              </div>
+
+
+              <div class="security-item">
+
+                <div class="security-left">
+
+                  <div class="security-icon">
+                    <i data-lucide="key-round"></i>
+                  </div>
+
+                  <div>
+                    <div class="security-title">
+                      Password
+                    </div>
+
+                    <div class="security-desc">
+                      Reset your password if you think your account is at risk.
+                    </div>
+                  </div>
+
+                </div>
+
+                <a
+                  href="./forgot-password.html"
+                  class="profile-btn"
+                >
+                  Reset
+                </a>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./script.js"></script>
+
+
+  <script>
+    "use strict";
+
+    let currentUser = null;
+    let currentProfile = null;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      setupSectionNavigation();
+      setupProfileForm();
+      setupLogout();
+
+      await loadProfile();
+    });
+
+
+    async function loadProfile() {
+
+      const loading = document.getElementById("profileLoading");
+      const content = document.getElementById("profileContent");
+
+      try {
+
+        if (!window.supabaseClient) {
+          throw new Error("Supabase client not initialized.");
+        }
+
+        const {
+          data: sessionData,
+          error: sessionError
+        } = await window.supabaseClient.auth.getSession();
+
+        if (sessionError) {
+          throw sessionError;
+        }
+
+        const session = sessionData.session;
+
+        if (!session || !session.user) {
+          window.location.href =
+            "./login.html?redirect=profile.html";
+          return;
+        }
+
+        currentUser = session.user;
+
+
+        const {
+          data: profile,
+          error: profileError
+        } = await window.supabaseClient
+          .from("profiles")
+          .select("*")
+          .eq("id", currentUser.id)
+          .maybeSingle();
+
+        if (profileError) {
+          throw profileError;
+        }
+
+        currentProfile = profile || {};
+
+
+        populateProfile(currentUser, currentProfile);
+
+        await loadUsage();
+
+        await loadStats();
+
+        loading.classList.add("hidden");
+        content.classList.remove("hidden");
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+      } catch (error) {
+
+        console.error("Profile load error:", error);
+
+        loading.textContent =
+          "Unable to load your profile. Please refresh and try again.";
+      }
+    }
+
+
+    function populateProfile(user, profile) {
+
+      const metadata =
+        user.user_metadata || {};
+
+      const fullName =
+        profile.full_name ||
+        metadata.full_name ||
+        metadata.name ||
+        "";
+
+      const bio =
+        profile.bio ||
+        metadata.bio ||
+        "";
+
+      const email =
+        user.email || "";
+
+      document.getElementById("fullName").value =
+        fullName;
+
+      document.getElementById("email").value =
+        email;
+
+      document.getElementById("bio").value =
+        bio;
+
+
+      document.getElementById(
+        "profileNameDisplay"
+      ).textContent =
+        fullName || "VoiceAI User";
+
+      document.getElementById(
+        "profileEmailDisplay"
+      ).textContent =
+        email || "No email";
+
+
+      const initial =
+        getInitial(
+          fullName ||
+          email ||
+          "V"
+        );
+
+      document.getElementById(
+        "avatarInitial"
+      ).textContent =
+        initial;
+
+
+      const plan =
+        normalizePlan(
+          profile.plan ||
+          profile.subscription_plan ||
+          "free"
+        );
+
+      applyPlanUI(plan);
+    }
+
+
+    function getInitial(value) {
+
+      const text =
+        String(value || "").trim();
+
+      if (!text) return "V";
+
+      return text
+        .charAt(0)
+        .toUpperCase();
+    }
+
+
+    function normalizePlan(plan) {
+
+      const value =
+        String(plan || "free")
+          .trim()
+          .toLowerCase();
+
+      if (
+        value === "premium" ||
+        value === "pro" ||
+        value === "paid"
+      ) {
+        return "premium";
+      }
+
+      return "free";
+    }
+
+
+    function applyPlanUI(plan) {
+
+      const pill =
+        document.getElementById("planPill");
+
+      const planName =
+        document.getElementById("planName");
+
+      const planDescription =
+        document.getElementById("planDescription");
+
+      const premiumBadge =
+        document.getElementById("premiumBadge");
+
+      const planAction =
+        document.getElementById("planAction");
+
+      const usagePlan =
+        document.getElementById("usagePlan");
+
+
+      if (plan === "premium") {
+
+        pill.textContent =
+          "Premium Plan";
+
+        planName.textContent =
+          "Premium Plan";
+
+        planDescription.textContent =
+          "Unlimited app-level AI usage, subject to provider/backend limits.";
+
+        premiumBadge.textContent =
+          "PREMIUM";
+
+        usagePlan.textContent =
+          "Premium";
+
+        planAction.textContent =
+          "Manage Plan";
+
+        planAction.href =
+          "./pricing.html";
+
+      } else {
+
+        pill.textContent =
+          "Free Plan";
+
+        planName.textContent =
+          "Free Plan";
+
+        planDescription.textContent =
+          "5 AI uses per tool every 24 hours.";
+
+        premiumBadge.textContent =
+          "FREE";
+
+        usagePlan.textContent =
+          "Free";
+
+        planAction.textContent =
+          "Upgrade";
+
+        planAction.href =
+          "./pricing.html";
+      }
+    }
+
+
+    async function loadUsage() {
+
+      if (!currentUser) return;
+
+      try {
+        // Always use the freshest Supabase access token; avoid a duplicate request.
+
+
+        const {
+          data
+        } =
+          await window.supabaseClient.auth.getSession();
+
+        const token =
+          data.session?.access_token;
+
+
+        if (!token) return;
+
+
+        const finalResponse =
+          await fetch(
+            "./api/usage",
+            {
+              method: "GET",
+              headers: {
+                "Authorization":
+                  `Bearer ${token}`,
+                "Content-Type":
+                  "application/json"
+              }
+            }
+          );
+
+
+        if (!finalResponse.ok) {
+          return;
+        }
+
+
+        const result =
+          await finalResponse.json();
+
+
+        if (!result) return;
+
+
+        /*
+         * Supports multiple response shapes.
+         */
+
+        const usage =
+          result.usage ||
+          result.data ||
+          result ||
+          {};
+
+
+        updateUsageItem(
+          "tts",
+          usage.tts ??
+          usage.text_to_speech ??
+          usage.textToSpeech ??
+          0
+        );
+
+
+        updateUsageItem(
+          "assistant",
+          usage.assistant ??
+          0
+        );
+
+
+        updateUsageItem(
+          "image",
+          usage.image ??
+          0
+        );
+
+
+        updateUsageItem(
+          "clone",
+          usage.clone ??
+          usage.voice_clone ??
+          usage.voiceCloning ??
+          0
+        );
+
+      } catch (error) {
+
+        console.warn(
+          "Usage loading skipped:",
+          error
+        );
+      }
+    }
+
+
+    function updateUsageItem(
+      type,
+      used
+    ) {
+
+      const numericUsed =
+        Math.max(
+          0,
+          Number(used) || 0
+        );
+
+      const plan =
+        normalizePlan(
+          currentProfile?.plan || "free"
+        );
+
+
+      const limit =
+        plan === "premium"
+          ? null
+          : 5;
+
+
+      const text =
+        document.getElementById(
+          `usage${capitalize(type)}Text`
+        );
+
+      const fill =
+        document.getElementById(
+          `usage${capitalize(type)}`
+        );
+
+
+      if (!text || !fill) return;
+
+
+      if (limit === null) {
+
+        text.textContent =
+          `${numericUsed} / Unlimited`;
+
+        fill.style.width =
+          "100%";
+
+        return;
+      }
+
+
+      text.textContent =
+        `${numericUsed} / ${limit}`;
+
+      const percent =
+        Math.min(
+          100,
+          (numericUsed / limit) * 100
+        );
+
+      fill.style.width =
+        `${percent}%`;
+    }
+
+
+    function capitalize(value) {
+
+      return String(value)
+        .charAt(0)
+        .toUpperCase() +
+        String(value)
+          .slice(1);
+    }
+
+
+    async function loadStats() {
+
+      if (!currentUser) return;
+
+      try {
+
+        const [
+          generationsResult,
+          projectsResult
+        ] =
+          await Promise.all([
+
+            window.supabaseClient
+              .from("generations")
+              .select(
+                "id",
+                {
+                  count: "exact",
+                  head: true
+                }
+              )
+              .eq(
+                "user_id",
+                currentUser.id
+              ),
+
+            window.supabaseClient
+              .from("projects")
+              .select(
+                "id",
+                {
+                  count: "exact",
+                  head: true
+                }
+              )
+              .eq(
+                "user_id",
+                currentUser.id
+              )
+          ]);
+
+
+        if (
+          !generationsResult.error
+        ) {
+
+          document.getElementById(
+            "generationCount"
+          ).textContent =
+            String(
+              generationsResult.count ?? 0
+            );
+        }
+
+
+        if (
+          !projectsResult.error
+        ) {
+
+          document.getElementById(
+            "projectCount"
+          ).textContent =
+            String(
+              projectsResult.count ?? 0
+            );
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "Stats loading skipped:",
+          error
+        );
+      }
+    }
+
+
+    function setupSectionNavigation() {
+
+      document
+        .querySelectorAll(".side-link")
+        .forEach((button) => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              const sectionId =
+                button.dataset.section;
+
+              if (!sectionId) return;
+
+
+              document
+                .querySelectorAll(
+                  ".side-link"
+                )
+                .forEach((item) => {
+                  item.classList.remove(
+                    "active"
+                  );
+                });
+
+
+              document
+                .querySelectorAll(
+                  ".profile-section"
+                )
+                .forEach((section) => {
+                  section.classList.remove(
+                    "active"
+                  );
+                });
+
+
+              button.classList.add(
+                "active"
+              );
+
+
+              const target =
+                document.getElementById(
+                  sectionId
+                );
+
+              if (target) {
+                target.classList.add(
+                  "active"
+                );
+              }
+
+              if (window.lucide) {
+                lucide.createIcons();
+              }
+            }
+          );
+
+        });
+    }
+
+
+    function setupProfileForm() {
+
+      const form =
+        document.getElementById(
+          "profileForm"
+        );
+
+      if (!form) return;
+
+
+      form.addEventListener(
+        "submit",
+        async (event) => {
+
+          event.preventDefault();
+
+          if (!currentUser) return;
+
+
+          const button =
+            document.getElementById(
+              "saveProfileBtn"
+            );
+
+          const originalHTML =
+            button.innerHTML;
+
+
+          button.disabled = true;
+
+          button.innerHTML =
+            `
+              <i data-lucide="loader-circle"></i>
+              Saving...
+            `;
+
+
+          if (window.lucide) {
+            lucide.createIcons();
+          }
+
+
+          const fullName =
+            document
+              .getElementById(
+                "fullName"
+              )
+              .value
+              .trim();
+
+
+          const bio =
+            document
+              .getElementById(
+                "bio"
+              )
+              .value
+              .trim();
+
+
+          try {
+
+            const {
+              error
+            } =
+              await window.supabaseClient
+                .from("profiles")
+                .update({
+                  full_name:
+                    fullName || null,
+                  bio:
+                    bio || null,
+                  updated_at:
+                    new Date().toISOString()
+                })
+                .eq(
+                  "id",
+                  currentUser.id
+                );
+
+
+            if (error) {
+              throw error;
+            }
+
+
+            currentProfile = {
+              ...currentProfile,
+              full_name: fullName,
+              bio: bio
+            };
+
+
+            document.getElementById(
+              "profileNameDisplay"
+            ).textContent =
+              fullName ||
+              "VoiceAI User";
+
+
+            document.getElementById(
+              "avatarInitial"
+            ).textContent =
+              getInitial(
+                fullName ||
+                currentUser.email ||
+                "V"
+              );
+
+
+            showAccountMessage(
+              "Profile updated successfully.",
+              "success"
+            );
+
+          } catch (error) {
+
+            console.error(
+              "Profile update error:",
+              error
+            );
+
+            showAccountMessage(
+              error.message ||
+              "Unable to update profile.",
+              "error"
+            );
+
+          } finally {
+
+            button.disabled = false;
+
+            button.innerHTML =
+              originalHTML;
+
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+          }
+
+        }
+      );
+    }
+
+
+    function showAccountMessage(
+      message,
+      type
+    ) {
+
+      const element =
+        document.getElementById(
+          "accountMessage"
+        );
+
+      if (!element) return;
+
+
+      element.className =
+        `profile-message ${type}`;
+
+      element.textContent =
+        message;
+
+
+      setTimeout(() => {
+
+        element.className =
+          "profile-message";
+
+        element.textContent =
+          "";
+
+      }, 3500);
+    }
+
+
+    function setupLogout() {
+
+      const button =
+        document.getElementById(
+          "logoutBtn"
+        );
+
+      if (!button) return;
+
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          const confirmed =
+            window.confirm(
+              "Are you sure you want to logout?"
+            );
+
+          if (!confirmed) return;
+
+
+          button.disabled = true;
+
+
+          try {
+
+            const {
+              error
+            } =
+              await window.supabaseClient
+                .auth
+                .signOut();
+
+
+            if (error) {
+              throw error;
+            }
+
+
+            window.location.href =
+              "./login.html";
+
+          } catch (error) {
+
+            console.error(
+              "Logout error:",
+              error
+            );
+
+            button.disabled = false;
+
+            if (
+              window.VoiceAI &&
+              window.VoiceAI.toast
+            ) {
+
+              window.VoiceAI.toast(
+                "Logout failed. Please try again."
+              );
+
+            } else {
+
+              alert(
+                "Logout failed. Please try again."
+              );
+            }
+          }
+        }
+      );
+    }
+  </script>
+
+</body>
+</html>

@@ -14,12 +14,13 @@ app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader("X-Frame-Options", "SAMEORIGIN");
-  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  res.setHeader("Permissions-Policy", "camera=(self), microphone=(self), geolocation=()");
   next();
 });
 const port = process.env.PORT || 3000;
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-const API_DIR = path.join(ROOT, "api");
+const HANDLERS_DIR = path.join(ROOT, "handlers");
+const PUBLIC_DIR = path.join(ROOT, "public");
 
 // Stripe requires the untouched request body for signature verification.
 // This route must be registered before JSON parsing.
@@ -28,7 +29,7 @@ app.post(
   express.raw({ type: "application/json", limit: "2mb" }),
   async (req, res) => {
     try {
-      const { default: handler } = await import("./api/stripe-webhook.js");
+      const { default: handler } = await import("./handlers/stripe-webhook.js");
       return await handler(req, res);
     } catch (error) {
       console.error("Stripe webhook error:", error);
@@ -46,8 +47,8 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // API files are ESM handlers (export default), not Express routers.
-// Dispatch /api/foo/bar to api/foo/bar.js so local development uses the
-// same handler contract as serverless deployments.
+// Dispatch /api/foo/bar to handlers/foo/bar.js so local development and the
+// single-function Vercel deployment use the same handler contract.
 app.all("/api/*", async (req, res, next) => {
   const requestedPath = (req.path || "").replace(/^\/api\/?/, "");
   const segments = requestedPath.split("/").filter(Boolean);
@@ -59,8 +60,8 @@ app.all("/api/*", async (req, res, next) => {
     return res.status(404).json({ success: false, error: "API route not found." });
   }
 
-  const handlerPath = path.resolve(API_DIR, ...segments) + ".js";
-  if (!handlerPath.startsWith(API_DIR + path.sep)) {
+  const handlerPath = path.resolve(HANDLERS_DIR, ...segments) + ".js";
+  if (!handlerPath.startsWith(HANDLERS_DIR + path.sep)) {
     return res.status(404).json({ success: false, error: "API route not found." });
   }
 
@@ -88,11 +89,17 @@ app.all("/api/*", async (req, res, next) => {
   }
 });
 
-// Static frontend
-app.use(express.static(ROOT, { extensions: ["html"] }));
+// Vercel serves files in /public through its CDN; Express static middleware
+// is for local development only. Never expose the repository root, which may
+// contain server code, configuration, or other non-public files.
+if (!process.env.VERCEL) {
+  app.use(express.static(PUBLIC_DIR, { extensions: ["html"] }));
+}
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(ROOT, "index.html"));
+  res.sendFile(path.join(PUBLIC_DIR, "index.html"), (error) => {
+    if (error && !res.headersSent) res.status(404).send("Page not found.");
+  });
 });
 
 app.listen(port, () => {

@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Favorite Voices — VoiceAI</title>
+  <meta
+    name="description"
+    content="Manage your favorite VoiceAI voices."
+  >
+
+  <link rel="stylesheet" href="./style.css">
+
+  <style>
+    .favorites-page {
+      min-height: 100vh;
+      padding: 110px 24px 60px;
+    }
+
+    .favorites-shell {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .favorites-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .favorites-header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(30px, 5vw, 46px);
+    }
+
+    .favorites-header p {
+      margin: 0;
+      color: #8ea4c1;
+      line-height: 1.6;
+    }
+
+    .favorites-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .favorite-btn {
+      min-height: 44px;
+      padding: 0 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(96,165,250,.22);
+      background: #0c1d35;
+      color: #eaf4ff;
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .favorite-btn.primary {
+      background: linear-gradient(135deg,#087eff,#18c8ff);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .favorites-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+      padding: 14px;
+      border-radius: 16px;
+      background: #091a31;
+      border: 1px solid rgba(96,165,250,.14);
+    }
+
+    .favorite-search {
+      flex: 1;
+      min-width: 180px;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 11px;
+      border: 1px solid rgba(96,165,250,.2);
+      background: #07162b;
+      color: #fff;
+      outline: none;
+    }
+
+    .favorite-search:focus {
+      border-color: #18bfff;
+    }
+
+    .favorite-filter {
+      height: 44px;
+      border-radius: 11px;
+      border: 1px solid rgba(96,165,250,.2);
+      background: #07162b;
+      color: #dceaff;
+      padding: 0 12px;
+      outline: none;
+    }
+
+    .favorites-count {
+      color: #7690ae;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .voices-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 17px;
+    }
+
+    .voice-card {
+      padding: 19px;
+      border-radius: 18px;
+      background: #091a31;
+      border: 1px solid rgba(96,165,250,.15);
+      transition: .2s ease;
+    }
+
+    .voice-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(24,200,255,.35);
+    }
+
+    .voice-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .voice-identity {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .voice-avatar {
+      width: 52px;
+      height: 52px;
+      flex: 0 0 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background:
+        radial-gradient(
+          circle at 30% 25%,
+          rgba(24,200,255,.28),
+          transparent 45%
+        ),
+        #10294a;
+      color: #62ddff;
+    }
+
+    .voice-name {
+      margin: 0 0 4px;
+      color: #f2f7ff;
+      font-size: 16px;
+    }
+
+    .voice-meta {
+      margin: 0;
+      color: #718aa7;
+      font-size: 11px;
+    }
+
+    .favorite-icon-btn {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      border: 1px solid rgba(96,165,250,.18);
+      background: #0d213c;
+      color: #ff5f7a;
+      cursor: pointer;
+    }
+
+    .voice-description {
+      margin: 17px 0;
+      color: #8298b3;
+      font-size: 12px;
+      line-height: 1.6;
+      min-height: 39px;
+    }
+
+    .voice-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 17px;
+    }
+
+    .voice-tag {
+      padding: 5px 8px;
+      border-radius: 7px;
+      background: rgba(96,165,250,.08);
+      border: 1px solid rgba(96,165,250,.12);
+      color: #89a3c0;
+      font-size: 10px;
+    }
+
+    .voice-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .voice-actions a,
+    .voice-actions button {
+      height: 39px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border-radius: 9px;
+      border: 1px solid rgba(96,165,250,.18);
+      background: #0d213c;
+      color: #dceaff;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .voice-actions a.primary {
+      background: linear-gradient(135deg,#087eff,#18c8ff);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .favorites-empty {
+      display: none;
+      text-align: center;
+      padding: 75px 20px;
+      border-radius: 18px;
+      border: 1px dashed rgba(96,165,250,.22);
+      color: #7890ae;
+    }
+
+    .favorites-empty h3 {
+      color: #eaf4ff;
+      margin: 16px 0 7px;
+    }
+
+    .favorites-empty p {
+      margin: 0 auto 20px;
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .favorites-loading {
+      padding: 55px;
+      text-align: center;
+      color: #8299b5;
+    }
+
+    @media (max-width: 950px) {
+      .voices-grid {
+        grid-template-columns: repeat(2,1fr);
+      }
+    }
+
+    @media (max-width: 650px) {
+      .favorites-page {
+        padding: 90px 14px 45px;
+      }
+
+      .favorites-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .favorites-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .favorites-count {
+        text-align: center;
+      }
+
+      .voices-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="site-header">
+    <div class="container nav-container">
+
+      <a href="./index.html" class="logo">
+        <span class="logo-mark">∿</span>
+        <span>VoiceAI</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="./index.html">Home</a>
+        <a href="./tools.html">AI Tools</a>
+        <a href="./voices.html">Voices</a>
+        <a href="./studio.html">Studio</a>
+        <a href="./pricing.html">Pricing</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="./login.html" class="nav-login">Login</a>
+        <a href="./pricing.html" class="nav-cta">Get Started</a>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="favorites-page">
+
+    <div class="favorites-shell">
+
+      <!-- HEADER -->
+      <section class="favorites-header">
+
+        <div>
+          <h1>Favorite Voices</h1>
+
+          <p>
+            Keep your most useful voices ready for your next
+            VoiceAI project.
+          </p>
+        </div>
+
+        <div class="favorites-actions">
+
+          <a
+            href="./voices.html"
+            class="favorite-btn"
+          >
+            <i data-lucide="mic"></i>
+            Voice Library
+          </a>
+
+          <a
+            href="./tts.html"
+            class="favorite-btn primary"
+          >
+            <i data-lucide="audio-lines"></i>
+            Create Audio
+          </a>
+
+        </div>
+
+      </section>
+
+      <!-- TOOLBAR -->
+      <section class="favorites-toolbar">
+
+        <input
+          id="favoriteSearch"
+          class="favorite-search"
+          type="search"
+          placeholder="Search favorite voices..."
+        >
+
+        <select
+          id="favoriteFilter"
+          class="favorite-filter"
+        >
+          <option value="all">All Voices</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="neutral">Neutral</option>
+        </select>
+
+        <span
+          id="favoritesCount"
+          class="favorites-count"
+        >
+          0 voices
+        </span>
+
+      </section>
+
+      <div
+        id="favoritesLoading"
+        class="favorites-loading"
+      >
+        Loading your favorite voices...
+      </div>
+
+      <section
+        id="voicesGrid"
+        class="voices-grid"
+      ></section>
+
+      <!-- EMPTY -->
+      <section
+        id="favoritesEmpty"
+        class="favorites-empty"
+      >
+
+        <i
+          data-lucide="heart"
+          width="48"
+          height="48"
+        ></i>
+
+        <h3>No favorite voices yet</h3>
+
+        <p>
+          Browse the Voice Library and save voices you want
+          to use again.
+        </p>
+
+        <a
+          href="./voices.html"
+          class="favorite-btn primary"
+        >
+          <i data-lucide="mic"></i>
+          Browse Voices
+        </a>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./script.js"></script>
+
+  <script>
+    "use strict";
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      async () => {
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+        const grid =
+          document.getElementById(
+            "voicesGrid"
+          );
+
+        const loading =
+          document.getElementById(
+            "favoritesLoading"
+          );
+
+        const empty =
+          document.getElementById(
+            "favoritesEmpty"
+          );
+
+        const search =
+          document.getElementById(
+            "favoriteSearch"
+          );
+
+        const filter =
+          document.getElementById(
+            "favoriteFilter"
+          );
+
+        const count =
+          document.getElementById(
+            "favoritesCount"
+          );
+
+        let favorites = [];
+
+        async function loadFavorites() {
+
+          if (!window.supabaseClient) {
+
+            loading.textContent =
+              "Supabase is not configured.";
+
+            return;
+          }
+
+          try {
+
+            const {
+              data: {
+                user
+              },
+              error: authError
+            } =
+              await window.supabaseClient
+                .auth
+                .getUser();
+
+            if (authError || !user) {
+
+              loading.innerHTML = `
+                <p>Please login to view favorite voices.</p>
+                <br>
+
+                <a
+                  href="./login.html"
+                  class="favorite-btn primary"
+                >
+                  Login
+                </a>
+              `;
+
+              return;
+            }
+
+            /*
+             * Expected table:
+             *
+             * favorite_voices
+             *
+             * id
+             * user_id
+             * voice_id
+             * created_at
+             */
+
+            const {
+              data,
+              error
+            } =
+              await window.supabaseClient
+                .from("favorite_voices")
+                .select(`
+                  id,
+                  voice_id,
+                  created_at,
+                  voices (
+                    id,
+                    name,
+                    gender,
+                    description,
+                    language,
+                    category
+                  )
+                `)
+                .eq(
+                  "user_id",
+                  user.id
+                )
+                .order(
+                  "created_at",
+                  {
+                    ascending: false
+                  }
+                );
+
+            if (error) {
+
+              console.error(error);
+
+              /*
+               * If the table/relationship is not
+               * configured yet, show an empty state
+               * instead of breaking the page.
+               */
+
+              favorites = [];
+
+              renderFavorites();
+
+              if (window.VoiceAI) {
+                VoiceAI.toast(
+                  "Favorite voices are not configured yet."
+                );
+              }
+
+              return;
+            }
+
+            favorites =
+              (data || [])
+                .filter(item => item.voices)
+                .map(item => ({
+                  favorite_id:
+                    item.id,
+                  ...item.voices
+                }));
+
+            renderFavorites();
+
+          } catch (error) {
+
+            console.error(error);
+
+            favorites = [];
+
+            renderFavorites();
+
+          }
+
+        }
+
+        function renderFavorites() {
+
+          const query =
+            search.value
+              .trim()
+              .toLowerCase();
+
+          const selectedGender =
+            filter.value;
+
+          const filtered =
+            favorites.filter(
+              voice => {
+
+                const name =
+                  String(
+                    voice.name || ""
+                  ).toLowerCase();
+
+                const description =
+                  String(
+                    voice.description || ""
+                  ).toLowerCase();
+
+                const gender =
+                  String(
+                    voice.gender || ""
+                  ).toLowerCase();
+
+                const matchesSearch =
+                  !query ||
+                  name.includes(query) ||
+                  description.includes(query);
+
+                const matchesGender =
+                  selectedGender === "all" ||
+                  gender === selectedGender;
+
+                return (
+                  matchesSearch &&
+                  matchesGender
+                );
+              }
+            );
+
+          loading.style.display =
+            "none";
+
+          grid.innerHTML = "";
+
+          count.textContent =
+            `${filtered.length} ${
+              filtered.length === 1
+                ? "voice"
+                : "voices"
+            }`;
+
+          if (!filtered.length) {
+
+            empty.style.display =
+              "block";
+
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+
+            return;
+          }
+
+          empty.style.display =
+            "none";
+
+          filtered.forEach(
+            voice => {
+
+              const card =
+                document.createElement(
+                  "article"
+                );
+
+              card.className =
+                "voice-card";
+
+              const gender =
+                voice.gender ||
+                "Neutral";
+
+              const language =
+                voice.language ||
+                "English";
+
+              const category =
+                voice.category ||
+                "General";
+
+              card.innerHTML = `
+                <div class="voice-top">
+
+                  <div class="voice-identity">
+
+                    <div class="voice-avatar">
+                      <i
+                        data-lucide="mic"
+                        width="24"
+                        height="24">
+                      </i>
+                    </div>
+
+                    <div>
+
+                      <h3 class="voice-name">
+                        ${escapeHTML(
+                          voice.name ||
+                          "Untitled Voice"
+                        )}
+                      </h3>
+
+                      <p class="voice-meta">
+                        ${escapeHTML(
+                          gender
+                        )}
+                        ·
+                        ${escapeHTML(
+                          language
+                        )}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                  <button
+                    class="favorite-icon-btn"
+                    type="button"
+                    data-remove="${
+                      voice.favorite_id || ""
+                    }"
+                    title="Remove favorite">
+
+                    <i
+                      data-lucide="heart"
+                      fill="currentColor">
+                    </i>
+
+                  </button>
+
+                </div>
+
+                <p class="voice-description">
+                  ${escapeHTML(
+                    voice.description ||
+                    "Professional AI voice for VoiceAI projects."
+                  )}
+                </p>
+
+                <div class="voice-tags">
+
+                  <span class="voice-tag">
+                    ${escapeHTML(
+                      language
+                    )}
+                  </span>
+
+                  <span class="voice-tag">
+                    ${escapeHTML(
+                      category
+                    )}
+                  </span>
+
+                </div>
+
+                <div class="voice-actions">
+
+                  <a
+                    href="./tts.html"
+                    class="primary"
+                    data-use-voice="${
+                      voice.id || ""
+                    }">
+
+                    <i
+                      data-lucide="play">
+                    </i>
+
+                    Use Voice
+
+                  </a>
+
+                  <button
+                    type="button"
+                    data-preview="${
+                      voice.id || ""
+                    }">
+
+                    <i
+                      data-lucide="headphones">
+                    </i>
+
+                    Preview
+
+                  </button>
+
+                </div>
+              `;
+
+              grid.appendChild(card);
+
+            }
+          );
+
+          if (window.lucide) {
+            lucide.createIcons();
+          }
+
+          bindActions();
+
+        }
+
+        function bindActions() {
+
+          grid
+            .querySelectorAll(
+              "[data-remove]"
+            )
+            .forEach(button => {
+
+              button.addEventListener(
+                "click",
+                async () => {
+
+                  const id =
+                    button.getAttribute(
+                      "data-remove"
+                    );
+
+                  await removeFavorite(id);
+
+                }
+              );
+
+            });
+
+          grid
+            .querySelectorAll(
+              "[data-use-voice]"
+            )
+            .forEach(link => {
+
+              link.addEventListener(
+                "click",
+                () => {
+
+                  const voiceId =
+                    link.getAttribute(
+                      "data-use-voice"
+                    );
+
+                  if (voiceId) {
+
+                    sessionStorage.setItem(
+                      "voiceai_tts_voice",
+                      voiceId
+                    );
+
+                  }
+
+                }
+              );
+
+            });
+
+          grid
+            .querySelectorAll(
+              "[data-preview]"
+            )
+            .forEach(button => {
+
+              button.addEventListener(
+                "click",
+                () => {
+
+                  const voiceId =
+                    button.getAttribute(
+                      "data-preview"
+                    );
+
+                  previewVoice(
+                    voiceId
+                  );
+
+                }
+              );
+
+            });
+
+        }
+
+        async function removeFavorite(
+          favoriteId
+        ) {
+
+          if (!favoriteId) {
+            return;
+          }
+
+          const confirmed =
+            window.confirm(
+              "Remove this voice from favorites?"
+            );
+
+          if (!confirmed) {
+            return;
+          }
+
+          const {
+            error
+          } =
+            await window.supabaseClient
+              .from("favorite_voices")
+              .delete()
+              .eq(
+                "id",
+                favoriteId
+              );
+
+          if (error) {
+
+            console.error(error);
+
+            if (window.VoiceAI) {
+              VoiceAI.toast(
+                "Unable to remove favorite."
+              );
+            }
+
+            return;
+          }
+
+          favorites =
+            favorites.filter(
+              voice =>
+                String(
+                  voice.favorite_id
+                ) !==
+                String(
+                  favoriteId
+                )
+            );
+
+          renderFavorites();
+
+          if (window.VoiceAI) {
+            VoiceAI.toast(
+              "Removed from favorites."
+            );
+          }
+
+        }
+
+        function previewVoice(
+          voiceId
+        ) {
+
+          /*
+           * Actual audio preview can be connected
+           * to the voice provider from voices.html.
+           *
+           * We do not create fake audio here.
+           */
+
+          if (window.VoiceAI) {
+
+            VoiceAI.toast(
+              "Voice preview will use the provider audio."
+            );
+
+          }
+
+          console.log(
+            "Preview voice:",
+            voiceId
+          );
+
+        }
+
+        function escapeHTML(
+          value
+        ) {
+
+          return String(value)
+            .replaceAll(
+              "&",
+              "&amp;"
+            )
+            .replaceAll(
+              "<",
+              "&lt;"
+            )
+            .replaceAll(
+              ">",
+              "&gt;"
+            )
+            .replaceAll(
+              '"',
+              "&quot;"
+            )
+            .replaceAll(
+              "'",
+              "&#039;"
+            );
+
+        }
+
+        search.addEventListener(
+          "input",
+          renderFavorites
+        );
+
+        filter.addEventListener(
+          "change",
+          renderFavorites
+        );
+
+        await loadFavorites();
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>

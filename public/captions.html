@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>AI Captions — VoiceAI</title>
+
+  <meta
+    name="description"
+    content="Generate accurate AI captions and subtitles with VoiceAI."
+  />
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+  <header class="site-header">
+
+    <div class="container nav-container">
+
+      <a href="index.html" class="brand">
+
+        <span class="brand-mark">
+          <i data-lucide="audio-waveform"></i>
+        </span>
+
+        <span>VoiceAI</span>
+
+      </a>
+
+
+      <nav class="nav-links">
+
+        <a href="index.html">
+          Home
+        </a>
+
+        <a href="tools.html">
+          AI Tools
+        </a>
+
+        <a href="voices.html">
+          Voices
+        </a>
+
+        <a href="studio.html">
+          Studio
+        </a>
+
+        <a href="pricing.html">
+          Pricing
+        </a>
+
+      </nav>
+
+
+      <div class="nav-actions">
+
+        <a
+          href="login.html"
+          class="btn btn-secondary"
+        >
+          Login
+        </a>
+
+        <a
+          href="pricing.html"
+          class="btn btn-primary"
+        >
+          Get Started
+        </a>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+  <main>
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+    <section class="page-hero">
+
+      <div class="container">
+
+        <div class="page-hero-icon">
+
+          <i data-lucide="subtitles"></i>
+
+        </div>
+
+
+        <div class="eyebrow">
+          AI CAPTIONS
+        </div>
+
+
+        <h1>
+          Turn Speech Into
+          <span>Accurate Captions</span>
+        </h1>
+
+
+        <p>
+          Upload your media and automatically generate
+          accurate subtitles with timestamps and multiple
+          export formats.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         WORKSPACE
+    ========================== -->
+    <section class="tool-workspace-section">
+
+      <div class="container">
+
+        <div class="tool-workspace">
+
+
+          <!-- =====================
+               LEFT PANEL
+          ====================== -->
+          <div class="tool-panel">
+
+            <div class="panel-header">
+
+              <div>
+
+                <h2>
+                  Caption Generator
+                </h2>
+
+                <p>
+                  Configure your subtitle project.
+                </p>
+
+              </div>
+
+
+              <div
+                id="usageBadge"
+                class="usage-badge"
+              >
+                Checking usage...
+              </div>
+
+            </div>
+
+
+            <!-- =====================
+                 FILE UPLOAD
+            ====================== -->
+            <div class="form-group">
+
+              <label>
+                Media file
+              </label>
+
+
+              <div
+                id="uploadBox"
+                class="upload-box"
+              >
+
+                <input
+                  id="mediaFile"
+                  type="file"
+                  accept="video/*,audio/*"
+                  hidden
+                />
+
+
+                <div class="upload-icon">
+
+                  <i data-lucide="upload-cloud"></i>
+
+                </div>
+
+
+                <h3>
+                  Upload video or audio
+                </h3>
+
+
+                <p>
+                  MP4, MOV, WEBM, MP3, WAV and more
+                </p>
+
+
+                <span class="upload-limit">
+                  Maximum 100 MB
+                </span>
+
+
+                <button
+                  type="button"
+                  id="browseBtn"
+                  class="btn btn-secondary"
+                >
+
+                  <i data-lucide="folder-open"></i>
+
+                  Choose File
+
+                </button>
+
+              </div>
+
+
+              <div
+                id="selectedFile"
+                class="selected-file"
+                style="display:none;"
+              >
+
+                <div class="selected-file-icon">
+
+                  <i data-lucide="file-video"></i>
+
+                </div>
+
+
+                <div class="selected-file-info">
+
+                  <strong id="fileName">
+                    file.mp4
+                  </strong>
+
+                  <span id="fileSize">
+                    0 MB
+                  </span>
+
+                </div>
+
+
+                <button
+                  type="button"
+                  id="removeFileBtn"
+                  class="icon-btn"
+                  title="Remove file"
+                >
+
+                  <i data-lucide="x"></i>
+
+                </button>
+
+              </div>
+
+            </div>
+
+
+            <!-- =====================
+                 LANGUAGE
+            ====================== -->
+            <div class="form-grid">
+
+
+              <div class="form-group">
+
+                <label for="language">
+                  Caption language
+                </label>
+
+
+                <select id="language">
+
+                  <option value="auto">
+                    Auto Detect
+                  </option>
+
+                  <option value="en" selected>
+                    English
+                  </option>
+
+                  <option value="hi">
+                    Hindi
+                  </option>
+
+                  <option value="gu">
+                    Gujarati
+                  </option>
+
+                  <option value="es">
+                    Spanish
+                  </option>
+
+                  <option value="fr">
+                    French
+                  </option>
+
+                  <option value="de">
+                    German
+                  </option>
+
+                  <option value="it">
+                    Italian
+                  </option>
+
+                  <option value="pt">
+                    Portuguese
+                  </option>
+
+                  <option value="ja">
+                    Japanese
+                  </option>
+
+                  <option value="ko">
+                    Korean
+                  </option>
+
+                  <option value="zh">
+                    Chinese
+                  </option>
+
+                  <option value="ar">
+                    Arabic
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="model">
+                  AI model
+                </label>
+
+
+                <select id="model">
+
+                  <option value="fast">
+                    Fast
+                  </option>
+
+                  <option
+                    value="accurate"
+                    selected
+                  >
+                    Accurate
+                  </option>
+
+                  <option value="premium">
+                    Premium Accuracy
+                  </option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+
+            <!-- =====================
+                 CAPTION STYLE
+            ====================== -->
+            <div class="form-group">
+
+              <label>
+                Caption style
+              </label>
+
+
+              <div class="style-grid">
+
+
+                <button
+                  type="button"
+                  class="caption-style active"
+                  data-style="clean"
+                >
+
+                  <span class="caption-demo clean-demo">
+                    Hello world
+                  </span>
+
+                  <small>
+                    Clean
+                  </small>
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="caption-style"
+                  data-style="bold"
+                >
+
+                  <span class="caption-demo bold-demo">
+                    HELLO WORLD
+                  </span>
+
+                  <small>
+                    Bold
+                  </small>
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="caption-style"
+                  data-style="minimal"
+                >
+
+                  <span class="caption-demo minimal-demo">
+                    hello world
+                  </span>
+
+                  <small>
+                    Minimal
+                  </small>
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="caption-style"
+                  data-style="creator"
+                >
+
+                  <span class="caption-demo creator-demo">
+                    HELLO
+                  </span>
+
+                  <small>
+                    Creator
+                  </small>
+
+                </button>
+
+              </div>
+
+            </div>
+
+
+            <!-- =====================
+                 OPTIONS
+            ====================== -->
+            <div class="form-group">
+
+              <label>
+                Caption options
+              </label>
+
+
+              <div class="option-list">
+
+
+                <label class="check-option">
+
+                  <input
+                    id="timestamps"
+                    type="checkbox"
+                    checked
+                  />
+
+                  <span class="custom-check"></span>
+
+                  <span>
+
+                    <strong>
+                      Include timestamps
+                    </strong>
+
+                    <small>
+                      Keep exact timing information.
+                    </small>
+
+                  </span>
+
+                </label>
+
+
+                <label class="check-option">
+
+                  <input
+                    id="speakerLabels"
+                    type="checkbox"
+                    checked
+                  />
+
+                  <span class="custom-check"></span>
+
+                  <span>
+
+                    <strong>
+                      Speaker labels
+                    </strong>
+
+                    <small>
+                      Detect different speakers.
+                    </small>
+
+                  </span>
+
+                </label>
+
+
+                <label class="check-option">
+
+                  <input
+                    id="autoPunctuation"
+                    type="checkbox"
+                    checked
+                  />
+
+                  <span class="custom-check"></span>
+
+                  <span>
+
+                    <strong>
+                      Auto punctuation
+                    </strong>
+
+                    <small>
+                      Add punctuation automatically.
+                    </small>
+
+                  </span>
+
+                </label>
+
+              </div>
+
+            </div>
+
+
+            <!-- =====================
+                 EXPORT FORMAT
+            ====================== -->
+            <div class="form-grid">
+
+
+              <div class="form-group">
+
+                <label for="format">
+                  Export format
+                </label>
+
+
+                <select id="format">
+
+                  <option value="srt" selected>
+                    SRT
+                  </option>
+
+                  <option value="vtt">
+                    WebVTT
+                  </option>
+
+                  <option value="txt">
+                    Text
+                  </option>
+
+                  <option value="json">
+                    JSON
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="maxChars">
+                  Characters / line
+                </label>
+
+
+                <select id="maxChars">
+
+                  <option value="32">
+                    32
+                  </option>
+
+                  <option value="42" selected>
+                    42
+                  </option>
+
+                  <option value="50">
+                    50
+                  </option>
+
+                  <option value="60">
+                    60
+                  </option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+
+            <!-- =====================
+                 GENERATE
+            ====================== -->
+            <div class="generator-actions">
+
+              <button
+                type="button"
+                id="generateBtn"
+                class="btn btn-primary btn-large"
+              >
+
+                <i data-lucide="subtitles"></i>
+
+                Generate Captions
+
+              </button>
+
+
+              <span class="generation-note">
+                AI processing may take a few moments.
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- =====================
+               RIGHT PANEL
+          ====================== -->
+          <aside class="tool-preview-panel">
+
+
+            <div class="preview-header">
+
+              <div>
+
+                <span class="preview-label">
+                  CAPTION RESULT
+                </span>
+
+                <h3>
+                  Generated subtitles
+                </h3>
+
+              </div>
+
+              <i data-lucide="captions"></i>
+
+            </div>
+
+
+            <!-- EMPTY -->
+            <div
+              id="emptyResult"
+              class="empty-result"
+            >
+
+              <div class="empty-icon">
+
+                <i data-lucide="subtitles"></i>
+
+              </div>
+
+
+              <h3>
+                No captions yet
+              </h3>
+
+
+              <p>
+                Upload your media and generate
+                subtitles to see the transcript here.
+              </p>
+
+            </div>
+
+
+            <!-- LOADING -->
+            <div
+              id="loadingResult"
+              class="empty-result"
+              style="display:none;"
+            >
+
+              <div class="loading-spinner"></div>
+
+
+              <h3>
+                Generating captions...
+              </h3>
+
+
+              <p>
+                VoiceAI is transcribing your media.
+              </p>
+
+
+              <div
+                class="progress-bar"
+                style="
+                  width:100%;
+                  margin-top:20px;
+                "
+              >
+
+                <span
+                  id="progressBar"
+                  style="width:15%;"
+                ></span>
+
+              </div>
+
+
+              <small
+                id="progressPercent"
+                style="margin-top:10px;"
+              >
+                15%
+              </small>
+
+            </div>
+
+
+            <!-- RESULT -->
+            <div
+              id="captionResult"
+              class="caption-result"
+              style="display:none;"
+            >
+
+
+              <div class="result-info">
+
+                <span class="preview-label">
+                  AI TRANSCRIPT
+                </span>
+
+
+                <h3 id="resultTitle">
+                  Generated Captions
+                </h3>
+
+
+                <p id="resultMeta">
+                  English · SRT
+                </p>
+
+              </div>
+
+
+              <!-- Transcript -->
+              <div
+                id="transcriptBox"
+                class="transcript-box"
+              >
+              </div>
+
+
+              <!-- Actions -->
+              <div class="result-actions">
+
+                <button
+                  type="button"
+                  id="copyBtn"
+                  class="btn btn-secondary"
+                >
+
+                  <i data-lucide="copy"></i>
+
+                  Copy
+
+                </button>
+
+
+                <a
+                  id="downloadBtn"
+                  class="btn btn-primary"
+                  download="voiceai-captions.srt"
+                >
+
+                  <i data-lucide="download"></i>
+
+                  Download
+
+                </a>
+
+
+                <button
+                  type="button"
+                  id="newCaptionBtn"
+                  class="btn btn-secondary"
+                >
+
+                  <i data-lucide="plus"></i>
+
+                  New
+
+                </button>
+
+              </div>
+
+            </div>
+
+          </aside>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         FEATURES
+    ========================== -->
+    <section class="feature-strip">
+
+      <div class="container">
+
+        <div class="feature-strip-grid">
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i data-lucide="scan-text"></i>
+            </div>
+
+            <div>
+
+              <h3>
+                Accurate Transcription
+              </h3>
+
+              <p>
+                Convert spoken audio into text.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i data-lucide="clock-3"></i>
+            </div>
+
+            <div>
+
+              <h3>
+                Precise Timing
+              </h3>
+
+              <p>
+                Generate synchronized timestamps.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i data-lucide="users"></i>
+            </div>
+
+            <div>
+
+              <h3>
+                Speaker Detection
+              </h3>
+
+              <p>
+                Separate different speakers.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i data-lucide="download"></i>
+            </div>
+
+            <div>
+
+              <h3>
+                Multiple Formats
+              </h3>
+
+              <p>
+                Export SRT, VTT, TXT or JSON.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+  <footer class="site-footer">
+
+    <div class="container footer-container">
+
+
+      <div class="footer-brand">
+
+        <a
+          href="index.html"
+          class="brand"
+        >
+
+          <span class="brand-mark">
+            <i data-lucide="audio-waveform"></i>
+          </span>
+
+          <span>
+            VoiceAI
+          </span>
+
+        </a>
+
+
+        <p>
+          AI-powered voice and audio studio
+          for creators and businesses.
+        </p>
+
+      </div>
+
+
+      <div class="footer-links">
+
+        <a href="about.html">
+          About
+        </a>
+
+        <a href="faq.html">
+          FAQ
+        </a>
+
+        <a href="contact.html">
+          Contact
+        </a>
+
+        <a href="pricing.html">
+          Pricing
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="container footer-bottom">
+
+      © 2026 VoiceAI. All rights reserved.
+
+    </div>
+
+  </footer>
+
+
+  <!-- =========================
+       SUPABASE
+  ========================== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="./supabase-config.js"></script>
+
+  <script src="./script.js"></script>
+
+
+  <!-- =========================
+       PAGE SCRIPT
+  ========================== -->
+  <script>
+
+    "use strict";
+
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+
+        const mediaFile =
+          document.getElementById(
+            "mediaFile"
+          );
+
+
+        const uploadBox =
+          document.getElementById(
+            "uploadBox"
+          );
+
+
+        const browseBtn =
+          document.getElementById(
+            "browseBtn"
+          );
+
+
+        const selectedFile =
+          document.getElementById(
+            "selectedFile"
+          );
+
+
+        const fileName =
+          document.getElementById(
+            "fileName"
+          );
+
+
+        const fileSize =
+          document.getElementById(
+            "fileSize"
+          );
+
+
+        const removeFileBtn =
+          document.getElementById(
+            "removeFileBtn"
+          );
+
+
+        const generateBtn =
+          document.getElementById(
+            "generateBtn"
+          );
+
+
+        const usageBadge =
+          document.getElementById(
+            "usageBadge"
+          );
+
+
+        const emptyResult =
+          document.getElementById(
+            "emptyResult"
+          );
+
+
+        const loadingResult =
+          document.getElementById(
+            "loadingResult"
+          );
+
+
+        const captionResult =
+          document.getElementById(
+            "captionResult"
+          );
+
+
+        const transcriptBox =
+          document.getElementById(
+            "transcriptBox"
+          );
+
+
+        const downloadBtn =
+          document.getElementById(
+            "downloadBtn"
+          );
+
+
+        const copyBtn =
+          document.getElementById(
+            "copyBtn"
+          );
+
+
+        const newCaptionBtn =
+          document.getElementById(
+            "newCaptionBtn"
+          );
+
+
+        let selectedMedia = null;
+
+        let selectedStyle = "clean";
+
+
+        /* =========================
+           FILE SIZE
+        ========================== */
+
+        function formatFileSize(bytes) {
+
+          if (!bytes) {
+            return "0 MB";
+          }
+
+
+          return (
+            bytes /
+            (1024 * 1024)
+          ).toFixed(2) +
+            " MB";
+
+        }
+
+
+        /* =========================
+           FILE PICKER
+        ========================== */
+
+        browseBtn.addEventListener(
+          "click",
+          () => {
+            mediaFile.click();
+          }
+        );
+
+
+        uploadBox.addEventListener(
+          "click",
+          (event) => {
+
+            if (
+              event.target.closest(
+                "button"
+              )
+            ) {
+              return;
+            }
+
+            mediaFile.click();
+
+          }
+        );
+
+
+        mediaFile.addEventListener(
+          "change",
+          () => {
+
+            const file =
+              mediaFile.files?.[0];
+
+            if (!file) {
+              return;
+            }
+
+
+            handleFile(file);
+
+          }
+        );
+
+
+        function handleFile(file) {
+
+          const maxSize =
+            100 *
+            1024 *
+            1024;
+
+
+          if (file.size > maxSize) {
+
+            if (window.VoiceAI) {
+
+              VoiceAI.toast(
+                "Maximum file size is 100 MB."
+              );
+
+            }
+
+
+            mediaFile.value = "";
+
+            return;
+
+          }
+
+
+          selectedMedia = file;
+
+
+          fileName.textContent =
+            file.name;
+
+
+          fileSize.textContent =
+            formatFileSize(
+              file.size
+            );
+
+
+          uploadBox.style.display =
+            "none";
+
+
+          selectedFile.style.display =
+            "flex";
+
+
+          if (window.lucide) {
+            lucide.createIcons();
+          }
+
+        }
+
+
+        /* =========================
+           REMOVE FILE
+        ========================== */
+
+        removeFileBtn.addEventListener(
+          "click",
+          () => {
+
+            selectedMedia = null;
+
+            mediaFile.value = "";
+
+            selectedFile.style.display =
+              "none";
+
+            uploadBox.style.display =
+              "flex";
+
+          }
+        );
+
+
+        /* =========================
+           DRAG & DROP
+        ========================== */
+
+        [
+          "dragenter",
+          "dragover"
+        ].forEach(
+          (eventName) => {
+
+            uploadBox.addEventListener(
+              eventName,
+              (event) => {
+
+                event.preventDefault();
+
+                uploadBox.classList.add(
+                  "drag-active"
+                );
+
+              }
+            );
+
+          }
+        );
+
+
+        [
+          "dragleave",
+          "drop"
+        ].forEach(
+          (eventName) => {
+
+            uploadBox.addEventListener(
+              eventName,
+              (event) => {
+
+                event.preventDefault();
+
+                uploadBox.classList.remove(
+                  "drag-active"
+                );
+
+              }
+            );
+
+          }
+        );
+
+
+        uploadBox.addEventListener(
+          "drop",
+          (event) => {
+
+            const file =
+              event.dataTransfer.files?.[0];
+
+            if (!file) {
+              return;
+            }
+
+
+            handleFile(file);
+
+          }
+        );
+
+
+        /* =========================
+           CAPTION STYLE
+        ========================== */
+
+        document
+          .querySelectorAll(
+            ".caption-style"
+          )
+          .forEach(
+            (button) => {
+
+              button.addEventListener(
+                "click",
+                () => {
+
+                  document
+                    .querySelectorAll(
+                      ".caption-style"
+                    )
+                    .forEach(
+                      (item) => {
+                        item.classList.remove(
+                          "active"
+                        );
+                      }
+                    );
+
+
+                  button.classList.add(
+                    "active"
+                  );
+
+
+                  selectedStyle =
+                    button.dataset.style ||
+                    "clean";
+
+                }
+              );
+
+            }
+          );
+
+
+        /* =========================
+           SUPABASE SESSION
+        ========================== */
+
+        async function getSession() {
+
+          if (!window.supabaseClient) {
+
+            throw new Error(
+              "Supabase is not configured."
+            );
+
+          }
+
+
+          const {
+            data,
+            error
+          } =
+            await window.supabaseClient.auth
+              .getSession();
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          return data.session;
+
+        }
+
+
+        /* =========================
+           USAGE
+        ========================== */
+
+        async function loadUsage() {
+
+          try {
+
+            const session =
+              await getSession();
+
+
+            if (!session) {
+
+              usageBadge.textContent =
+                "Login required";
+
+              return;
+
+            }
+
+
+            const response =
+              await fetch(
+                "/api/usage?action=captions",
+                {
+                  headers: {
+                    Authorization:
+                      `Bearer ${session.access_token}`
+                  }
+                }
+              );
+
+
+            if (!response.ok) {
+
+              usageBadge.textContent =
+                "Usage unavailable";
+
+              return;
+
+            }
+
+
+            const data =
+              await response.json();
+
+
+            if (
+              data.unlimited ||
+              data.plan === "premium" ||
+              data.plan === "admin"
+            ) {
+
+              usageBadge.textContent =
+                "Premium · Unlimited";
+
+
+              usageBadge.classList.add(
+                "usage-unlimited"
+              );
+
+
+              return;
+
+            }
+
+
+            const used =
+              Number(
+                data.used || 0
+              );
+
+
+            const limit =
+              Number(
+                data.limit || 5
+              );
+
+
+            usageBadge.textContent =
+              `${Math.max(
+                0,
+                limit - used
+              )} free uses left`;
+
+          } catch (error) {
+
+            console.error(
+              "Usage error:",
+              error
+            );
+
+
+            usageBadge.textContent =
+              "Free plan · 5 uses";
+
+          }
+
+        }
+
+
+        loadUsage();
+
+
+        /* =========================
+           GENERATE
+        ========================== */
+
+        generateBtn.addEventListener(
+          "click",
+          async () => {
+
+
+            if (!selectedMedia) {
+
+              if (window.VoiceAI) {
+
+                VoiceAI.toast(
+                  "Please upload a video or audio file."
+                );
+
+              }
+
+              return;
+
+            }
+
+
+            let session;
+
+
+            try {
+
+              session =
+                await getSession();
+
+            } catch (error) {
+
+              console.error(error);
+
+
+              if (window.VoiceAI) {
+
+                VoiceAI.toast(
+                  "Unable to connect to Supabase."
+                );
+
+              }
+
+              return;
+
+            }
+
+
+            if (!session) {
+
+              sessionStorage.setItem(
+                "voiceai_return_url",
+                "captions.html"
+              );
+
+
+              if (window.VoiceAI) {
+
+                VoiceAI.toast(
+                  "Please login before generating captions."
+                );
+
+              }
+
+
+              setTimeout(
+                () => {
+                  window.location.href =
+                    "login.html";
+                },
+                700
+              );
+
+
+              return;
+
+            }
+
+
+            /* =====================
+               LOADING UI
+            ====================== */
+
+            generateBtn.disabled =
+              true;
+
+
+            generateBtn.innerHTML = `
+              <span class="loading-spinner-small"></span>
+              Processing...
+            `;
+
+
+            emptyResult.style.display =
+              "none";
+
+
+            captionResult.style.display =
+              "none";
+
+
+            loadingResult.style.display =
+              "flex";
+
+
+            const progressBar =
+              document.getElementById(
+                "progressBar"
+              );
+
+
+            const progressPercent =
+              document.getElementById(
+                "progressPercent"
+              );
+
+
+            let progress = 15;
+
+
+            const progressTimer =
+              setInterval(
+                () => {
+
+                  if (progress < 90) {
+
+                    progress +=
+                      Math.floor(
+                        Math.random() * 8
+                      );
+
+
+                    progress =
+                      Math.min(
+                        progress,
+                        90
+                      );
+
+
+                    progressBar.style.width =
+                      `${progress}%`;
+
+
+                    progressPercent.textContent =
+                      `${progress}%`;
+
+                  }
+
+                },
+                900
+              );
+
+
+            try {
+
+              const formData =
+                new FormData();
+
+
+              formData.append(
+                "file",
+                selectedMedia
+              );
+
+
+              formData.append(
+                "language",
+                document.getElementById(
+                  "language"
+                ).value
+              );
+
+
+              formData.append(
+                "model",
+                document.getElementById(
+                  "model"
+                ).value
+              );
+
+
+              formData.append(
+                "style",
+                selectedStyle
+              );
+
+
+              formData.append(
+                "timestamps",
+                document.getElementById(
+                  "timestamps"
+                ).checked
+              );
+
+
+              formData.append(
+                "speakerLabels",
+                document.getElementById(
+                  "speakerLabels"
+                ).checked
+              );
+
+
+              formData.append(
+                "autoPunctuation",
+                document.getElementById(
+                  "autoPunctuation"
+                ).checked
+              );
+
+
+              formData.append(
+                "format",
+                document.getElementById(
+                  "format"
+                ).value
+              );
+
+
+              formData.append(
+                "maxChars",
+                document.getElementById(
+                  "maxChars"
+                ).value
+              );
+
+
+              const response =
+                await fetch(
+                  "/api/captions",
+                  {
+                    method: "POST",
+
+                    headers: {
+                      Authorization:
+                        `Bearer ${session.access_token}`
+                    },
+
+                    body: formData
+
+                  }
+                );
+
+
+              const data =
+                await response.json();
+
+
+              if (!response.ok) {
+
+                if (
+                  response.status === 429
+                ) {
+
+                  throw new Error(
+                    data.message ||
+                    "Daily limit reached. Please try again after 24 hours."
+                  );
+
+                }
+
+
+                throw new Error(
+                  data.message ||
+                  data.error ||
+                  "Caption generation failed."
+                );
+
+              }
+
+
+              const transcript =
+                data.content ||
+                data.transcript ||
+                data.text ||
+                data.captions;
+
+
+              if (!transcript) {
+
+                throw new Error(
+                  "The server did not return captions."
+                );
+
+              }
+
+
+              transcriptBox.textContent =
+                transcript;
+
+
+              document.getElementById(
+                "resultTitle"
+              ).textContent =
+                data.title ||
+                "Generated Captions";
+
+
+              const format =
+                document.getElementById(
+                  "format"
+                ).value;
+
+
+              document.getElementById(
+                "resultMeta"
+              ).textContent =
+                `${
+                  document.getElementById(
+                    "language"
+                  ).selectedOptions[0].text
+                } · ${format.toUpperCase()}`;
+
+
+              /* =====================
+                 DOWNLOAD
+              ====================== */
+
+              let blob;
+
+
+              if (
+                data.downloadUrl ||
+                data.url
+              ) {
+
+                downloadBtn.href =
+                  data.downloadUrl ||
+                  data.url;
+
+              } else {
+
+                const mimeMap = {
+
+                  srt:
+                    "application/x-subrip",
+
+                  vtt:
+                    "text/vtt",
+
+                  txt:
+                    "text/plain",
+
+                  json:
+                    "application/json"
+
+                };
+
+
+                let downloadContent =
+                  transcript;
+
+
+                if (
+                  format === "json" &&
+                  typeof transcript ===
+                    "string"
+                ) {
+
+                  downloadContent =
+                    JSON.stringify(
+                      {
+                        captions:
+                          transcript
+                      },
+                      null,
+                      2
+                    );
+
+                }
+
+
+                blob =
+                  new Blob(
+                    [downloadContent],
+                    {
+                      type:
+                        mimeMap[format] ||
+                        "text/plain"
+                    }
+                  );
+
+
+                const blobUrl =
+                  URL.createObjectURL(
+                    blob
+                  );
+
+
+                downloadBtn.href =
+                  blobUrl;
+
+              }
+
+
+              downloadBtn.download =
+                `voiceai-captions.${format}`;
+
+
+              clearInterval(
+                progressTimer
+              );
+
+
+              progressBar.style.width =
+                "100%";
+
+
+              progressPercent.textContent =
+                "100%";
+
+
+              setTimeout(
+                () => {
+
+                  loadingResult.style.display =
+                    "none";
+
+                  captionResult.style.display =
+                    "block";
+
+                },
+                350
+              );
+
+
+              await loadUsage();
+
+
+              if (window.VoiceAI) {
+
+                VoiceAI.toast(
+                  "Captions generated successfully."
+                );
+
+              }
+
+
+              if (window.lucide) {
+                lucide.createIcons();
+              }
+
+
+            } catch (error) {
+
+              clearInterval(
+                progressTimer
+              );
+
+
+              console.error(
+                "Caption generation error:",
+                error
+              );
+
+
+              loadingResult.style.display =
+                "none";
+
+
+              emptyResult.style.display =
+                "flex";
+
+
+              if (window.VoiceAI) {
+
+                VoiceAI.toast(
+                  error.message ||
+                  "Unable to generate captions."
+                );
+
+              }
+
+            } finally {
+
+              generateBtn.disabled =
+                false;
+
+
+              generateBtn.innerHTML = `
+                <i data-lucide="subtitles"></i>
+                Generate Captions
+              `;
+
+
+              if (window.lucide) {
+                lucide.createIcons();
+              }
+
+            }
+
+          }
+        );
+
+
+        /* =========================
+           COPY
+        ========================== */
+
+        copyBtn.addEventListener(
+          "click",
+          async () => {
+
+            const text =
+              transcriptBox.textContent
+                .trim();
+
+
+            if (!text) {
+              return;
+            }
+
+
+            try {
+
+              await navigator.clipboard.writeText(
+                text
+              );
+
+
+              if (window.VoiceAI) {
+
+                VoiceAI.toast(
+                  "Captions copied."
+                );
+
+              }
+
+            } catch (error) {
+
+              console.error(
+                error
+              );
+
+
+              if (window.VoiceAI) {
+
+                VoiceAI.toast(
+                  "Unable to copy captions."
+                );
+
+              }
+
+            }
+
+          }
+        );
+
+
+        /* =========================
+           NEW PROJECT
+        ========================== */
+
+        newCaptionBtn.addEventListener(
+          "click",
+          () => {
+
+            captionResult.style.display =
+              "none";
+
+
+            emptyResult.style.display =
+              "flex";
+
+
+            transcriptBox.textContent =
+              "";
+
+
+            selectedMedia = null;
+
+
+            mediaFile.value = "";
+
+
+            selectedFile.style.display =
+              "none";
+
+
+            uploadBox.style.display =
+              "flex";
+
+
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+
+          }
+        );
+
+
+      }
+
+    );
+
+  </script>
+
+</body>
+</html>

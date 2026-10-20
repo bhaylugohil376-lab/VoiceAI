@@ -1,0 +1,421 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Music — VoiceAI</title>
+  <meta name="description" content="Generate original AI music tracks with VoiceAI.">
+
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./script.js"></script>
+
+  <style>
+    .music-page{width:min(1180px,calc(100% - 28px));margin:auto;padding:55px 0 80px}
+    .music-hero{text-align:center;max-width:760px;margin:0 auto 40px}
+    .music-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border:1px solid rgba(34,211,238,.22);border-radius:999px;background:rgba(34,211,238,.06);color:#67e8f9;font-size:11px;font-weight:800}
+    .music-hero h1{margin:19px 0 13px;font-size:clamp(38px,6vw,64px);line-height:1.02;letter-spacing:-2px}
+    .music-hero h1 span{background:linear-gradient(90deg,#60a5fa,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .music-hero p{max-width:650px;margin:auto;color:#8298b1;line-height:1.7;font-size:14px}
+    .music-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:20px;align-items:start}
+    .music-card{overflow:hidden;border:1px solid rgba(96,165,250,.14);border-radius:20px;background:rgba(8,22,43,.88);box-shadow:0 25px 70px rgba(0,0,0,.25)}
+    .card-head{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:19px 21px;border-bottom:1px solid rgba(148,163,184,.09)}
+    .head-title{display:flex;align-items:center;gap:11px}
+    .head-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:rgba(34,211,238,.08);color:#67e8f9}
+    .head-title h2{margin:0;font-size:14px}.head-title p{margin:4px 0 0;color:#607894;font-size:10px}
+    .usage{padding:7px 10px;border:1px solid rgba(96,165,250,.14);border-radius:999px;color:#91a8c2;font-size:10px;white-space:nowrap}
+    .card-body,.side-section{padding:23px}.field{margin-bottom:18px}
+    .field label{display:block;margin-bottom:8px;color:#a7bad0;font-size:11px;font-weight:700}
+    .music-textarea,.music-select,.music-input{width:100%;box-sizing:border-box;border:1px solid rgba(96,165,250,.14);border-radius:11px;outline:none;background:#06162c;color:#dcecff;font:inherit;font-size:12px}
+    .music-textarea{min-height:145px;resize:vertical;padding:13px;line-height:1.6}
+    .music-select,.music-input{min-height:42px;padding:0 12px}
+    .music-textarea:focus,.music-select:focus,.music-input:focus{border-color:rgba(34,211,238,.42)}
+    .field-hint{margin-top:6px;color:#7890aa;font-size:10px}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    .style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .style-option{padding:11px 7px;border:1px solid rgba(96,165,250,.12);border-radius:10px;background:#07172d;color:#7890aa;cursor:pointer;text-align:center;font-size:10px}
+    .style-option:hover,.style-option.selected{border-color:rgba(34,211,238,.4);background:rgba(34,211,238,.07);color:#c9f8ff}
+    .style-option i{display:block;margin:0 auto 6px}
+    .advanced-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 0;border:0;border-top:1px solid rgba(148,163,184,.08);border-bottom:1px solid rgba(148,163,184,.08);background:transparent;color:#9eb2c9;cursor:pointer;font-size:11px;font-weight:700}
+    .advanced-content{display:none;padding-top:18px}.advanced-content.show{display:block}
+    .range-row{display:grid;grid-template-columns:1fr 42px;gap:10px;align-items:center}.range-row input{width:100%;accent-color:#22d3ee}
+    .range-value{color:#7890aa;font-size:10px;text-align:right}
+    .generate{width:100%;min-height:46px;display:flex;align-items:center;justify-content:center;gap:9px;margin-top:21px;border:0;border-radius:12px;background:linear-gradient(90deg,#2563eb,#0891b2);color:white;cursor:pointer;font-size:12px;font-weight:800}
+    .generate:disabled{opacity:.55;cursor:not-allowed}
+    .status{display:none;margin-top:14px;padding:11px 13px;border-radius:10px;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+    .status.show{display:block}.status.loading{color:#bae6fd;background:rgba(8,47,73,.3);border:1px solid rgba(34,211,238,.14)}
+    .status.error{color:#fecaca;background:rgba(127,29,29,.22);border:1px solid rgba(248,113,113,.16)}
+    .status.success{color:#bbf7d0;background:rgba(20,83,45,.2);border:1px solid rgba(74,222,128,.14)}
+    .result{display:none;margin-top:20px;border:1px solid rgba(96,165,250,.12);border-radius:14px;overflow:hidden;background:#06152b}
+    .result.show{display:block}.result-top{padding:14px;border-bottom:1px solid rgba(148,163,184,.08)}
+    .result-top strong{font-size:11px}.result-top span{display:block;margin-top:4px;color:#7890aa;font-size:10px}
+    .result-body{padding:16px}.audio-player{width:100%}
+    .result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+    .result-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 13px;border:1px solid rgba(96,165,250,.14);border-radius:9px;background:#0d213d;color:#cfe0f5;text-decoration:none;font-size:10px;font-weight:700;cursor:pointer}
+    .side-section h3{margin:0 0 17px;font-size:14px}.genre-list{display:grid;gap:8px}
+    .genre{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid rgba(96,165,250,.08);border-radius:10px;background:rgba(5,15,30,.45);color:#8298b1;font-size:10px;cursor:pointer;text-align:left}
+    .genre:hover{border-color:rgba(34,211,238,.24);color:#d8faff}.genre i{color:#60a5fa}
+    .tips{margin-top:20px;padding:13px;border-radius:11px;border:1px solid rgba(96,165,250,.09);background:rgba(59,130,246,.04);color:#7890aa;font-size:10px;line-height:1.6}
+    .tips strong{color:#c0d8ef}
+    @media(max-width:850px){.music-grid{grid-template-columns:1fr}}
+    @media(max-width:600px){.music-page{width:calc(100% - 18px);padding-top:35px}.two-col{grid-template-columns:1fr}.style-grid{grid-template-columns:repeat(2,1fr)}.card-body,.side-section{padding:17px}.card-head{padding:16px}}
+  </style>
+</head>
+
+<body>
+<header class="navbar">
+  <div class="nav-inner">
+    <a href="./index.html" class="logo"><span class="logo-mark"><i data-lucide="audio-lines"></i></span><span>VoiceAI</span></a>
+    <nav class="nav-links">
+      <a href="./index.html">Home</a><a href="./tools.html">AI Tools</a><a href="./voices.html">Voices</a><a href="./studio.html">Studio</a><a href="./pricing.html">Pricing</a>
+    </nav>
+    <div class="nav-actions"><a href="./login.html" class="secondary-btn">Login</a><a href="./signup.html" class="primary-btn">Get Started</a></div>
+  </div>
+</header>
+
+<main class="music-page">
+  <section class="music-hero">
+    <div class="music-badge"><i data-lucide="music" size="14"></i> AI MUSIC STUDIO</div>
+    <h1>Create <span>Original Music</span></h1>
+    <p>Describe the sound you want and create music for videos, ads, podcasts, reels and creative projects.</p>
+  </section>
+
+  <section class="music-grid">
+    <div class="music-card">
+      <div class="card-head">
+        <div class="head-title"><div class="head-icon"><i data-lucide="music-2"></i></div><div><h2>Music Generator</h2><p>Describe your track</p></div></div>
+        <div class="usage" id="usageBadge">Checking usage...</div>
+      </div>
+
+      <div class="card-body">
+        <div class="field">
+          <label for="musicPrompt">Music Description</label>
+          <textarea id="musicPrompt" class="music-textarea" maxlength="2000" placeholder="Example: cinematic motivational music with piano, warm strings and a powerful modern ending..."></textarea>
+          <div class="field-hint">Mention mood, instruments, tempo and intended use.</div>
+        </div>
+
+        <div class="field">
+          <label>Music Style</label>
+          <div class="style-grid">
+            <button type="button" class="style-option selected" data-style="cinematic"><i data-lucide="clapperboard" size="17"></i>Cinematic</button>
+            <button type="button" class="style-option" data-style="electronic"><i data-lucide="radio" size="17"></i>Electronic</button>
+            <button type="button" class="style-option" data-style="ambient"><i data-lucide="cloud" size="17"></i>Ambient</button>
+            <button type="button" class="style-option" data-style="lofi"><i data-lucide="coffee" size="17"></i>Lo-Fi</button>
+            <button type="button" class="style-option" data-style="pop"><i data-lucide="disc-3" size="17"></i>Pop</button>
+            <button type="button" class="style-option" data-style="orchestral"><i data-lucide="music-3" size="17"></i>Orchestral</button>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="field"><label for="duration">Duration</label><select id="duration" class="music-select"><option value="15">15 seconds</option><option value="30" selected>30 seconds</option><option value="60">60 seconds</option><option value="120">2 minutes</option></select></div>
+          <div class="field"><label for="quality">Quality</label><select id="quality" class="music-select"><option value="standard">Standard</option><option value="high" selected>High</option><option value="studio">Studio</option></select></div>
+        </div>
+
+        <button type="button" class="advanced-toggle" id="advancedToggle"><span>Advanced Controls</span><i data-lucide="chevron-down" size="15"></i></button>
+        <div class="advanced-content" id="advancedContent">
+          <div class="field"><label for="tempo">Tempo</label><div class="range-row"><input type="range" id="tempo" min="50" max="180" value="110"><span class="range-value" id="tempoValue">110</span></div></div>
+          <div class="field"><label for="energy">Energy</label><div class="range-row"><input type="range" id="energy" min="0" max="100" value="70"><span class="range-value" id="energyValue">70%</span></div></div>
+          <div class="field"><label for="instrument">Main Instrument</label><select id="instrument" class="music-select"><option value="piano">Piano</option><option value="guitar">Guitar</option><option value="synth">Synth</option><option value="strings">Strings</option><option value="drums">Drums</option><option value="mixed">Mixed</option></select></div>
+        </div>
+
+        <button type="button" class="generate" id="generateBtn"><i data-lucide="sparkles" size="16"></i>Generate Music</button>
+        <div class="status" id="statusBox" role="status" aria-live="polite"></div>
+
+        <div class="result" id="resultBox">
+          <div class="result-top"><strong>Your AI Music</strong><span id="resultDescription">Generated track</span></div>
+          <div class="result-body">
+            <audio id="resultAudio" class="audio-player" controls preload="metadata"></audio>
+            <div class="result-actions">
+              <a href="#" id="downloadBtn" class="result-btn" download="voiceai-music.mp3"><i data-lucide="download" size="14"></i>Download</a>
+              <button type="button" id="saveBtn" class="result-btn"><i data-lucide="heart" size="14"></i>Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="music-card">
+      <div class="side-section">
+        <h3>Popular Directions</h3>
+        <div class="genre-list">
+          <button class="genre" data-prompt="Cinematic inspirational background music with piano, strings and a powerful emotional build."><i data-lucide="film" size="15"></i>Cinematic</button>
+          <button class="genre" data-prompt="Modern energetic electronic music for a technology advertisement with punchy drums and synths."><i data-lucide="cpu" size="15"></i>Technology</button>
+          <button class="genre" data-prompt="Warm relaxing ambient music with soft pads, gentle piano and peaceful atmosphere."><i data-lucide="sunset" size="15"></i>Relaxing</button>
+          <button class="genre" data-prompt="Energetic upbeat commercial music for a social media advertisement with catchy rhythm."><i data-lucide="megaphone" size="15"></i>Advertisement</button>
+          <button class="genre" data-prompt="Minimal lo-fi beat with warm vinyl texture, soft drums and mellow keys."><i data-lucide="headphones" size="15"></i>Lo-Fi</button>
+        </div>
+        <div class="tips"><strong>Prompt tip:</strong><br>Mention mood + instruments + tempo + purpose. Example: “uplifting corporate music with piano, modern synths and a confident ending.”</div>
+      </div>
+      <div class="side-section">
+        <h3>Workflow</h3>
+        <div class="genre-list">
+          <div class="genre"><i data-lucide="file-text" size="15"></i>Describe your music</div>
+          <div class="genre"><i data-lucide="wand-sparkles" size="15"></i>Generate track</div>
+          <div class="genre"><i data-lucide="audio-waveform" size="15"></i>Preview result</div>
+          <div class="genre"><i data-lucide="download" size="15"></i>Download or save</div>
+        </div>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<footer class="footer"><div class="footer-inner"><div><strong>VoiceAI</strong><span>AI Voice Studio</span></div><div>© 2026 VoiceAI. All rights reserved.</div></div></footer>
+
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", async () => {
+  if (window.lucide) lucide.createIcons();
+
+  const $ = (id) => document.getElementById(id);
+  const promptInput = $("musicPrompt");
+  const generateBtn = $("generateBtn");
+  const statusBox = $("statusBox");
+  const usageBadge = $("usageBadge");
+  const resultBox = $("resultBox");
+  const resultAudio = $("resultAudio");
+  const downloadBtn = $("downloadBtn");
+  const saveBtn = $("saveBtn");
+  const resultDescription = $("resultDescription");
+  const duration = $("duration");
+  const quality = $("quality");
+  const tempo = $("tempo");
+  const tempoValue = $("tempoValue");
+  const energy = $("energy");
+  const energyValue = $("energyValue");
+  const instrument = $("instrument");
+  const advancedToggle = $("advancedToggle");
+  const advancedContent = $("advancedContent");
+
+  let selectedStyle = "cinematic";
+  let currentAudioUrl = "";
+  let currentAudioObjectUrl = "";
+  let saved = false;
+
+  function setStatus(message, type = "loading") {
+    statusBox.textContent = message;
+    statusBox.className = `status show ${type}`;
+  }
+
+  function clearStatus() {
+    statusBox.textContent = "";
+    statusBox.className = "status";
+  }
+
+  async function getSession() {
+    if (!window.supabaseClient) {
+      throw new Error("Supabase is not configured. Check supabase-config.js.");
+    }
+    const { data, error } = await window.supabaseClient.auth.getSession();
+    if (error) throw error;
+    return data.session;
+  }
+
+  async function apiJson(url, options = {}) {
+    const response = await fetch(url, options);
+    const data = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      window.location.href = "./login.html?redirect=music.html";
+      throw new Error("Please sign in again.");
+    }
+    if (!response.ok) {
+      throw new Error(data.error || data.message || `Request failed (${response.status}).`);
+    }
+    return data;
+  }
+
+  async function loadUsage() {
+    try {
+      const session = await getSession();
+      if (!session) {
+        usageBadge.textContent = "Login required";
+        return;
+      }
+
+      const data = await apiJson("/api/usage?action=music", {
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      });
+
+      if (data.unlimited || data.plan === "premium") {
+        usageBadge.textContent = "Premium • Unlimited";
+      } else {
+        const used = Number(data.used || 0);
+        const limit = Number(data.limit || 5);
+        usageBadge.textContent = `${Math.max(0, limit - used)} / ${limit} uses left`;
+      }
+    } catch (error) {
+      usageBadge.textContent = "Usage unavailable";
+      console.warn("Usage lookup:", error.message);
+    }
+  }
+
+  document.querySelectorAll(".style-option").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".style-option").forEach((item) => item.classList.remove("selected"));
+      button.classList.add("selected");
+      selectedStyle = button.dataset.style || "cinematic";
+    });
+  });
+
+  document.querySelectorAll(".genre[data-prompt]").forEach((button) => {
+    button.addEventListener("click", () => {
+      promptInput.value = button.dataset.prompt || "";
+      promptInput.focus();
+    });
+  });
+
+  advancedToggle.addEventListener("click", () => {
+    const open = advancedContent.classList.toggle("show");
+    advancedToggle.setAttribute("aria-expanded", String(open));
+  });
+
+  tempo.addEventListener("input", () => { tempoValue.textContent = tempo.value; });
+  energy.addEventListener("input", () => { energyValue.textContent = `${energy.value}%`; });
+
+  async function fetchAudioResult(data) {
+    if (typeof data.audio_url === "string" && data.audio_url.trim()) {
+      return { url: data.audio_url, objectUrl: "" };
+    }
+
+    if (typeof data.audio_base64 === "string" && data.audio_base64.trim()) {
+      const raw = data.audio_base64.replace(/^data:audio\/[^;]+;base64,/i, "");
+      const binary = atob(raw);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      const blob = new Blob([bytes], { type: data.content_type || "audio/mpeg" });
+      const objectUrl = URL.createObjectURL(blob);
+      return { url: objectUrl, objectUrl };
+    }
+
+    throw new Error("The music API returned no audio_url or audio_base64. Check the provider adapter response.");
+  }
+
+  generateBtn.addEventListener("click", async () => {
+    clearStatus();
+    resultBox.classList.remove("show");
+
+    const prompt = promptInput.value.trim();
+    if (!prompt) {
+      setStatus("Please describe the music you want.", "error");
+      promptInput.focus();
+      return;
+    }
+
+    let session;
+    try {
+      session = await getSession();
+      if (!session) {
+        window.location.href = "./login.html?redirect=music.html";
+        return;
+      }
+    } catch (error) {
+      setStatus(error.message, "error");
+      return;
+    }
+
+    generateBtn.disabled = true;
+    const originalHTML = generateBtn.innerHTML;
+    generateBtn.innerHTML = '<i data-lucide="loader-circle" size="16"></i>Generating...';
+    if (window.lucide) lucide.createIcons();
+
+    try {
+      setStatus("Sending request to the configured music provider…", "loading");
+
+      // This matches api/music.js: POST { prompt, style, duration }.
+      const data = await apiJson("/api/music", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({
+          prompt,
+          style: selectedStyle,
+          duration: Number(duration.value),
+          quality: quality.value,
+          tempo: Number(tempo.value),
+          energy: Number(energy.value),
+          instrument: instrument.value
+        })
+      });
+
+      const audio = await fetchAudioResult(data);
+
+      if (currentAudioObjectUrl) URL.revokeObjectURL(currentAudioObjectUrl);
+      currentAudioUrl = audio.url;
+      currentAudioObjectUrl = audio.objectUrl;
+
+      resultAudio.src = audio.url;
+      downloadBtn.href = audio.url;
+      downloadBtn.download = `voiceai-${selectedStyle}-${duration.value}s.mp3`;
+      resultDescription.textContent = `${selectedStyle} • ${duration.value}s • ${quality.value}`;
+
+      resultBox.classList.add("show");
+      setStatus("Music generated. Press Play to preview, or Download to save.", "success");
+      await loadUsage();
+      if (window.lucide) lucide.createIcons();
+    } catch (error) {
+      console.error("Music generation error:", error);
+      setStatus(error.message || "Music generation failed.", "error");
+    } finally {
+      generateBtn.disabled = false;
+      generateBtn.innerHTML = originalHTML;
+      if (window.lucide) lucide.createIcons();
+    }
+  });
+
+  saveBtn.addEventListener("click", async () => {
+    if (!currentAudioUrl) {
+      setStatus("Generate a track before saving.", "error");
+      return;
+    }
+    if (saved) {
+      setStatus("This track has already been saved in this session.", "success");
+      return;
+    }
+
+    try {
+      const session = await getSession();
+      if (!session) {
+        window.location.href = "./login.html?redirect=music.html";
+        return;
+      }
+
+      // Save endpoint is separate; it must store metadata and an owned, durable audio URL.
+      await apiJson("/api/music/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({
+          title: promptInput.value.trim().slice(0, 150) || ("VoiceAI " + selectedStyle + " track"),
+          audioUrl: currentAudioUrl,
+          duration: Number(duration.value),
+          provider: "configured-music-provider"
+        })
+      });
+
+      saved = true;
+      saveBtn.innerHTML = '<i data-lucide="check" size="14"></i>Saved';
+      if (window.lucide) lucide.createIcons();
+      setStatus("Track metadata saved.", "success");
+    } catch (error) {
+      console.error("Music save error:", error);
+      setStatus(error.message || "Unable to save music.", "error");
+    }
+  });
+
+  window.addEventListener("beforeunload", () => {
+    if (currentAudioObjectUrl) URL.revokeObjectURL(currentAudioObjectUrl);
+  });
+
+  await loadUsage();
+  if (window.lucide) lucide.createIcons();
+});
+</script>
+</body>
+</html>

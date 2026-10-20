@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Voice Changer — VoiceAI</title>
+
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .changer-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 50px 20px 80px;
+    }
+
+    .changer-header {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .changer-header h1 {
+      margin: 15px 0 10px;
+    }
+
+    .changer-header p {
+      max-width: 680px;
+      margin: auto;
+      color: #8da2bd;
+      line-height: 1.7;
+    }
+
+    .changer-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 22px;
+    }
+
+    .changer-panel,
+    .changer-card {
+      background: linear-gradient(
+        145deg,
+        rgba(15, 31, 57, .97),
+        rgba(8, 19, 38, .97)
+      );
+      border: 1px solid rgba(110, 150, 200, .15);
+      border-radius: 18px;
+    }
+
+    .changer-panel {
+      padding: 26px;
+    }
+
+    .changer-card {
+      padding: 20px;
+    }
+
+    .changer-title {
+      margin-bottom: 24px;
+    }
+
+    .changer-title h2 {
+      margin: 0 0 7px;
+    }
+
+    .changer-title p {
+      margin: 0;
+      color: #8196b0;
+      font-size: 13px;
+    }
+
+    .changer-group {
+      margin-bottom: 20px;
+    }
+
+    .changer-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #dcecff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .changer-select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px 14px;
+      border-radius: 11px;
+      border: 1px solid rgba(120, 150, 190, .18);
+      background: #0a172d;
+      color: #eef7ff;
+      outline: none;
+    }
+
+    .upload-box {
+      border: 1px dashed rgba(80, 180, 220, .35);
+      border-radius: 16px;
+      background: rgba(8, 25, 45, .65);
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .upload-box:hover {
+      border-color: rgba(34, 211, 238, .7);
+      background: rgba(10, 35, 57, .8);
+    }
+
+    .upload-icon {
+      width: 55px;
+      height: 55px;
+      margin: 0 auto 13px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: rgba(34, 211, 238, .1);
+      color: #35d5ed;
+    }
+
+    .upload-box strong {
+      display: block;
+      color: #eaf4ff;
+      margin-bottom: 6px;
+    }
+
+    .upload-box span {
+      display: block;
+      color: #758ba6;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .selected-file {
+      margin-top: 12px;
+      color: #59d9ed;
+      font-size: 12px;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .changer-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .range-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .range-row input {
+      flex: 1;
+      accent-color: #18bfd9;
+    }
+
+    .range-value {
+      min-width: 45px;
+      color: #59d9ed;
+      text-align: right;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .change-btn {
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      color: white;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #1677c8, #13b8d5);
+    }
+
+    .change-btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .changer-message {
+      margin-top: 15px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .changer-error {
+      color: #ffb5b5;
+      background: rgba(239, 68, 68, .08);
+      border: 1px solid rgba(239, 68, 68, .2);
+    }
+
+    .changer-success {
+      color: #9ef0d0;
+      background: rgba(16, 185, 129, .08);
+      border: 1px solid rgba(16, 185, 129, .2);
+    }
+
+    .changer-result {
+      margin-top: 22px;
+      padding: 20px;
+      border-radius: 15px;
+      background: #09162b;
+      border: 1px solid rgba(34, 211, 238, .15);
+    }
+
+    .changer-result h3 {
+      margin: 0 0 14px;
+      color: #eaf4ff;
+    }
+
+    .changer-result audio {
+      width: 100%;
+    }
+
+    .result-download {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .side {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .side-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: rgba(34, 211, 238, .1);
+      color: #35d5ed;
+      margin-bottom: 14px;
+    }
+
+    .changer-card h3 {
+      margin: 0 0 8px;
+      color: #eef7ff;
+      font-size: 15px;
+    }
+
+    .changer-card p {
+      margin: 0;
+      color: #8196b0;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    @media (max-width: 800px) {
+      .changer-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .changer-page {
+        padding: 30px 15px 60px;
+      }
+
+      .changer-panel {
+        padding: 20px;
+      }
+
+      .changer-options {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-inner">
+
+      <a href="index.html" class="logo">
+        <span class="logo-mark">
+          <i data-lucide="audio-lines"></i>
+        </span>
+        <span>VoiceAI</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="tools.html">AI Tools</a>
+        <a href="voices.html">Voices</a>
+        <a href="studio.html">Studio</a>
+        <a href="pricing.html">Pricing</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="login.html" class="secondary-btn">
+          Login
+        </a>
+
+        <a href="pricing.html" class="primary-btn">
+          Get Premium
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+
+  <main class="changer-page">
+
+    <!-- HEADER -->
+    <section class="changer-header">
+
+      <div class="hero-badge">
+        <i data-lucide="shuffle"></i>
+        Voice Changer
+      </div>
+
+      <h1>
+        Transform any recording
+        <span>into another voice.</span>
+      </h1>
+
+      <p>
+        Upload your recording, select an authorized target voice,
+        and create a new voice version while preserving the delivery.
+      </p>
+
+    </section>
+
+
+    <section class="changer-layout">
+
+      <!-- MAIN PANEL -->
+      <div class="changer-panel">
+
+        <div class="changer-title">
+
+          <h2>
+            Change your voice
+          </h2>
+
+          <p>
+            Upload an audio file and configure the transformation.
+          </p>
+
+        </div>
+
+
+        <!-- AUDIO UPLOAD -->
+        <div class="changer-group">
+
+          <label>
+            Source recording
+          </label>
+
+          <input
+            id="sourceAudio"
+            type="file"
+            accept="audio/*"
+            hidden
+          />
+
+          <label
+            for="sourceAudio"
+            class="upload-box"
+          >
+
+            <div class="upload-icon">
+              <i data-lucide="upload-cloud"></i>
+            </div>
+
+            <strong>
+              Upload audio
+            </strong>
+
+            <span>
+              MP3, WAV, M4A and other supported formats
+            </span>
+
+            <span>
+              Maximum file size: 25 MB
+            </span>
+
+            <div
+              id="selectedFile"
+              class="selected-file"
+            ></div>
+
+          </label>
+
+        </div>
+
+
+        <!-- TARGET VOICE -->
+        <div class="changer-group">
+
+          <label for="targetVoice">
+            Target voice
+          </label>
+
+          <select
+            id="targetVoice"
+            class="changer-select"
+          >
+
+            <option value="">
+              Select target voice
+            </option>
+
+            <option value="bryan">
+              Bryan — Polished & Engaging
+            </option>
+
+            <option value="juniper">
+              Juniper — Grounded & Professional
+            </option>
+
+            <option value="hale">
+              Hale — Smooth & Persuasive
+            </option>
+
+            <option value="jerry">
+              Jerry B — Upbeat & Energetic
+            </option>
+
+            <option value="allison">
+              Allison — Energetic & Clear
+            </option>
+
+            <option value="jessica-anne-bogart">
+              Jessica Anne Bogart — Conversational
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- OPTIONS -->
+        <div class="changer-options">
+
+          <div class="changer-group">
+
+            <label for="changerSimilarity">
+              Voice similarity
+            </label>
+
+            <div class="range-row">
+
+              <input
+                id="changerSimilarity"
+                type="range"
+                min="0"
+                max="100"
+                value="75"
+              />
+
+              <span
+                id="similarityValue"
+                class="range-value"
+              >
+                75%
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="changer-group">
+
+            <label for="changerClarity">
+              Clarity
+            </label>
+
+            <div class="range-row">
+
+              <input
+                id="changerClarity"
+                type="range"
+                min="0"
+                max="100"
+                value="80"
+              />
+
+              <span
+                id="clarityValue"
+                class="range-value"
+              >
+                80%
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- BUTTON -->
+        <button
+          id="changeVoiceBtn"
+          class="change-btn"
+          type="button"
+        >
+          <i data-lucide="shuffle"></i>
+          Change Voice
+        </button>
+
+
+        <!-- MESSAGE -->
+        <div
+          id="changerMessage"
+          class="changer-message"
+          hidden
+        ></div>
+
+
+        <!-- RESULT -->
+        <div
+          id="changerResult"
+          class="changer-result"
+          hidden
+        >
+
+          <h3>
+            Voice conversion complete
+          </h3>
+
+          <audio
+            id="changedAudio"
+            controls
+            preload="metadata"
+          ></audio>
+
+          <div class="result-download">
+
+            <button
+              id="downloadChanged"
+              class="secondary-btn"
+              type="button"
+            >
+              <i data-lucide="download"></i>
+              Download Audio
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- SIDEBAR -->
+      <aside class="side">
+
+        <div class="changer-card">
+
+          <div class="side-icon">
+            <i data-lucide="mic-2"></i>
+          </div>
+
+          <h3>
+            Preserve delivery
+          </h3>
+
+          <p>
+            The transformation is designed to retain the
+            original performance while changing the voice.
+          </p>
+
+        </div>
+
+
+        <div class="changer-card">
+
+          <div class="side-icon">
+            <i data-lucide="shield-check"></i>
+          </div>
+
+          <h3>
+            Use authorized voices
+          </h3>
+
+          <p>
+            Only use voices that you own or have permission
+            to transform.
+          </p>
+
+        </div>
+
+
+        <div class="changer-card">
+
+          <div class="side-icon">
+            <i data-lucide="gauge"></i>
+          </div>
+
+          <h3>
+            Voice Changer limit
+          </h3>
+
+          <p>
+            Free accounts use an independent 5-use / 24-hour
+            limit for this section.
+          </p>
+
+        </div>
+
+      </aside>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="footer">
+
+    <div class="footer-inner">
+
+      <div>
+        <strong>VoiceAI</strong>
+        <span>AI Voice Studio</span>
+      </div>
+
+      <div>
+        © 2026 VoiceAI. All rights reserved.
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+
+
+  <script>
+    "use strict";
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      const sourceAudio =
+        document.getElementById("sourceAudio");
+
+      const selectedFile =
+        document.getElementById("selectedFile");
+
+      const targetVoice =
+        document.getElementById("targetVoice");
+
+      const similarity =
+        document.getElementById("changerSimilarity");
+
+      const clarity =
+        document.getElementById("changerClarity");
+
+      const similarityValue =
+        document.getElementById("similarityValue");
+
+      const clarityValue =
+        document.getElementById("clarityValue");
+
+      const changeBtn =
+        document.getElementById("changeVoiceBtn");
+
+      const message =
+        document.getElementById("changerMessage");
+
+      const result =
+        document.getElementById("changerResult");
+
+      const changedAudio =
+        document.getElementById("changedAudio");
+
+      const downloadBtn =
+        document.getElementById("downloadChanged");
+
+
+      /* -----------------------------
+         RANGE VALUES
+      ----------------------------- */
+
+      function updateRanges() {
+
+        similarityValue.textContent =
+          `${similarity.value}%`;
+
+        clarityValue.textContent =
+          `${clarity.value}%`;
+
+      }
+
+      similarity.addEventListener(
+        "input",
+        updateRanges
+      );
+
+      clarity.addEventListener(
+        "input",
+        updateRanges
+      );
+
+      updateRanges();
+
+
+      /* -----------------------------
+         FILE
+      ----------------------------- */
+
+      sourceAudio.addEventListener(
+        "change",
+        () => {
+
+          const file =
+            sourceAudio.files?.[0];
+
+          if (!file) {
+
+            selectedFile.textContent =
+              "";
+
+            return;
+          }
+
+          const size =
+            file.size / (1024 * 1024);
+
+          selectedFile.textContent =
+            `${file.name} • ${size.toFixed(2)} MB`;
+
+        }
+      );
+
+
+      function showMessage(
+        text,
+        type = "error"
+      ) {
+
+        message.textContent =
+          text;
+
+        message.className =
+          `changer-message ${
+            type === "success"
+              ? "changer-success"
+              : "changer-error"
+          }`;
+
+        message.hidden = false;
+
+      }
+
+
+      /* -----------------------------
+         CHANGE VOICE
+      ----------------------------- */
+
+      changeBtn.addEventListener(
+        "click",
+        async () => {
+
+          message.hidden = true;
+          result.hidden = true;
+
+
+          const file =
+            sourceAudio.files?.[0];
+
+          const voice =
+            targetVoice.value;
+
+
+          if (!file) {
+
+            showMessage(
+              "Please upload an audio recording."
+            );
+
+            return;
+          }
+
+
+          if (!voice) {
+
+            showMessage(
+              "Please select a target voice."
+            );
+
+            return;
+          }
+
+
+          const maxSize =
+            25 * 1024 * 1024;
+
+          if (file.size > maxSize) {
+
+            showMessage(
+              "Audio file is too large. Maximum size is 25 MB."
+            );
+
+            return;
+          }
+
+
+          try {
+
+            let accessToken = null;
+
+
+            /* SUPABASE SESSION */
+
+            if (window.supabaseClient) {
+
+              const {
+                data
+              } =
+                await window.supabaseClient
+                  .auth
+                  .getSession();
+
+              accessToken =
+                data?.session?.access_token || null;
+
+            }
+
+
+            if (!accessToken) {
+
+              window.location.href =
+                "login.html";
+
+              return;
+            }
+
+
+            /* LOADING */
+
+            changeBtn.disabled = true;
+
+            changeBtn.innerHTML = `
+              <i data-lucide="loader-circle"></i>
+              Processing...
+            `;
+
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+
+
+            /* FORM DATA */
+
+            const formData =
+              new FormData();
+
+            formData.append(
+              "audio",
+              file
+            );
+
+            formData.append(
+              "voiceId",
+              voice
+            );
+
+            formData.append(
+              "similarity",
+              similarity.value
+            );
+
+            formData.append(
+              "clarity",
+              clarity.value
+            );
+
+
+            /* API */
+
+            const response =
+              await fetch(
+                "/api/voice-changer",
+                {
+                  method: "POST",
+
+                  headers: {
+                    "Authorization":
+                      `Bearer ${accessToken}`
+                  },
+
+                  body: formData
+                }
+              );
+
+
+            const data =
+              await response.json();
+
+
+            if (!response.ok) {
+
+              throw new Error(
+                data?.error ||
+                "Voice conversion failed."
+              );
+
+            }
+
+
+            if (!data.audio) {
+
+              throw new Error(
+                "No converted audio was returned."
+              );
+
+            }
+
+
+            changedAudio.src =
+              data.audio;
+
+            changedAudio.load();
+
+            result.hidden = false;
+
+
+            downloadBtn.onclick =
+              () => {
+
+                const link =
+                  document.createElement("a");
+
+                link.href =
+                  data.audio;
+
+                link.download =
+                  "voiceai-changed-voice.mp3";
+
+                document.body.appendChild(
+                  link
+                );
+
+                link.click();
+
+                link.remove();
+
+              };
+
+
+            showMessage(
+              "Voice conversion completed successfully.",
+              "success"
+            );
+
+
+          } catch (error) {
+
+            console.error(
+              "Voice Changer Error:",
+              error
+            );
+
+            showMessage(
+              error.message ||
+              "Something went wrong while changing the voice."
+            );
+
+          } finally {
+
+            changeBtn.disabled = false;
+
+            changeBtn.innerHTML = `
+              <i data-lucide="shuffle"></i>
+              Change Voice
+            `;
+
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+
+          }
+
+        }
+      );
+
+    });
+  </script>
+
+</body>
+</html>

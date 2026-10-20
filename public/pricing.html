@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050b18">
+
+  <title>Pricing — VoiceAI</title>
+  <meta name="description" content="Choose the VoiceAI plan that fits your AI voice workflow.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="./style.css">
+
+  <style>
+    .pricing-page {
+      min-height: 100vh;
+      color: #eaf4ff;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(34,211,238,.10), transparent 32%),
+        radial-gradient(circle at 90% 45%, rgba(59,130,246,.07), transparent 28%),
+        #06101f;
+    }
+
+    .pricing-container {
+      width: min(1180px, calc(100% - 40px));
+      margin: auto;
+      padding: 70px 0 100px;
+    }
+
+    .pricing-heading {
+      max-width: 720px;
+      margin: 0 auto 45px;
+      text-align: center;
+    }
+
+    .pricing-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 13px;
+      color: #67e8f9;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .pricing-heading h1 {
+      margin: 0;
+      font-size: clamp(35px, 6vw, 58px);
+      line-height: 1.08;
+      letter-spacing: -.045em;
+    }
+
+    .pricing-heading h1 span { color: #22d3ee; }
+
+    .pricing-heading p {
+      max-width: 600px;
+      margin: 17px auto 0;
+      color: #8fa7c2;
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .billing-switch {
+      display: flex;
+      justify-content: center;
+      margin-top: 28px;
+    }
+
+    .billing-box {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px;
+      border: 1px solid rgba(148,163,184,.14);
+      border-radius: 13px;
+      background: rgba(7,18,34,.8);
+    }
+
+    .billing-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border: 0;
+      border-radius: 9px;
+      padding: 9px 15px;
+      background: transparent;
+      color: #7890aa;
+      cursor: pointer;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .billing-btn.active {
+      color: #cfffff;
+      background: rgba(34,211,238,.10);
+    }
+
+    .save-badge {
+      color: #86efac;
+      font-size: 10px;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 430px));
+      justify-content: center;
+      align-items: stretch;
+      gap: 20px;
+    }
+
+    .pricing-card {
+      position: relative;
+      padding: 30px;
+      border: 1px solid rgba(148,163,184,.13);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(13,29,52,.96), rgba(7,18,34,.96));
+      box-shadow: 0 30px 80px rgba(0,0,0,.28);
+    }
+
+    .pricing-card.premium {
+      border-color: rgba(34,211,238,.35);
+      box-shadow: 0 0 0 1px rgba(34,211,238,.06), 0 30px 90px rgba(0,0,0,.35), 0 0 60px rgba(34,211,238,.06);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      padding: 6px 9px;
+      border: 1px solid rgba(34,211,238,.23);
+      border-radius: 8px;
+      color: #67e8f9;
+      background: rgba(34,211,238,.11);
+      font-size: 9px;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .plan-icon {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(34,211,238,.10);
+      border-radius: 12px;
+      color: #67e8f9;
+      background: rgba(34,211,238,.07);
+    }
+
+    .pricing-card.free .plan-icon {
+      color: #a8bdd3;
+      background: rgba(148,163,184,.07);
+      border-color: rgba(148,163,184,.10);
+    }
+
+    .plan-title { font-size: 22px; font-weight: 800; }
+
+    .plan-description {
+      min-height: 43px;
+      margin-top: 7px;
+      color: #8198b2;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .price {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 25px 0;
+    }
+
+    .price-amount {
+      font-size: 46px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: -.05em;
+    }
+
+    .price-period {
+      color: #7189a3;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .price-old {
+      display: none;
+      margin-left: 4px;
+      color: #60758e;
+      font-size: 14px;
+      text-decoration: line-through;
+    }
+
+    .plan-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: 1px solid rgba(148,163,184,.17);
+      border-radius: 11px;
+      color: #dcecff;
+      background: rgba(3,12,25,.65);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .plan-button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: rgba(103,232,249,.3);
+    }
+
+    .plan-button:disabled {
+      cursor: wait;
+      opacity: .7;
+    }
+
+    .plan-button.premium-button {
+      border-color: rgba(34,211,238,.35);
+      color: #02111f;
+      background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+    }
+
+    .feature-title {
+      margin: 27px 0 14px;
+      color: #7890aa;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      color: #c8d8e9;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .feature-list li i {
+      flex: 0 0 auto;
+      width: 15px;
+      height: 15px;
+      margin-top: 1px;
+      color: #22d3ee;
+    }
+
+    .free .feature-list li i { color: #94a3b8; }
+
+    .pricing-note {
+      max-width: 800px;
+      margin: 28px auto 0;
+      padding: 13px 16px;
+      border: 1px solid rgba(148,163,184,.10);
+      border-radius: 12px;
+      color: #8ba0b8;
+      background: rgba(7,18,34,.55);
+      text-align: center;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .comparison { max-width: 880px; margin: 65px auto 0; }
+    .comparison-heading { margin-bottom: 22px; text-align: center; }
+    .comparison-heading h2, .faq-box h2, .pricing-cta h2 { margin: 0; font-size: 25px; }
+    .comparison-heading p, .faq-box p {
+      margin: 8px 0 0;
+      color: #8198b2;
+      font-size: 12px;
+    }
+
+    .comparison-table {
+      overflow: hidden;
+      border: 1px solid rgba(148,163,184,.11);
+      border-radius: 16px;
+      background: rgba(7,18,34,.65);
+    }
+
+    .comparison-row {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr;
+      border-bottom: 1px solid rgba(148,163,184,.08);
+    }
+
+    .comparison-row:last-child { border-bottom: 0; }
+
+    .comparison-cell {
+      display: flex;
+      align-items: center;
+      min-height: 50px;
+      padding: 11px 15px;
+      color: #9db2c8;
+      font-size: 11px;
+    }
+
+    .comparison-cell:not(:first-child) { justify-content: center; text-align: center; }
+
+    .comparison-row.header .comparison-cell {
+      color: #eaf4ff;
+      background: rgba(34,211,238,.035);
+      font-weight: 800;
+    }
+
+    .check { color: #67e8f9; }
+    .cross { color: #8ba0b8; }
+
+    .faq-box { max-width: 880px; margin: 55px auto 0; text-align: center; }
+
+    .pricing-cta {
+      margin-top: 45px;
+      padding: 35px 25px;
+      border: 1px solid rgba(34,211,238,.15);
+      border-radius: 20px;
+      background: radial-gradient(circle at 50% 0%, rgba(34,211,238,.09), transparent 50%), rgba(7,18,34,.65);
+      text-align: center;
+    }
+
+    .pricing-cta p {
+      max-width: 550px;
+      margin: 10px auto 20px;
+      color: #8198b2;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 43px;
+      padding: 0 17px;
+      border: 1px solid rgba(148,163,184,.15);
+      border-radius: 10px;
+      color: #dcecff;
+      background: rgba(3,12,25,.6);
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .cta-button.primary {
+      border-color: transparent;
+      color: #02111f;
+      background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+    }
+
+    .checkout-status {
+      display: none;
+      max-width: 480px;
+      margin: 20px auto 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .checkout-status.show { display: block; }
+    .checkout-status.error {
+      border: 1px solid rgba(239,68,68,.18);
+      color: #fecaca;
+      background: rgba(239,68,68,.08);
+    }
+
+    .checkout-status.success {
+      border: 1px solid rgba(34,197,94,.18);
+      color: #bbf7d0;
+      background: rgba(34,197,94,.08);
+    }
+
+    @media (max-width: 800px) {
+      .pricing-grid { grid-template-columns: 1fr; max-width: 480px; margin: auto; }
+      .comparison-row { grid-template-columns: 1.3fr .85fr .85fr; }
+    }
+
+    @media (max-width: 560px) {
+      .pricing-container { width: calc(100% - 24px); padding-top: 42px; }
+      .pricing-card { padding: 23px; }
+      .comparison-cell { padding: 10px 8px; font-size: 10px; }
+      .comparison { margin-top: 45px; }
+      .popular-badge { top: 14px; right: 14px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="pricing-page">
+
+  <header class="site-header">
+    <div class="container">
+      <a href="./index.html" class="logo">
+        <span class="logo-mark">∿</span>
+        <span>VoiceAI</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="./index.html">Home</a>
+        <a href="./tools.html">AI Tools</a>
+        <a href="./voices.html">Voices</a>
+        <a href="./studio.html">Studio</a>
+        <a href="./pricing.html" class="active">Pricing</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="./login.html" class="header-login">Login</a>
+        <a href="./signup.html" class="header-cta">Get Started</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pricing-container">
+    <section class="pricing-heading">
+      <div class="pricing-eyebrow">
+        <i data-lucide="sparkles"></i>
+        Simple pricing
+      </div>
+
+      <h1>Create more with <span>VoiceAI.</span></h1>
+
+      <p>
+        Start free and explore the complete VoiceAI platform.
+        Upgrade to Premium when you need higher usage and advanced workflows.
+      </p>
+
+      <div class="billing-switch">
+        <div class="billing-box">
+          <button id="monthlyBtn" class="billing-btn active" type="button" aria-pressed="true">
+            Monthly
+          </button>
+          <button id="yearlyBtn" class="billing-btn" type="button" aria-pressed="false">
+            Yearly <span class="save-badge">Save</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="pricing-grid">
+      <article class="pricing-card free">
+        <div class="plan-icon"><i data-lucide="zap"></i></div>
+        <div class="plan-title">Free</div>
+        <div class="plan-description">
+          Explore VoiceAI and test every major workflow before upgrading.
+        </div>
+
+        <div class="price">
+          <span class="price-amount">$0</span>
+          <span class="price-period">/ month</span>
+        </div>
+
+        <a href="./signup.html" class="plan-button">
+          <i data-lucide="user-plus"></i> Start Free
+        </a>
+
+        <div class="feature-title">Included</div>
+        <ul class="feature-list">
+          <li><i data-lucide="check"></i>5 AI uses per tool every 24 hours</li>
+          <li><i data-lucide="check"></i>Access to all VoiceAI tools</li>
+          <li><i data-lucide="check"></i>Voice library browsing</li>
+          <li><i data-lucide="check"></i>Basic voice generation</li>
+          <li><i data-lucide="check"></i>Gemini AI Assistant, when configured</li>
+          <li><i data-lucide="check"></i>Gemini Image Generator, when configured</li>
+          <li><i data-lucide="check"></i>Projects and saved generations, when enabled</li>
+        </ul>
+      </article>
+
+      <article class="pricing-card premium">
+        <div class="popular-badge">Most Popular</div>
+        <div class="plan-icon"><i data-lucide="crown"></i></div>
+        <div class="plan-title">Premium</div>
+        <div class="plan-description">
+          For creators, agencies and businesses that need more AI production.
+        </div>
+
+        <div class="price">
+          <span id="premiumPrice" class="price-amount">$20</span>
+          <span id="premiumPeriod" class="price-period">/ month</span>
+          <span id="oldPrice" class="price-old">$240</span>
+        </div>
+
+        <button id="premiumBtn" class="plan-button premium-button" type="button">
+          <i data-lucide="credit-card"></i> Get Premium
+        </button>
+
+        <div class="feature-title">Everything in Free, plus</div>
+        <ul class="feature-list">
+          <li><i data-lucide="check"></i>Unlimited app-level AI usage*</li>
+          <li><i data-lucide="check"></i>Advanced voice generation</li>
+          <li><i data-lucide="check"></i>Voice cloning workflows, where configured</li>
+          <li><i data-lucide="check"></i>Voice changer, where configured</li>
+          <li><i data-lucide="check"></i>Studio editing workflows</li>
+          <li><i data-lucide="check"></i>Dubbing and captions, where configured</li>
+          <li><i data-lucide="check"></i>AI music and sound effects, where configured</li>
+          <li><i data-lucide="check"></i>Conversational AI agent management</li>
+          <li><i data-lucide="check"></i>Premium workflows as they become available</li>
+        </ul>
+      </article>
+    </section>
+
+    <div id="checkoutStatus" class="checkout-status" role="status" aria-live="polite"></div>
+
+    <div class="pricing-note">
+      * Premium removes VoiceAI's internal 5-use-per-tool restriction.
+      Third-party provider limits, API quotas, infrastructure limits and fair-use restrictions may still apply.
+    </div>
+
+    <section class="comparison">
+      <div class="comparison-heading">
+        <h2>Compare plans</h2>
+        <p>Choose the plan that matches your workflow.</p>
+      </div>
+
+      <div class="comparison-table">
+        <div class="comparison-row header">
+          <div class="comparison-cell">Feature</div>
+          <div class="comparison-cell">Free</div>
+          <div class="comparison-cell">Premium</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell">AI tools</div>
+          <div class="comparison-cell">All tools</div>
+          <div class="comparison-cell">All tools</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell">AI usage</div>
+          <div class="comparison-cell">5 / tool / 24h</div>
+          <div class="comparison-cell check">Unlimited*</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell">Voice library</div>
+          <div class="comparison-cell check">✓</div>
+          <div class="comparison-cell check">✓</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell">Voice cloning</div>
+          <div class="comparison-cell">Available tools only</div>
+          <div class="comparison-cell check">Premium access*</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell">Studio</div>
+          <div class="comparison-cell check">✓</div>
+          <div class="comparison-cell check">✓</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell">AI agents</div>
+          <div class="comparison-cell">Management*</div>
+          <div class="comparison-cell check">Management*</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell">Premium workflows</div>
+          <div class="comparison-cell cross">—</div>
+          <div class="comparison-cell check">✓</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-box">
+      <h2>Frequently asked questions</h2>
+      <p>Premium removes the app's internal usage limit; provider quotas can still apply.</p>
+    </section>
+
+    <section class="pricing-cta">
+      <h2>Ready to create your next voice?</h2>
+      <p>
+        Start with the free plan. Upgrade to Premium whenever your workflow
+        needs more production capacity.
+      </p>
+      <div class="cta-buttons">
+        <a href="./signup.html" class="cta-button primary">
+          <i data-lucide="rocket"></i> Start Free
+        </a>
+        <a href="./tools.html" class="cta-button">
+          <i data-lucide="grid-2x2"></i> Explore Tools
+        </a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Load the Supabase browser client before the project configuration. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-config.js"></script>
+<script src="./script.js"></script>
+
+<script>
+"use strict";
+
+let selectedBilling = "monthly";
+let checkoutInProgress = false;
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+
+  setupBilling();
+  setupPremiumCheckout();
+});
+
+function setIcons() {
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+}
+
+function setupBilling() {
+  const monthlyBtn = document.getElementById("monthlyBtn");
+  const yearlyBtn = document.getElementById("yearlyBtn");
+  const premiumPrice = document.getElementById("premiumPrice");
+  const premiumPeriod = document.getElementById("premiumPeriod");
+  const oldPrice = document.getElementById("oldPrice");
+
+  function selectBilling(interval) {
+    selectedBilling = interval;
+
+    const isYearly = interval === "yearly";
+
+    monthlyBtn.classList.toggle("active", !isYearly);
+    yearlyBtn.classList.toggle("active", isYearly);
+
+    monthlyBtn.setAttribute("aria-pressed", String(!isYearly));
+    yearlyBtn.setAttribute("aria-pressed", String(isYearly));
+
+    premiumPrice.textContent = isYearly ? "$200" : "$20";
+    premiumPeriod.textContent = isYearly ? "/ year" : "/ month";
+
+    oldPrice.textContent = isYearly ? "$240" : "";
+    oldPrice.style.display = isYearly ? "inline" : "none";
+  }
+
+  monthlyBtn.addEventListener("click", () => selectBilling("monthly"));
+  yearlyBtn.addEventListener("click", () => selectBilling("yearly"));
+}
+
+function showCheckoutStatus(message, type = "error") {
+  const status = document.getElementById("checkoutStatus");
+  status.textContent = message;
+  status.className = `checkout-status show ${type}`;
+}
+
+function setupPremiumCheckout() {
+  const button = document.getElementById("premiumBtn");
+  if (!button) return;
+
+  button.addEventListener("click", async () => {
+    if (checkoutInProgress) return;
+
+    const supabase = window.supabaseClient;
+
+    if (!supabase || !supabase.auth) {
+      showCheckoutStatus(
+        "Supabase is not initialized. Check supabase-config.js and try again."
+      );
+      return;
+    }
+
+    checkoutInProgress = true;
+    button.disabled = true;
+    button.innerHTML = '<i data-lucide="loader-circle"></i> Creating checkout...';
+    setIcons();
+
+    try {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) throw error;
+
+      const session = data && data.session;
+
+      if (!session || !session.access_token) {
+        const redirect = encodeURIComponent("pricing.html");
+        window.location.href = `./login.html?redirect=${redirect}`;
+        return;
+      }
+
+      const response = await fetch("/api/stripe-checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({
+          interval: selectedBilling
+        })
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          result.error || `Checkout failed (HTTP ${response.status}).`
+        );
+      }
+
+      if (!result.url || typeof result.url !== "string") {
+        throw new Error("Stripe checkout URL was not returned by the server.");
+      }
+
+      let checkoutUrl;
+      try {
+        checkoutUrl = new URL(result.url);
+      } catch {
+        throw new Error("The checkout URL returned by the server is invalid.");
+      }
+
+      if (
+        checkoutUrl.protocol !== "https:" ||
+        checkoutUrl.hostname !== "checkout.stripe.com"
+      ) {
+        throw new Error("The server returned an unexpected checkout URL.");
+      }
+
+      showCheckoutStatus("Redirecting to secure Stripe Checkout…", "success");
+      window.location.assign(checkoutUrl.href);
+    } catch (error) {
+      console.error("VoiceAI checkout error:", error);
+
+      showCheckoutStatus(
+        error && error.message
+          ? error.message
+          : "Unable to start checkout. Please try again."
+      );
+
+      checkoutInProgress = false;
+      button.disabled = false;
+      button.innerHTML = '<i data-lucide="credit-card"></i> Get Premium';
+      setIcons();
+    }
+  });
+}
+</script>
+
+</body>
+</html>

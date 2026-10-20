@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>About VoiceAI — AI Voice Studio</title>
+
+  <meta
+    name="description"
+    content="Learn about VoiceAI, a professional AI Voice Studio for voice generation, audio, video and creative AI tools."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <style>
+    .about-page {
+      min-height: 100vh;
+      background: #050b18;
+      color: #eaf4ff;
+    }
+
+    .about-hero {
+      padding: 95px 20px 80px;
+      text-align: center;
+      background:
+        radial-gradient(
+          circle at 50% 20%,
+          rgba(37, 99, 235, .18),
+          transparent 35%
+        );
+    }
+
+    .about-badge {
+      width: fit-content;
+      margin: 0 auto 20px;
+      padding: 8px 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid rgba(34,211,238,.2);
+      border-radius: 999px;
+      background: rgba(8,47,73,.35);
+      color: #67e8f9;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .about-badge svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .about-hero h1 {
+      max-width: 850px;
+      margin: auto;
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 1;
+      letter-spacing: -3px;
+    }
+
+    .gradient {
+      background: linear-gradient(90deg,#60a5fa,#22d3ee);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .about-hero p {
+      max-width: 680px;
+      margin: 25px auto 0;
+      color: #91a6bf;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .about-actions {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .about-btn {
+      min-height: 45px;
+      padding: 0 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 11px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .about-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .about-btn.primary {
+      color: #fff;
+      background: linear-gradient(135deg,#2563eb,#0891b2);
+    }
+
+    .about-btn.secondary {
+      color: #b9c8da;
+      border: 1px solid rgba(148,163,184,.17);
+      background: rgba(15,28,51,.7);
+    }
+
+    .about-section {
+      max-width: 1150px;
+      margin: auto;
+      padding: 75px 20px;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(25px,4vw,38px);
+      letter-spacing: -1.4px;
+    }
+
+    .section-heading p {
+      max-width: 650px;
+      margin: 12px auto 0;
+      color: #7f94ad;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .mission {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .mission-card {
+      padding: 30px;
+      border: 1px solid rgba(148,163,184,.13);
+      border-radius: 18px;
+      background: linear-gradient(
+        145deg,
+        rgba(15,28,51,.82),
+        rgba(8,17,34,.9)
+      );
+    }
+
+    .mission-icon {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      border-radius: 12px;
+      color: #67e8f9;
+      background: rgba(8,47,73,.45);
+    }
+
+    .mission-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .mission-card h3 {
+      margin-bottom: 10px;
+      font-size: 19px;
+    }
+
+    .mission-card p {
+      color: #8196ae;
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 15px;
+    }
+
+    .feature {
+      padding: 22px;
+      border: 1px solid rgba(148,163,184,.12);
+      border-radius: 16px;
+      background: rgba(10,21,40,.78);
+      transition: transform .2s ease,border-color .2s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-3px);
+      border-color: rgba(34,211,238,.25);
+    }
+
+    .feature-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      color: #67e8f9;
+      background: rgba(8,47,73,.4);
+    }
+
+    .feature-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .feature h3 {
+      font-size: 14px;
+      margin-bottom: 7px;
+    }
+
+    .feature p {
+      color: #71869e;
+      font-size: 11px;
+      line-height: 1.65;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 14px;
+    }
+
+    .stat {
+      padding: 25px 15px;
+      text-align: center;
+      border: 1px solid rgba(148,163,184,.12);
+      border-radius: 16px;
+      background: rgba(10,21,40,.7);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 27px;
+      color: #eaf4ff;
+    }
+
+    .stat span {
+      color: #71869e;
+      font-size: 11px;
+    }
+
+    .plans {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .plan {
+      padding: 28px;
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,.13);
+      background: rgba(10,21,40,.75);
+    }
+
+    .plan.premium {
+      border-color: rgba(34,211,238,.27);
+      box-shadow: 0 20px 55px rgba(6,182,212,.08);
+    }
+
+    .plan h3 {
+      margin-bottom: 8px;
+      font-size: 19px;
+    }
+
+    .plan-price {
+      margin-bottom: 18px;
+      font-size: 27px;
+      font-weight: 800;
+    }
+
+    .plan p {
+      color: #7d91a9;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .plan ul {
+      display: grid;
+      gap: 9px;
+      margin-top: 20px;
+      list-style: none;
+    }
+
+    .plan li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #b3c2d4;
+      font-size: 11px;
+    }
+
+    .plan li svg {
+      width: 14px;
+      height: 14px;
+      color: #22d3ee;
+    }
+
+    .about-cta {
+      max-width: 900px;
+      margin: 20px auto 80px;
+      padding: 55px 25px;
+      text-align: center;
+      border: 1px solid rgba(34,211,238,.16);
+      border-radius: 24px;
+      background:
+        radial-gradient(
+          circle at 50% 0,
+          rgba(37,99,235,.16),
+          transparent 55%
+        ),
+        rgba(10,21,40,.85);
+    }
+
+    .about-cta h2 {
+      font-size: clamp(25px,4vw,38px);
+      margin-bottom: 12px;
+    }
+
+    .about-cta p {
+      max-width: 580px;
+      margin: auto;
+      color: #8196ae;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    @media(max-width:850px) {
+      .mission,
+      .plans {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-grid {
+        grid-template-columns: repeat(2,1fr);
+      }
+
+      .stats {
+        grid-template-columns: repeat(2,1fr);
+      }
+    }
+
+    @media(max-width:560px) {
+      .about-hero {
+        padding: 65px 17px 55px;
+      }
+
+      .about-hero h1 {
+        letter-spacing: -1.8px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about-section {
+        padding: 55px 17px;
+      }
+
+      .mission-card,
+      .plan {
+        padding: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="about-page">
+
+  <!-- NAV -->
+  <header class="site-header">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">
+        <i data-lucide="audio-lines"></i>
+      </span>
+      VoiceAI
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="tools.html">AI Tools</a>
+      <a href="voices.html">Voices</a>
+      <a href="studio.html">Studio</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+
+    <div class="header-actions">
+      <a href="login.html" class="login-link">Login</a>
+      <a href="signup.html" class="header-btn">Get Started</a>
+    </div>
+  </header>
+
+
+  <!-- HERO -->
+  <section class="about-hero">
+
+    <div class="about-badge">
+      <i data-lucide="sparkles"></i>
+      About VoiceAI
+    </div>
+
+    <h1>
+      One studio for
+      <span class="gradient">AI voice & creativity.</span>
+    </h1>
+
+    <p>
+      VoiceAI is designed to bring professional AI voice generation,
+      voice transformation, audio production, video workflows and
+      creative AI tools into one simple platform.
+    </p>
+
+    <div class="about-actions">
+
+      <a href="signup.html" class="about-btn primary">
+        <i data-lucide="rocket"></i>
+        Start Creating
+      </a>
+
+      <a href="tools.html" class="about-btn secondary">
+        <i data-lucide="grid-2x2"></i>
+        Explore AI Tools
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- MISSION -->
+  <section class="about-section">
+
+    <div class="section-heading">
+
+      <h2>Built for modern creators</h2>
+
+      <p>
+        From a short advertisement to a complete voice production,
+        VoiceAI is built around a single creative workflow.
+      </p>
+
+    </div>
+
+
+    <div class="mission">
+
+      <article class="mission-card">
+
+        <div class="mission-icon">
+          <i data-lucide="target"></i>
+        </div>
+
+        <h3>Our mission</h3>
+
+        <p>
+          Make professional-quality AI voice and creative production
+          accessible through a fast, clean and easy-to-use studio.
+        </p>
+
+      </article>
+
+
+      <article class="mission-card">
+
+        <div class="mission-icon">
+          <i data-lucide="lightbulb"></i>
+        </div>
+
+        <h3>Our approach</h3>
+
+        <p>
+          Keep powerful AI tools together while allowing creators to
+          move from idea to finished content without unnecessary complexity.
+        </p>
+
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- FEATURES -->
+  <section class="about-section">
+
+    <div class="section-heading">
+
+      <h2>Everything in one workspace</h2>
+
+      <p>
+        VoiceAI connects multiple creative workflows into a single
+        professional AI platform.
+      </p>
+
+    </div>
+
+
+    <div class="feature-grid">
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="volume-2"></i>
+        </div>
+        <h3>Text to Speech</h3>
+        <p>Turn written scripts into natural AI voiceovers.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="mic-2"></i>
+        </div>
+        <h3>Voice Library</h3>
+        <p>Discover and preview voices for different content styles.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="copy-plus"></i>
+        </div>
+        <h3>Voice Cloning</h3>
+        <p>Create authorized voice clones from supported recordings.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="wand-sparkles"></i>
+        </div>
+        <h3>Voice Design</h3>
+        <p>Design a voice based on creative characteristics.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="refresh-cw"></i>
+        </div>
+        <h3>Voice Changer</h3>
+        <p>Transform supported audio into another voice style.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="messages-square"></i>
+        </div>
+        <h3>Text to Dialogue</h3>
+        <p>Create multi-speaker conversations from a script.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="file-audio"></i>
+        </div>
+        <h3>Speech to Text</h3>
+        <p>Convert supported recordings into editable text.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="audio-waveform"></i>
+        </div>
+        <h3>Voice Isolator</h3>
+        <p>Process supported media to isolate useful vocal content.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="scissors"></i>
+        </div>
+        <h3>Studio Editor</h3>
+        <p>Organize voice and media projects inside the studio.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="music-2"></i>
+        </div>
+        <h3>AI Music</h3>
+        <p>Create music workflows using a configured AI provider.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="audio-lines"></i>
+        </div>
+        <h3>Sound Effects</h3>
+        <p>Create or process sound-effect generations.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="languages"></i>
+        </div>
+        <h3>Dubbing</h3>
+        <p>Build multilingual voice workflows for supported media.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="captions"></i>
+        </div>
+        <h3>Captions</h3>
+        <p>Create caption workflows for supported video content.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="video"></i>
+        </div>
+        <h3>Video Voice Transfer</h3>
+        <p>Process supported video voice-transfer workflows.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="bot"></i>
+        </div>
+        <h3>Conversational Agents</h3>
+        <p>Build AI voice-agent experiences with conversations and testing.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="message-circle-ai"></i>
+        </div>
+        <h3>Gemini Assistant</h3>
+        <p>Use Gemini-powered assistance for AI content workflows.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="image"></i>
+        </div>
+        <h3>Gemini Image Generator</h3>
+        <p>Generate images through the configured Gemini image model.</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-icon">
+          <i data-lucide="folder-kanban"></i>
+        </div>
+        <h3>Projects</h3>
+        <p>Keep generations and creative work organized.</p>
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- STATS -->
+  <section class="about-section">
+
+    <div class="section-heading">
+
+      <h2>Designed as a complete platform</h2>
+
+      <p>
+        VoiceAI is structured to grow from a testing environment
+        into a production-ready SaaS.
+      </p>
+
+    </div>
+
+
+    <div class="stats">
+
+      <div class="stat">
+        <strong>29</strong>
+        <span>Core pages</span>
+      </div>
+
+      <div class="stat">
+        <strong>24+</strong>
+        <span>AI workflows</span>
+      </div>
+
+      <div class="stat">
+        <strong>5</strong>
+        <span>Free uses / tool / 24h</span>
+      </div>
+
+      <div class="stat">
+        <strong>1</strong>
+        <span>Unified workspace</span>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- PLANS -->
+  <section class="about-section">
+
+    <div class="section-heading">
+
+      <h2>Simple access model</h2>
+
+      <p>
+        Start free during development and upgrade when you need
+        higher application-level usage.
+      </p>
+
+    </div>
+
+
+    <div class="plans">
+
+      <article class="plan">
+
+        <h3>Free</h3>
+
+        <div class="plan-price">$0</div>
+
+        <p>
+          Explore the VoiceAI platform and test its available workflows.
+        </p>
+
+        <ul>
+
+          <li>
+            <i data-lucide="check"></i>
+            AI tools available
+          </li>
+
+          <li>
+            <i data-lucide="check"></i>
+            5 uses per tool every 24 hours
+          </li>
+
+          <li>
+            <i data-lucide="check"></i>
+            Supabase account
+          </li>
+
+          <li>
+            <i data-lucide="check"></i>
+            Projects and generations
+          </li>
+
+        </ul>
+
+      </article>
+
+
+      <article class="plan premium">
+
+        <h3>Premium</h3>
+
+        <div class="plan-price">$20/month</div>
+
+        <p>
+          Designed for creators who need higher application-level usage.
+        </p>
+
+        <ul>
+
+          <li>
+            <i data-lucide="check"></i>
+            Unlimited app-level usage
+          </li>
+
+          <li>
+            <i data-lucide="check"></i>
+            All available AI workflows
+          </li>
+
+          <li>
+            <i data-lucide="check"></i>
+            Premium project workflows
+          </li>
+
+          <li>
+            <i data-lucide="check"></i>
+            Provider limits may still apply
+          </li>
+
+        </ul>
+
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- CTA -->
+  <section class="about-cta">
+
+    <h2>Ready to create with AI?</h2>
+
+    <p>
+      Start with VoiceAI and build your next voice, audio,
+      video or creative AI project.
+    </p>
+
+    <div class="about-actions">
+
+      <a href="signup.html" class="about-btn primary">
+        <i data-lucide="rocket"></i>
+        Create Free Account
+      </a>
+
+      <a href="contact.html" class="about-btn secondary">
+        <i data-lucide="message-circle"></i>
+        Contact VoiceAI
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+
+    <div>
+      © 2026 VoiceAI — AI Voice Studio
+    </div>
+
+    <div class="footer-links">
+      <a href="about.html">About</a>
+      <a href="faq.html">FAQ</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="contact.html">Contact</a>
+    </div>
+
+  </footer>
+
+</div>
+
+
+<script src="./script.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  });
+</script>
+
+</body>
+</html>

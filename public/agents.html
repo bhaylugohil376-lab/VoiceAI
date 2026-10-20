@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AI Agents — VoiceAI</title>
+  <meta
+    name="description"
+    content="Create, configure and test conversational AI voice agents with VoiceAI."
+  >
+
+  <link rel="stylesheet" href="./style.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="nav-inner">
+
+    <a href="index.html" class="brand">
+      <span class="brand-mark">
+        <i data-lucide="audio-lines"></i>
+      </span>
+      <span>VoiceAI</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="tools.html">AI Tools</a>
+      <a href="voices.html">Voices</a>
+      <a href="studio.html">Studio</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-ghost">
+        Login
+      </a>
+
+      <a href="pricing.html" class="btn btn-primary">
+        Get Started
+      </a>
+    </div>
+
+  </div>
+</header>
+
+
+<main class="page-shell">
+
+  <!-- HERO -->
+
+  <section class="page-hero">
+
+    <div class="page-hero-copy">
+
+      <div class="eyebrow">
+        <i data-lucide="bot"></i>
+        Conversational AI
+      </div>
+
+      <h1>
+        Build intelligent
+        <span>voice agents.</span>
+      </h1>
+
+      <p>
+        Create AI agents that can understand users, respond naturally,
+        and power real-time voice conversations.
+      </p>
+
+    </div>
+
+    <div class="page-hero-actions">
+
+      <button class="btn btn-primary" id="newAgentBtn">
+        <i data-lucide="plus"></i>
+        New Agent
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- AGENT WORKSPACE -->
+
+  <section class="agent-workspace">
+
+    <!-- LEFT -->
+
+    <aside class="agent-sidebar">
+
+      <div class="sidebar-title">
+        <span>Your Agents</span>
+
+        <button
+          class="icon-button"
+          id="refreshAgentsBtn"
+          title="Refresh agents"
+        >
+          <i data-lucide="refresh-cw"></i>
+        </button>
+      </div>
+
+      <div id="agentsList" class="agents-list">
+
+        <div class="agent-empty">
+
+          <div class="empty-icon">
+            <i data-lucide="bot"></i>
+          </div>
+
+          <strong>No agents yet</strong>
+
+          <p>
+            Create your first conversational AI agent.
+          </p>
+
+        </div>
+
+      </div>
+
+    </aside>
+
+
+    <!-- CENTER -->
+
+    <section class="agent-builder">
+
+      <div class="builder-header">
+
+        <div>
+          <div class="builder-label">
+            Agent Configuration
+          </div>
+
+          <h2 id="agentTitle">
+            New Voice Agent
+          </h2>
+        </div>
+
+        <div class="builder-status">
+          <span class="status-dot"></span>
+          Draft
+        </div>
+
+      </div>
+
+
+      <form id="agentForm">
+
+        <!-- NAME -->
+
+        <div class="form-group">
+
+          <label for="agentName">
+            Agent name
+          </label>
+
+          <input
+            id="agentName"
+            name="name"
+            type="text"
+            placeholder="e.g. Customer Support Agent"
+            maxlength="100"
+            required
+          >
+
+        </div>
+
+
+        <!-- DESCRIPTION -->
+
+        <div class="form-group">
+
+          <label for="agentDescription">
+            Description
+          </label>
+
+          <input
+            id="agentDescription"
+            name="description"
+            type="text"
+            placeholder="What does this agent do?"
+            maxlength="250"
+          >
+
+        </div>
+
+
+        <!-- SYSTEM PROMPT -->
+
+        <div class="form-group">
+
+          <div class="label-row">
+
+            <label for="systemPrompt">
+              System instructions
+            </label>
+
+            <span id="promptCount">
+              0 / 6000
+            </span>
+
+          </div>
+
+          <textarea
+            id="systemPrompt"
+            name="system_prompt"
+            rows="9"
+            maxlength="6000"
+            placeholder="You are a helpful and professional customer support assistant. Understand the customer's problem, ask relevant questions and provide concise solutions."
+            required
+          ></textarea>
+
+        </div>
+
+
+        <!-- MODEL + VOICE -->
+
+        <div class="form-grid">
+
+          <div class="form-group">
+
+            <label for="agentModel">
+              AI model
+            </label>
+
+            <select id="agentModel">
+
+              <option value="gemini-2.5-flash">
+                Gemini 2.5 Flash
+              </option>
+
+              <option value="gemini-2.5-pro">
+                Gemini 2.5 Pro
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="agentVoice">
+              Voice
+            </label>
+
+            <select id="agentVoice">
+
+              <option value="">
+                Select a voice
+              </option>
+
+              <option value="bryan">
+                Bryan — Professional
+              </option>
+
+              <option value="hale">
+                Hale — Confident
+              </option>
+
+              <option value="jessica">
+                Jessica — Conversational
+              </option>
+
+              <option value="juniper">
+                Juniper — Grounded
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- LANGUAGE -->
+
+        <div class="form-grid">
+
+          <div class="form-group">
+
+            <label for="agentLanguage">
+              Primary language
+            </label>
+
+            <select id="agentLanguage">
+
+              <option value="en">
+                English
+              </option>
+
+              <option value="hi">
+                Hindi
+              </option>
+
+              <option value="gu">
+                Gujarati
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="agentTemperature">
+              Response creativity
+            </label>
+
+            <select id="agentTemperature">
+
+              <option value="0.2">
+                Precise
+              </option>
+
+              <option value="0.5" selected>
+                Balanced
+              </option>
+
+              <option value="0.8">
+                Creative
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- BEHAVIOUR -->
+
+        <div class="agent-settings-card">
+
+          <div class="settings-title">
+
+            <div class="settings-icon">
+              <i data-lucide="settings-2"></i>
+            </div>
+
+            <div>
+              <strong>Agent behaviour</strong>
+              <span>Control how your agent communicates.</span>
+            </div>
+
+          </div>
+
+
+          <label class="toggle-row">
+
+            <span>
+              <strong>Allow interruptions</strong>
+              <small>
+                Let users interrupt the agent while speaking.
+              </small>
+            </span>
+
+            <input
+              type="checkbox"
+              id="allowInterruptions"
+              checked
+            >
+
+          </label>
+
+
+          <label class="toggle-row">
+
+            <span>
+              <strong>Conversation memory</strong>
+              <small>
+                Remember important information during a session.
+              </small>
+            </span>
+
+            <input
+              type="checkbox"
+              id="conversationMemory"
+              checked
+            >
+
+          </label>
+
+
+          <label class="toggle-row">
+
+            <span>
+              <strong>End-call detection</strong>
+              <small>
+                Automatically detect when the conversation is finished.
+              </small>
+            </span>
+
+            <input
+              type="checkbox"
+              id="endCallDetection"
+              checked
+            >
+
+          </label>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="builder-actions">
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="resetAgentBtn"
+          >
+            Reset
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            id="saveAgentBtn"
+          >
+            <i data-lucide="save"></i>
+            Save Agent
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+
+    <!-- RIGHT TEST PANEL -->
+
+    <aside class="agent-test-panel">
+
+      <div class="test-header">
+
+        <div>
+
+          <div class="test-eyebrow">
+            Live Test
+          </div>
+
+          <h3>
+            Test your agent
+          </h3>
+
+        </div>
+
+        <span class="live-badge">
+          <span></span>
+          Ready
+        </span>
+
+      </div>
+
+
+      <div id="chatMessages" class="chat-messages">
+
+        <div class="chat-message assistant">
+
+          <div class="message-avatar">
+            <i data-lucide="bot"></i>
+          </div>
+
+          <div class="message-content">
+            <strong>AI Agent</strong>
+
+            <p>
+              Hello! Configure your agent and send me a message
+              to test the conversation.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="test-controls">
+
+        <textarea
+          id="agentInput"
+          rows="2"
+          placeholder="Type a message..."
+          maxlength="2000"
+        ></textarea>
+
+        <button
+          class="send-agent-btn"
+          id="agentSendBtn"
+          type="button"
+          title="Send message"
+        >
+          <i data-lucide="arrow-up"></i>
+        </button>
+
+      </div>
+
+
+      <div class="test-footer">
+
+        <span>
+          <i data-lucide="shield-check"></i>
+          Test mode
+        </span>
+
+        <span id="agentUsage">
+          Checking usage...
+        </span>
+
+      </div>
+
+    </aside>
+
+  </section>
+
+
+  <!-- FEATURES -->
+
+  <section class="agent-features">
+
+    <div class="section-heading">
+
+      <div class="eyebrow">
+        <i data-lucide="sparkles"></i>
+        Agent capabilities
+      </div>
+
+      <h2>
+        Everything your voice agent needs.
+      </h2>
+
+    </div>
+
+
+    <div class="feature-grid">
+
+      <article class="feature-card">
+
+        <div class="feature-icon">
+          <i data-lucide="brain-circuit"></i>
+        </div>
+
+        <h3>Natural conversations</h3>
+
+        <p>
+          Give your agent context-aware instructions for natural,
+          helpful conversations.
+        </p>
+
+      </article>
+
+
+      <article class="feature-card">
+
+        <div class="feature-icon">
+          <i data-lucide="mic"></i>
+        </div>
+
+        <h3>Voice interaction</h3>
+
+        <p>
+          Combine AI reasoning with high-quality synthetic voices.
+        </p>
+
+      </article>
+
+
+      <article class="feature-card">
+
+        <div class="feature-icon">
+          <i data-lucide="memory-stick"></i>
+        </div>
+
+        <h3>Conversation memory</h3>
+
+        <p>
+          Keep important context available during a conversation.
+        </p>
+
+      </article>
+
+
+      <article class="feature-card">
+
+        <div class="feature-icon">
+          <i data-lucide="bar-chart-3"></i>
+        </div>
+
+        <h3>Usage monitoring</h3>
+
+        <p>
+          Track agent usage and stay within your plan limits.
+        </p>
+
+      </article>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+  <div class="footer-inner">
+
+    <div class="footer-brand">
+
+      <div class="brand">
+        <span class="brand-mark">
+          <i data-lucide="audio-lines"></i>
+        </span>
+        VoiceAI
+      </div>
+
+      <p>
+        AI voice tools for creators, businesses and developers.
+      </p>
+
+    </div>
+
+
+    <div class="footer-links">
+
+      <a href="about.html">About</a>
+      <a href="faq.html">FAQ</a>
+      <a href="contact.html">Contact</a>
+      <a href="pricing.html">Pricing</a>
+
+    </div>
+
+  </div>
+
+</footer>
+
+
+<style>
+
+.page-shell {
+  width: min(1500px, calc(100% - 36px));
+  margin: 0 auto;
+  padding: 55px 0 80px;
+}
+
+.page-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: 38px;
+}
+
+.page-hero-copy {
+  max-width: 760px;
+}
+
+.page-hero h1 {
+  margin: 10px 0 15px;
+  font-size: clamp(38px, 5vw, 68px);
+  line-height: 1;
+  letter-spacing: -2.5px;
+}
+
+.page-hero h1 span {
+  color: #55c7ff;
+}
+
+.page-hero p {
+  max-width: 650px;
+  color: #8ea5bf;
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #61c9ff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.eyebrow svg {
+  width: 15px;
+  height: 15px;
+}
+
+.agent-workspace {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr) 360px;
+  gap: 18px;
+  min-height: 720px;
+}
+
+.agent-sidebar,
+.agent-builder,
+.agent-test-panel {
+  background: rgba(7, 18, 36, .82);
+  border: 1px solid rgba(95, 145, 190, .18);
+  border-radius: 20px;
+  box-shadow: 0 20px 70px rgba(0,0,0,.22);
+}
+
+.agent-sidebar {
+  padding: 18px;
+}
+
+.sidebar-title,
+.label-row,
+.builder-header,
+.test-header,
+.builder-actions,
+.test-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-title {
+  color: #edf7ff;
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+
+.icon-button {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(100,160,210,.2);
+  border-radius: 10px;
+  background: rgba(255,255,255,.035);
+  color: #a9c2dc;
+  cursor: pointer;
+}
+
+.icon-button svg {
+  width: 15px;
+}
+
+.agent-empty {
+  padding: 40px 10px;
+  text-align: center;
+  color: #7189a3;
+}
+
+.empty-icon {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 15px;
+  border-radius: 16px;
+  background: rgba(75,185,255,.08);
+  color: #55c7ff;
+}
+
+.empty-icon svg {
+  width: 25px;
+}
+
+.agent-empty strong {
+  display: block;
+  color: #dbeaff;
+  margin-bottom: 8px;
+}
+
+.agent-empty p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.agent-builder {
+  padding: 25px;
+}
+
+.builder-header {
+  padding-bottom: 22px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid rgba(100,160,210,.12);
+}
+
+.builder-label,
+.test-eyebrow {
+  color: #6f88a3;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-weight: 800;
+}
+
+.builder-header h2 {
+  margin: 6px 0 0;
+  color: #f0f8ff;
+  font-size: 22px;
+}
+
+.builder-status {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  color: #8da5bf;
+  font-size: 11px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  display: inline-block;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: #7f91a5;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #d9e9f8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.label-row span {
+  color: #617994;
+  font-size: 10px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select,
+.test-controls textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(96,150,200,.18);
+  outline: none;
+  border-radius: 12px;
+  background: #08182d;
+  color: #eaf5ff;
+  padding: 13px 14px;
+  font-family: inherit;
+  font-size: 13px;
+  transition: .2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus,
+.test-controls textarea:focus {
+  border-color: rgba(77,193,255,.65);
+  box-shadow: 0 0 0 3px rgba(77,193,255,.08);
+}
+
+.form-group textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.form-group select {
+  cursor: pointer;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.agent-settings-card {
+  margin-top: 5px;
+  padding: 17px;
+  border: 1px solid rgba(96,150,200,.15);
+  border-radius: 15px;
+  background: rgba(255,255,255,.025);
+}
+
+.settings-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.settings-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(75,190,255,.08);
+  color: #55c7ff;
+}
+
+.settings-icon svg {
+  width: 17px;
+}
+
+.settings-title strong {
+  display: block;
+  color: #dcecff;
+  font-size: 12px;
+}
+
+.settings-title span {
+  display: block;
+  margin-top: 3px;
+  color: #657e99;
+  font-size: 10px;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 13px 0;
+  border-top: 1px solid rgba(100,160,210,.09);
+}
+
+.toggle-row span strong {
+  display: block;
+  color: #c9dced;
+  font-size: 11px;
+}
+
+.toggle-row small {
+  display: block;
+  margin-top: 4px;
+  color: #657e99;
+  font-size: 10px;
+}
+
+.toggle-row input {
+  appearance: none;
+  position: relative;
+  width: 39px;
+  height: 22px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #172b42;
+  cursor: pointer;
+}
+
+.toggle-row input::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 3px;
+  left: 3px;
+  border-radius: 50%;
+  background: #8ca1b6;
+  transition: .2s;
+}
+
+.toggle-row input:checked {
+  background: #168ac4;
+}
+
+.toggle-row input:checked::after {
+  left: 20px;
+  background: #fff;
+}
+
+.builder-actions {
+  gap: 10px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(100,160,210,.12);
+}
+
+.agent-test-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.test-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(100,160,210,.12);
+}
+
+.test-header h3 {
+  margin: 5px 0 0;
+  color: #edf7ff;
+  font-size: 17px;
+}
+
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: #73e0ac;
+  background: rgba(45,190,120,.08);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.live-badge span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #43d78c;
+}
+
+.chat-messages {
+  flex: 1;
+  min-height: 450px;
+  padding: 18px;
+  overflow-y: auto;
+}
+
+.chat-message {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 17px;
+}
+
+.message-avatar {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 9px;
+  background: rgba(75,190,255,.08);
+  color: #55c7ff;
+}
+
+.message-avatar svg {
+  width: 15px;
+}
+
+.message-content strong {
+  display: block;
+  color: #cde4f8;
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+
+.message-content p {
+  margin: 0;
+  color: #8198b1;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.chat-message.user {
+  flex-direction: row-reverse;
+}
+
+.chat-message.user .message-avatar {
+  background: rgba(84,120,255,.12);
+  color: #8db0ff;
+}
+
+.chat-message.user .message-content {
+  text-align: right;
+}
+
+.test-controls {
+  position: relative;
+  padding: 15px;
+  border-top: 1px solid rgba(100,160,210,.12);
+}
+
+.test-controls textarea {
+  min-height: 72px;
+  padding-right: 52px;
+  resize: none;
+}
+
+.send-agent-btn {
+  position: absolute;
+  right: 25px;
+  bottom: 25px;
+  width: 35px;
+  height: 35px;
+  border: 0;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: #1b9bd5;
+  color: white;
+  cursor: pointer;
+}
+
+.send-agent-btn:hover {
+  background: #29b2ed;
+}
+
+.send-agent-btn svg {
+  width: 17px;
+}
+
+.test-footer {
+  padding: 10px 15px;
+  color: #607893;
+  font-size: 9px;
+  border-top: 1px solid rgba(100,160,210,.08);
+}
+
+.test-footer span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.test-footer svg {
+  width: 12px;
+}
+
+.agent-features {
+  margin-top: 70px;
+}
+
+.section-heading {
+  margin-bottom: 25px;
+}
+
+.section-heading h2 {
+  margin: 8px 0 0;
+  color: #eaf5ff;
+  font-size: 28px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.feature-card {
+  padding: 22px;
+  border: 1px solid rgba(96,150,200,.15);
+  border-radius: 17px;
+  background: rgba(7,18,36,.65);
+}
+
+.feature-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: rgba(75,190,255,.08);
+  color: #55c7ff;
+  margin-bottom: 15px;
+}
+
+.feature-icon svg {
+  width: 19px;
+}
+
+.feature-card h3 {
+  margin: 0 0 8px;
+  color: #dcecff;
+  font-size: 13px;
+}
+
+.feature-card p {
+  margin: 0;
+  color: #7189a3;
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.site-footer {
+  margin-top: 30px;
+  border-top: 1px solid rgba(100,160,210,.1);
+}
+
+.footer-inner {
+  width: min(1500px, calc(100% - 36px));
+  margin: auto;
+  padding: 35px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.footer-brand p {
+  max-width: 300px;
+  color: #627993;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.footer-links a {
+  color: #7890aa;
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: #55c7ff;
+}
+
+@media (max-width: 1150px) {
+
+  .agent-workspace {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+
+  .agent-test-panel {
+    grid-column: 1 / -1;
+    min-height: 600px;
+  }
+
+  .feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+@media (max-width: 760px) {
+
+  .page-shell {
+    width: min(100% - 24px, 1500px);
+    padding-top: 35px;
+  }
+
+  .page-hero {
+    display: block;
+  }
+
+  .page-hero-actions {
+    margin-top: 20px;
+  }
+
+  .agent-workspace {
+    display: block;
+  }
+
+  .agent-sidebar,
+  .agent-builder,
+  .agent-test-panel {
+    margin-bottom: 15px;
+  }
+
+  .agent-builder {
+    padding: 18px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .agent-test-panel {
+    min-height: 560px;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-inner {
+    display: block;
+  }
+
+  .footer-links {
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+}
+
+</style>
+
+
+<script>
+
+"use strict";
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+  initAgentsPage();
+
+});
+
+
+let currentAgentId = null;
+let currentSession = null;
+
+
+async function initAgentsPage() {
+
+  try {
+
+    if (window.supabaseClient) {
+
+      const result =
+        await window.supabaseClient.auth.getSession();
+
+      currentSession = result.data.session;
+
+    }
+
+  } catch (error) {
+
+    console.error("Session error:", error);
+
+  }
+
+
+  setupPromptCounter();
+  setupAgentForm();
+  setupNewAgent();
+  setupReset();
+  setupChat();
+  setupRefresh();
+
+  await loadAgents();
+  await loadUsage();
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+}
+
+
+function setupPromptCounter() {
+
+  const textarea =
+    document.getElementById("systemPrompt");
+
+  const counter =
+    document.getElementById("promptCount");
+
+  if (!textarea || !counter) return;
+
+  function update() {
+
+    counter.textContent =
+      `${textarea.value.length} / 6000`;
+
+  }
+
+  textarea.addEventListener("input", update);
+
+  update();
+
+}
+
+
+function setupAgentForm() {
+
+  const form =
+    document.getElementById("agentForm");
+
+  if (!form) return;
+
+  form.addEventListener("submit", async (event) => {
+
+    event.preventDefault();
+
+    await saveAgent();
+
+  });
+
+}
+
+
+function setupNewAgent() {
+
+  document
+    .getElementById("newAgentBtn")
+    ?.addEventListener("click", () => {
+
+      resetAgentForm();
+
+      currentAgentId = null;
+
+      document.getElementById("agentTitle").textContent =
+        "New Voice Agent";
+
+      document.querySelector(".builder-status").innerHTML =
+        `<span class="status-dot"></span>Draft`;
+
+    });
+
+}
+
+
+function setupReset() {
+
+  document
+    .getElementById("resetAgentBtn")
+    ?.addEventListener("click", resetAgentForm);
+
+}
+
+
+function setupRefresh() {
+
+  document
+    .getElementById("refreshAgentsBtn")
+    ?.addEventListener("click", async () => {
+
+      await loadAgents();
+
+    });
+
+}
+
+
+function resetAgentForm() {
+
+  document.getElementById("agentForm")?.reset();
+
+  document.getElementById("agentModel").value =
+    "gemini-2.5-flash";
+
+  document.getElementById("agentTemperature").value =
+    "0.5";
+
+  document.getElementById("allowInterruptions").checked =
+    true;
+
+  document.getElementById("conversationMemory").checked =
+    true;
+
+  document.getElementById("endCallDetection").checked =
+    true;
+
+  currentAgentId = null;
+
+  const messages =
+    document.getElementById("chatMessages");
+
+  if (messages) {
+
+    messages.innerHTML = `
+      <div class="chat-message assistant">
+
+        <div class="message-avatar">
+          <i data-lucide="bot"></i>
+        </div>
+
+        <div class="message-content">
+
+          <strong>AI Agent</strong>
+
+          <p>
+            Configure your agent and send me a message
+            to test the conversation.
+          </p>
+
+        </div>
+
+      </div>
+    `;
+
+  }
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+}
+
+
+async function loadAgents() {
+
+  const list =
+    document.getElementById("agentsList");
+
+  if (!list) return;
+
+  if (!currentSession) {
+
+    list.innerHTML = `
+      <div class="agent-empty">
+
+        <div class="empty-icon">
+          <i data-lucide="lock"></i>
+        </div>
+
+        <strong>Login required</strong>
+
+        <p>
+          Login to create and manage your agents.
+        </p>
+
+        <a
+          href="login.html"
+          class="btn btn-primary"
+          style="margin-top:15px;"
+        >
+          Login
+        </a>
+
+      </div>
+    `;
+
+    lucide.createIcons();
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch("/api/agents", {
+
+        method: "GET",
+
+        headers: {
+          "Authorization":
+            `Bearer ${currentSession.access_token}`
+        }
+
+      });
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error || "Unable to load agents."
+      );
+
+    }
+
+
+    const agents =
+      Array.isArray(data.agents)
+        ? data.agents
+        : [];
+
+
+    if (!agents.length) {
+
+      list.innerHTML = `
+        <div class="agent-empty">
+
+          <div class="empty-icon">
+            <i data-lucide="bot"></i>
+          </div>
+
+          <strong>No agents yet</strong>
+
+          <p>
+            Click New Agent to create your first AI agent.
+          </p>
+
+        </div>
+      `;
+
+      lucide.createIcons();
+
+      return;
+
+    }
+
+
+    list.innerHTML = agents.map(agent => `
+
+      <button
+        class="agent-list-item"
+        data-agent-id="${escapeHtml(agent.id)}"
+      >
+
+        <span class="agent-list-icon">
+          <i data-lucide="bot"></i>
+        </span>
+
+        <span class="agent-list-copy">
+
+          <strong>
+            ${escapeHtml(agent.name || "Untitled Agent")}
+          </strong>
+
+          <small>
+            ${escapeHtml(agent.description || "Voice AI agent")}
+          </small>
+
+        </span>
+
+      </button>
+
+    `).join("");
+
+
+    document.querySelectorAll(".agent-list-item")
+      .forEach(button => {
+
+        button.addEventListener("click", () => {
+
+          const agent =
+            agents.find(
+              item => item.id === button.dataset.agentId
+            );
+
+          if (agent) {
+            populateAgent(agent);
+          }
+
+        });
+
+      });
+
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+
+    populateAgent(agents[0]);
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    list.innerHTML = `
+      <div class="agent-empty">
+
+        <div class="empty-icon">
+          <i data-lucide="triangle-alert"></i>
+        </div>
+
+        <strong>Unable to load agents</strong>
+
+        <p>
+          ${escapeHtml(error.message)}
+        </p>
+
+      </div>
+    `;
+
+    lucide.createIcons();
+
+  }
+
+}
+
+
+function populateAgent(agent) {
+
+  currentAgentId = agent.id;
+
+  document.getElementById("agentName").value =
+    agent.name || "";
+
+  document.getElementById("agentDescription").value =
+    agent.description || "";
+
+  document.getElementById("systemPrompt").value =
+    agent.system_prompt || "";
+
+  document.getElementById("agentModel").value =
+    agent.model || "gemini-2.5-flash";
+
+  document.getElementById("agentVoice").value =
+    agent.voice_id || "";
+
+  document.getElementById("agentLanguage").value =
+    agent.language || "en";
+
+  document.getElementById("agentTemperature").value =
+    String(agent.temperature ?? 0.5);
+
+  document.getElementById("allowInterruptions").checked =
+    agent.allow_interruptions !== false;
+
+  document.getElementById("conversationMemory").checked =
+    agent.memory_enabled !== false;
+
+  document.getElementById("endCallDetection").checked =
+    agent.end_call_detection !== false;
+
+  document.getElementById("agentTitle").textContent =
+    agent.name || "Voice Agent";
+
+  document.querySelector(".builder-status").innerHTML =
+    `<span class="status-dot" style="background:#43d78c"></span>Saved`;
+
+  document.getElementById("promptCount").textContent =
+    `${(agent.system_prompt || "").length} / 6000`;
+
+}
+
+
+async function saveAgent() {
+
+  if (!currentSession) {
+
+    VoiceAI.toast("Please login first.");
+    return;
+
+  }
+
+
+  const name =
+    document.getElementById("agentName").value.trim();
+
+  const description =
+    document.getElementById("agentDescription").value.trim();
+
+  const systemPrompt =
+    document.getElementById("systemPrompt").value.trim();
+
+
+  if (!name) {
+
+    VoiceAI.toast("Enter an agent name.");
+    return;
+
+  }
+
+
+  if (!systemPrompt) {
+
+    VoiceAI.toast("Enter system instructions.");
+    return;
+
+  }
+
+
+  const button =
+    document.getElementById("saveAgentBtn");
+
+  const original =
+    button.innerHTML;
+
+  button.disabled = true;
+
+  button.innerHTML =
+    `<i data-lucide="loader-circle"></i> Saving...`;
+
+  lucide.createIcons();
+
+
+  try {
+
+    const payload = {
+
+      id: currentAgentId,
+
+      name,
+
+      description,
+
+      system_prompt: systemPrompt,
+
+      model:
+        document.getElementById("agentModel").value,
+
+      voice_id:
+        document.getElementById("agentVoice").value,
+
+      language:
+        document.getElementById("agentLanguage").value,
+
+      temperature:
+        Number(document.getElementById("agentTemperature").value),
+
+      allow_interruptions:
+        document.getElementById("allowInterruptions").checked,
+
+      memory_enabled:
+        document.getElementById("conversationMemory").checked,
+
+      end_call_detection:
+        document.getElementById("endCallDetection").checked
+
+    };
+
+
+    const response =
+      await fetch("/api/agents", {
+
+        method: "POST",
+
+        headers: {
+
+          "Content-Type": "application/json",
+
+          "Authorization":
+            `Bearer ${currentSession.access_token}`
+
+        },
+
+        body: JSON.stringify(payload)
+
+      });
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error || "Unable to save agent."
+      );
+
+    }
+
+
+    currentAgentId =
+      data.agent?.id || currentAgentId;
+
+
+    document.getElementById("agentTitle").textContent =
+      name;
+
+    document.querySelector(".builder-status").innerHTML =
+      `<span class="status-dot" style="background:#43d78c"></span>Saved`;
+
+    VoiceAI.toast("Agent saved successfully.");
+
+    await loadAgents();
+
+  } catch (error) {
+
+    console.error(error);
+
+    VoiceAI.toast(error.message);
+
+  } finally {
+
+    button.disabled = false;
+    button.innerHTML = original;
+
+    lucide.createIcons();
+
+  }
+
+}
+
+
+function setupChat() {
+
+  const button =
+    document.getElementById("agentSendBtn");
+
+  const input =
+    document.getElementById("agentInput");
+
+  if (!button || !input) return;
+
+  // Carry the message typed on the homepage into the agent workspace.
+  try {
+    const draft = sessionStorage.getItem("voiceai_agent_draft");
+    if (draft) {
+      input.value = draft;
+      sessionStorage.removeItem("voiceai_agent_draft");
+      input.focus();
+    }
+  } catch (error) {
+    console.warn("Could not restore the homepage agent draft.", error);
+  }
+
+
+  async function sendMessage() {
+
+    const message =
+      input.value.trim();
+
+    if (!message) return;
+
+
+    if (!currentSession) {
+
+      VoiceAI.toast("Please login first.");
+      return;
+
+    }
+
+
+    if (!currentAgentId) {
+
+      VoiceAI.toast("Save an agent before testing it.");
+      return;
+
+    }
+
+
+    addChatMessage("user", message);
+
+    input.value = "";
+
+
+    button.disabled = true;
+
+
+    try {
+
+      const response =
+        await fetch("/api/agents", {
+
+          method: "POST",
+
+          headers: {
+
+            "Content-Type": "application/json",
+
+            "Authorization":
+              `Bearer ${currentSession.access_token}`
+
+          },
+
+          body: JSON.stringify({
+
+            action: "test",
+
+            agent_id: currentAgentId,
+
+            message
+
+          })
+
+        });
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error || "Agent test failed."
+        );
+
+      }
+
+
+      addChatMessage(
+        "assistant",
+        data.reply ||
+        data.message ||
+        "No response received."
+      );
+
+
+      await loadUsage();
+
+    } catch (error) {
+
+      console.error(error);
+
+      addChatMessage(
+        "assistant",
+        `Error: ${error.message}`
+      );
+
+    } finally {
+
+      button.disabled = false;
+
+    }
+
+  }
+
+
+  button.addEventListener("click", sendMessage);
+
+
+  input.addEventListener("keydown", event => {
+
+    if (
+      event.key === "Enter" &&
+      !event.shiftKey
+    ) {
+
+      event.preventDefault();
+      sendMessage();
+
+    }
+
+  });
+
+}
+
+
+function addChatMessage(role, text) {
+
+  const container =
+    document.getElementById("chatMessages");
+
+  const item =
+    document.createElement("div");
+
+  item.className =
+    `chat-message ${role}`;
+
+  item.innerHTML = `
+
+    <div class="message-avatar">
+
+      <i data-lucide="${
+        role === "user" ? "user" : "bot"
+      }"></i>
+
+    </div>
+
+    <div class="message-content">
+
+      <strong>
+        ${role === "user" ? "You" : "AI Agent"}
+      </strong>
+
+      <p>
+        ${escapeHtml(text)}
+      </p>
+
+    </div>
+
+  `;
+
+  container.appendChild(item);
+
+  container.scrollTop =
+    container.scrollHeight;
+
+  lucide.createIcons();
+
+}
+
+
+async function loadUsage() {
+
+  const target =
+    document.getElementById("agentUsage");
+
+  if (!target) return;
+
+
+  if (!currentSession) {
+
+    target.textContent =
+      "Login required";
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch("/api/usage?action=agents", {
+
+        headers: {
+
+          "Authorization":
+            `Bearer ${currentSession.access_token}`
+
+        }
+
+      });
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error || "Usage unavailable"
+      );
+
+    }
+
+
+    if (data.unlimited) {
+
+      target.textContent =
+        "Premium • Unlimited";
+
+      return;
+
+    }
+
+
+    const used =
+      Number(data.used || 0);
+
+    const limit =
+      Number(data.limit || 5);
+
+    target.textContent =
+      `${used}/${limit} free uses`;
+
+  } catch {
+
+    target.textContent =
+      "Usage unavailable";
+
+  }
+
+}
+
+
+function escapeHtml(value) {
+
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+setTimeout(() => {
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+}, 100);
+
+</script>
+
+</body>
+</html>
