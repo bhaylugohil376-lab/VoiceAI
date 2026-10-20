@@ -39,9 +39,12 @@ export default async function handler(req, res) {
       });
     });
 
-    uploadedFile = Array.isArray(files.audio)
-      ? files.audio[0]
-      : files.audio;
+    // The browser UI historically submits the file as "file"; accept both
+    // field names so older and newer clients use the same endpoint.
+    const audioUpload = files.audio ?? files.file;
+    uploadedFile = Array.isArray(audioUpload)
+      ? audioUpload[0]
+      : audioUpload;
 
     if (!uploadedFile) {
       return sendError(res, 400, "Please upload an audio file in the audio field.");
