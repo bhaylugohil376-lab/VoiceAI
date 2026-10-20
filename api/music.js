@@ -1,13 +1,9 @@
-
 import { requireUser } from "./_lib/auth.js";
 import { checkAndUseAI } from "./_lib/usage.js";
-import {
-  requireMethod,
-  parseJsonBody,
-  sendError
-} from "./_lib/response.js";
+import { requireMethod, parseJsonBody, sendError } from "./_lib/response.js";
 
 const MAX_PROMPT_LENGTH = 1500;
+const ELEVENLABS_MUSIC_URL = "https://api.elevenlabs.io/v1/music";
 
 export default async function handler(req, res) {
   if (!requireMethod(req, res, ["POST"])) return;
@@ -17,95 +13,49 @@ export default async function handler(req, res) {
     if (!user) return;
 
     const body = parseJsonBody(req);
+    if (!body) return sendError(res, 400, "Send a valid JSON request.");
 
-    if (!body) {
-      return sendError(res, 400, "Send a valid JSON request.");
-    }
-
-    const prompt =
-      typeof body.prompt === "string" ? body.prompt.trim() : "";
-
-    const style =
-      typeof body.style === "string" ? body.style.trim() : "cinematic";
-
+    const prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
+    const style = typeof body.style === "string" ? body.style.trim() : "cinematic";
     const duration = Number(body.duration ?? 30);
 
     if (!prompt || prompt.length > MAX_PROMPT_LENGTH) {
-      return sendError(
-        res,
-        400,
-        "Prompt is required and must be 1–1500 characters."
-      );
+      return sendError(res, 400, "Prompt is required and must be 1–1500 characters.");
     }
-
     if (!/^[a-zA-Z0-9 _-]{1,60}$/.test(style)) {
       return sendError(res, 400, "Invalid music style.");
     }
-
     if (!Number.isFinite(duration) || duration < 5 || duration > 180) {
-      return sendError(
-        res,
-        400,
-        "Duration must be between 5 and 180 seconds."
-      );
+      return sendError(res, 400, "Duration must be between 5 and 180 seconds.");
     }
 
-    const providerUrl = process.env.MUSIC_API_URL;
-    const providerKey = process.env.MUSIC_API_KEY;
-
-    if (!providerUrl || !providerKey) {
-      return sendError(
-        res,
-        503,
-        "Music generation provider is not configured."
-      );
-    }
-
-    let parsedUrl;
-
-    try {
-      parsedUrl = new URL(providerUrl);
-    } catch {
-      return sendError(res, 500, "Music provider URL is invalid.");
-    }
-
-    if (
-      parsedUrl.protocol !== "https:" &&
-      process.env.NODE_ENV === "production"
-    ) {
-      return sendError(
-        res,
-        500,
-        "Production music provider URL must use HTTPS."
-      );
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+    if (!apiKey) {
+      return sendError(res, 503, "Music generation is not configured. Add ELEVENLABS_API_KEY to the Vercel project environment.");
     }
 
     const usage = await checkAndUseAI(user, "music");
-
     if (!usage.allowed) {
-      return sendError(
-        res,
-        usage.status || 429,
-        usage.error || "Music generation limit reached."
-      );
+      return sendError(res, usage.status || 429, usage.error || "Music generation limit reached.");
     }
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 90000);
-
+    const timeout = setTimeout(() => controller.abort(), 55000);
     let providerResponse;
 
     try {
-      providerResponse = await fetch(providerUrl, {
+      providerResponse = await fetch(`${ELEVENLABS_MUSIC_URL}?output_format=mp3_44100_128`, {
         method: "POST",
         headers: {
+          "xi-api-key": apiKey,
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${providerKey}`
+          "Accept": "audio/mpeg"
         },
         body: JSON.stringify({
-          prompt,
-          style,
-          duration
+          prompt: `Create ${style} music. ${prompt}`,
+          music_length_ms: duration * 1000,
+          model_id: process.env.ELEVENLABS_MUSIC_MODEL || "music_v2_5",
+          force_instrumental: body.instrumental !== false
         }),
         signal: controller.signal
       });
@@ -114,63 +64,26 @@ export default async function handler(req, res) {
     }
 
     if (!providerResponse.ok) {
-      console.error(
-        "Music provider returned HTTP status:",
-        providerResponse.status
-      );
-
-      return sendError(
-        res,
-        502,
-        "The music provider could not generate audio. Check its API status and configuration."
-      );
+      const providerMessage = await providerResponse.text().catch(() => "");
+      console.error("ElevenLabs music API returned HTTP", providerResponse.status, providerMessage.slice(0, 500));
+      const status = providerResponse.status === 401 || providerResponse.status === 403 ? 502 : 502;
+      return sendError(res, status, "ElevenLabs could not generate music. Check API key permissions, plan limits, and available credits.");
     }
 
-    const contentType =
-      providerResponse.headers.get("content-type") || "";
-
-    if (!contentType.includes("application/json")) {
-      return sendError(
-        res,
-        502,
-        "The provider returned a non-JSON response. Its adapter must be configured for that response format."
-      );
+    const contentType = providerResponse.headers.get("content-type") || "";
+    if (!contentType.includes("audio/") && !contentType.includes("application/octet-stream")) {
+      console.error("Unexpected ElevenLabs music response content type:", contentType);
+      return sendError(res, 502, "Music provider returned an unsupported audio format.");
     }
 
-    const result = await providerResponse.json();
-
-    const audioUrl =
-      typeof result.audio_url === "string"
-        ? result.audio_url
-        : typeof result.url === "string"
-          ? result.url
-          : null;
-
-    const providerJobId =
-      typeof result.job_id === "string"
-        ? result.job_id
-        : typeof result.id === "string"
-          ? result.id
-          : null;
-
-    const status =
-      typeof result.status === "string"
-        ? result.status
-        : null;
-
-    if (!audioUrl && !providerJobId) {
-      return sendError(
-        res,
-        502,
-        "The provider response did not contain an audio URL or job ID."
-      );
-    }
+    const audioBuffer = Buffer.from(await providerResponse.arrayBuffer());
+    if (!audioBuffer.length) return sendError(res, 502, "Music provider returned an empty audio file.");
 
     return res.status(200).json({
       success: true,
-      status: status || (audioUrl ? "completed" : "processing"),
-      audio_url: audioUrl,
-      job_id: providerJobId,
+      status: "completed",
+      audio_base64: audioBuffer.toString("base64"),
+      mime_type: contentType.split(";")[0] || "audio/mpeg",
       prompt,
       style,
       duration,
@@ -178,15 +91,9 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     if (error.name === "AbortError") {
-      return sendError(
-        res,
-        504,
-        "Music provider timed out. Check the provider's job status before retrying."
-      );
+      return sendError(res, 504, "Music generation timed out. Try a shorter track.");
     }
-
     console.error("Music API error:", error.message);
-
     return sendError(res, 500, "Music generation request failed.");
   }
 }
