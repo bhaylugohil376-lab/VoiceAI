@@ -324,7 +324,7 @@
 
       audioPlayer.src = audioUrl;
       downloadLink.href = audioUrl;
-      downloadLink.download = `voiceai-speech.${formatSelect.value.startsWith("pcm") ? "wav" : "mp3"}`;
+      downloadLink.download = `voiceai-speech.${formatSelect.value.startsWith("pcm") ? "pcm" : "mp3"}`;
 
       const voice = voices.get(voiceId);
       $("selectedVoiceInfo").textContent =
