@@ -1568,26 +1568,64 @@
               );
 
 
-              const response =
+              let response =
                 await fetch(
                   "/api/dubbing",
                   {
                     method: "POST",
-
                     headers: {
                       Authorization:
                         `Bearer ${session.access_token}`
                     },
-
                     body: formData
-
                   }
                 );
 
+              let data = await response.json();
 
-              const data =
-                await response.json();
+              // ElevenLabs dubbing runs asynchronously. Poll our authenticated
+              // server endpoint until the finished media is ready.
+              if (response.ok && data.status === "processing" && data.job_id) {
+                const jobId = data.job_id;
+                const targetLanguage =
+                  document.getElementById("targetLanguage").value;
+                let completed = false;
 
+                for (let attempt = 0; attempt < 25; attempt += 1) {
+                  await new Promise((resolve) => setTimeout(resolve, 2000));
+                  loadingTitle.textContent = "Generating dubbed media...";
+                  loadingText.textContent = "Waiting for ElevenLabs to finish the translation and voice generation.";
+
+                  const statusResponse = await fetch("/api/dubbing-status", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${session.access_token}`
+                    },
+                    body: JSON.stringify({
+                      job_id: jobId,
+                      target_language: targetLanguage
+                    })
+                  });
+                  const statusData = await statusResponse.json();
+
+                  if (!statusResponse.ok) {
+                    throw new Error(statusData.message || statusData.error || "Could not check dubbing status.");
+                  }
+                  if (statusData.status === "completed" && (statusData.outputUrl || statusData.base64)) {
+                    data = statusData;
+                    completed = true;
+                    break;
+                  }
+                  if (statusData.status === "failed") {
+                    throw new Error(statusData.error || "Dubbing failed at the provider.");
+                  }
+                }
+
+                if (!completed) {
+                  throw new Error("Dubbing is still processing. Please try again in a little while.");
+                }
+              }
 
               if (!response.ok) {
 
