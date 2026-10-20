@@ -70,7 +70,8 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           voice_description: description,
           text: previewText
-        })
+        }),
+        signal: AbortSignal.timeout(60000)
       }
     );
 
