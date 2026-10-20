@@ -1,0 +1,362 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoiceAI — Text to Speech</title>
+  <meta name="description" content="Convert text into speech with available VoiceAI voices.">
+  <meta name="theme-color" content="#050b18">
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body{font-family:system-ui,sans-serif}
+    .wrap{max-width:1000px;margin:30px auto;padding:20px}
+    .card{padding:22px;border:1px solid #ddd;border-radius:16px;margin:18px 0}
+    label{display:block;font-weight:600;margin:14px 0 7px}
+    textarea,select,input{box-sizing:border-box;width:100%;padding:12px;border:1px solid #bbb;border-radius:9px;font:inherit}
+    textarea{min-height:160px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+    button,.btn{padding:12px 18px;border:0;border-radius:9px;cursor:pointer;font-weight:600;margin:10px 6px 0 0}
+    .primary{background:#6848e8;color:white}
+    button:disabled{opacity:.5;cursor:wait}
+    #status{margin-top:15px;overflow-wrap:anywhere}
+    .error{color:#bd2424}.success{color:#16803c}
+    audio{width:100%;margin-top:15px}
+    @media(max-width:600px){.row{grid-template-columns:1fr}.wrap{padding:12px}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <h1>VoiceAI Text to Speech</h1>
+  <p>Generate real speech with available ElevenLabs voices.</p>
+
+  <section class="card">
+    <label for="textInput">Text to convert</label>
+    <textarea id="textInput" maxlength="5000"
+      placeholder="Type or paste your text here..."></textarea>
+    <small><span id="charCount">0</span>/5000 characters</small>
+
+    <label for="voiceSearch">Search loaded voices</label>
+    <input id="voiceSearch" type="search"
+      placeholder="Search voice name or Voice ID...">
+
+    <div class="row">
+      <div>
+        <label for="voiceSelect">Real voice</label>
+        <select id="voiceSelect">
+          <option value="">Loading voices...</option>
+        </select>
+      </div>
+      <div>
+        <label for="formatSelect">Audio quality</label>
+        <select id="formatSelect">
+          <option value="mp3_44100_128">MP3 High Quality</option>
+          <option value="mp3_22050_32">MP3 Small File</option>
+        </select>
+      </div>
+    </div>
+
+    <p id="voiceCount">0 voices loaded</p>
+    <button id="loadMoreBtn" type="button" hidden>Load More Voices</button>
+    <button id="refreshBtn" type="button">Refresh Voices</button>
+    <button id="generateBtn" class="primary" type="button">
+      Generate Speech
+    </button>
+    <div id="status" role="status" aria-live="polite"></div>
+  </section>
+
+  <section id="resultCard" class="card" hidden>
+    <h2>Your generated audio</h2>
+    <p id="selectedVoiceInfo"></p>
+    <audio id="audioPlayer" controls></audio>
+    <br>
+    <a id="downloadLink" class="btn primary" download="voiceai-speech.mp3">
+      Download MP3
+    </a>
+  </section>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = id => document.getElementById(id);
+
+  const textInput = $("textInput");
+  const voiceSearch = $("voiceSearch");
+  const voiceSelect = $("voiceSelect");
+  const formatSelect = $("formatSelect");
+  const status = $("status");
+  const loadMoreBtn = $("loadMoreBtn");
+  const refreshBtn = $("refreshBtn");
+  const generateBtn = $("generateBtn");
+  const resultCard = $("resultCard");
+  const audioPlayer = $("audioPlayer");
+  const downloadLink = $("downloadLink");
+
+  let voices = new Map();
+  let nextPageToken = null;
+  let loadingVoices = false;
+  let generating = false;
+  let audioUrl = null;
+
+  function setStatus(message, type = "") {
+    status.textContent = message;
+    status.className = type;
+  }
+
+  function getClient() {
+    if (window.supabaseClient?.auth?.getSession) {
+      return window.supabaseClient;
+    }
+
+    if (window.SUPABASE_URL && window.SUPABASE_ANON_KEY &&
+        window.supabase?.createClient) {
+      window.supabaseClient = window.supabase.createClient(
+        window.SUPABASE_URL,
+        window.SUPABASE_ANON_KEY
+      );
+      return window.supabaseClient;
+    }
+
+    throw new Error(
+      "Supabase is not configured. Set SUPABASE_URL and SUPABASE_ANON_KEY, or initialize window.supabaseClient in your project."
+    );
+  }
+
+  async function getAccessToken() {
+    const client = getClient();
+    const { data, error } = await client.auth.getSession();
+
+    if (error) throw new Error(error.message);
+
+    const token = data?.session?.access_token;
+    if (!token) throw new Error("Please sign in before using Text to Speech.");
+
+    return token;
+  }
+
+  async function authorizedFetch(url, options = {}) {
+    const token = await getAccessToken();
+
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        ...(options.headers || {}),
+        Authorization: "Bearer " + token
+      }
+    });
+
+    if (!response.ok) {
+      let message = `Request failed (${response.status})`;
+      try {
+        const payload = await response.json();
+        message = payload.error || payload.message || message;
+      } catch (_) {}
+      throw new Error(message);
+    }
+
+    return response;
+  }
+
+  function restoreHomepageDraft() {
+    try {
+      const savedText = sessionStorage.getItem("voiceai_tts_text");
+      const savedVoice = sessionStorage.getItem("voiceai_tts_voice");
+      const savedVoiceName = sessionStorage.getItem("voiceai_selected_voice_name");
+      if (savedText && !textInput.value) {
+        textInput.value = savedText;
+        $("charCount").textContent = String(savedText.length);
+      }
+      if (savedVoice) {
+        voiceSelect.dataset.preferredVoice = savedVoice;
+      }
+      if (savedVoiceName) {
+        voiceSelect.dataset.preferredVoiceName = savedVoiceName;
+      }
+    } catch (error) {
+      console.warn("Could not restore homepage draft:", error);
+    }
+  }
+
+  function renderVoices() {
+    const query = voiceSearch.value.trim().toLowerCase();
+    const previousValue = voiceSelect.value;
+
+    voiceSelect.replaceChildren(new Option("Select a voice...", ""));
+
+    for (const voice of voices.values()) {
+      const name = String(voice.name || "");
+      const id = String(voice.voice_id || "");
+      const labels = voice.labels || {};
+      const description = String(voice.description || "");
+      const searchText =
+        `${name} ${id} ${description} ${JSON.stringify(labels)}`.toLowerCase();
+
+      if (query && !searchText.includes(query)) continue;
+
+      const option = new Option(`${name} — ID: ${id}`, id);
+      voiceSelect.add(option);
+    }
+
+    const preferredVoice = voiceSelect.dataset.preferredVoice;
+    const preferredVoiceName = voiceSelect.dataset.preferredVoiceName;
+    if (preferredVoice && [...voiceSelect.options].some(option => option.value === preferredVoice)) {
+      voiceSelect.value = preferredVoice;
+      delete voiceSelect.dataset.preferredVoice;
+      delete voiceSelect.dataset.preferredVoiceName;
+    } else if ([...voiceSelect.options].some(option => option.value === previousValue)) {
+      voiceSelect.value = previousValue;
+    } else if (preferredVoice && preferredVoiceName && !query) {
+      setStatus(`Your selected voice “${preferredVoiceName}” is not in the loaded voice list. Refresh voices or choose another voice.`, "error");
+    }
+
+    $("voiceCount").textContent =
+      `${voices.size} unique real voices loaded` +
+      (query ? `; ${Math.max(0, voiceSelect.options.length - 1)} match search` : "");
+  }
+
+  async function loadVoices(loadMore = false) {
+    if (loadingVoices) return;
+    if (loadMore && !nextPageToken) return;
+
+    loadingVoices = true;
+    loadMoreBtn.disabled = true;
+    refreshBtn.disabled = true;
+
+    if (!loadMore) {
+      voices.clear();
+      nextPageToken = null;
+      voiceSelect.replaceChildren(new Option("Loading real voices...", ""));
+    }
+
+    setStatus(loadMore ? "Loading next voice page..." : "Loading real voices...");
+
+    try {
+      const params = new URLSearchParams({ page_size: "100" });
+      if (loadMore && nextPageToken) {
+        params.set("next_page_token", nextPageToken);
+      }
+
+      const response = await authorizedFetch("/api/voices?" + params);
+      const payload = await response.json();
+
+      if (!payload.success || !Array.isArray(payload.voices)) {
+        throw new Error(payload.error || "Invalid voices response.");
+      }
+
+      for (const voice of payload.voices) {
+        if (voice?.voice_id && voice?.name) {
+          voices.set(voice.voice_id, voice);
+        }
+      }
+
+      nextPageToken = payload.next_page_token || null;
+
+      renderVoices();
+      loadMoreBtn.hidden = !nextPageToken;
+
+      setStatus(
+        `${voices.size} real voices loaded.` +
+        (nextPageToken
+          ? " More voices are available. Select Load More Voices."
+          : " The provider reports no next page."),
+        "success"
+      );
+    } catch (error) {
+      setStatus(error.message || "Could not load voices.", "error");
+      if (!voices.size) {
+        voiceSelect.replaceChildren(new Option("Voices unavailable", ""));
+      }
+    } finally {
+      loadingVoices = false;
+      loadMoreBtn.disabled = false;
+      refreshBtn.disabled = false;
+    }
+  }
+
+  async function generateSpeech() {
+    if (generating) return;
+
+    const text = textInput.value.trim();
+    const voiceId = voiceSelect.value;
+
+    if (!text) {
+      setStatus("Enter some text first.", "error");
+      textInput.focus();
+      return;
+    }
+
+    if (!voiceId) {
+      setStatus("Select a real voice first.", "error");
+      return;
+    }
+
+    generating = true;
+    generateBtn.disabled = true;
+    resultCard.hidden = true;
+    setStatus("Generating audio from ElevenLabs...");
+
+    try {
+      const response = await authorizedFetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text,
+          voice_id: voiceId,
+          output_format: formatSelect.value
+        })
+      });
+
+      const contentType = response.headers.get("content-type") || "";
+
+      if (contentType.includes("application/json")) {
+        const payload = await response.json();
+        throw new Error(payload.error || "The API did not return audio.");
+      }
+
+      const blob = await response.blob();
+      if (!blob.size) throw new Error("The returned audio is empty.");
+
+      if (audioUrl) URL.revokeObjectURL(audioUrl);
+      audioUrl = URL.createObjectURL(blob);
+
+      audioPlayer.src = audioUrl;
+      downloadLink.href = audioUrl;
+      downloadLink.download = `voiceai-speech.${formatSelect.value.startsWith("pcm") ? "pcm" : "mp3"}`;
+
+      const voice = voices.get(voiceId);
+      $("selectedVoiceInfo").textContent =
+        `Voice: ${voice?.name || "Selected voice"} | Voice ID: ${voiceId}`;
+
+      resultCard.hidden = false;
+      setStatus("Audio generated successfully.", "success");
+      resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (error) {
+      setStatus(error.message || "Speech generation failed.", "error");
+    } finally {
+      generating = false;
+      generateBtn.disabled = false;
+    }
+  }
+
+  textInput.addEventListener("input", () => {
+    $("charCount").textContent = textInput.value.length;
+  });
+
+  voiceSearch.addEventListener("input", renderVoices);
+  loadMoreBtn.addEventListener("click", () => loadVoices(true));
+  refreshBtn.addEventListener("click", () => loadVoices(false));
+  generateBtn.addEventListener("click", generateSpeech);
+
+  window.addEventListener("beforeunload", () => {
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+  });
+
+  restoreHomepageDraft();
+  loadVoices(false);
+})();
+</script>
+</body>
+</html>

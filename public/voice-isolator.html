@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050b18">
+
+  <title>Voice Isolator — VoiceAI</title>
+  <meta
+    name="description"
+    content="Remove background noise and isolate clean speech with VoiceAI."
+  >
+
+  <link rel="stylesheet" href="./style.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./script.js"></script>
+
+  <style>
+    .page-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 70px 0 90px;
+    }
+
+    .tool-hero {
+      text-align: center;
+      max-width: 780px;
+      margin: 0 auto 42px;
+    }
+
+    .tool-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border: 1px solid rgba(34,211,238,.22);
+      border-radius: 999px;
+      background: rgba(34,211,238,.07);
+      color: #67e8f9;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tool-hero h1 {
+      margin: 20px 0 14px;
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -2px;
+    }
+
+    .tool-hero h1 span {
+      background: linear-gradient(90deg,#60a5fa,#22d3ee);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .tool-hero p {
+      margin: 0 auto;
+      max-width: 650px;
+      color: #8ea6c2;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .isolator-layout {
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(9,23,45,.86);
+      border: 1px solid rgba(96,165,250,.14);
+      border-radius: 22px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.28);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 20px 22px;
+      border-bottom: 1px solid rgba(148,163,184,.10);
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .panel-title-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: rgba(34,211,238,.09);
+      color: #67e8f9;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .panel-title p {
+      margin: 4px 0 0;
+      color: #667d99;
+      font-size: 11px;
+    }
+
+    .usage-pill {
+      padding: 7px 10px;
+      border: 1px solid rgba(96,165,250,.16);
+      border-radius: 999px;
+      color: #9bb4cf;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .panel-body {
+      padding: 24px;
+    }
+
+    .upload-zone {
+      position: relative;
+      min-height: 270px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+      border: 1px dashed rgba(96,165,250,.28);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at center, rgba(34,211,238,.07), transparent 45%),
+        rgba(4,13,29,.45);
+      transition: .2s ease;
+    }
+
+    .upload-zone.dragover {
+      border-color: #22d3ee;
+      background: rgba(34,211,238,.08);
+    }
+
+    .upload-icon {
+      width: 62px;
+      height: 62px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 16px;
+      border-radius: 18px;
+      background: rgba(59,130,246,.11);
+      color: #60a5fa;
+    }
+
+    .upload-zone h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .upload-zone p {
+      margin: 0 auto 17px;
+      max-width: 440px;
+      color: #7188a4;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .browse-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border: 1px solid rgba(96,165,250,.22);
+      border-radius: 11px;
+      background: #10213c;
+      color: #dbeafe;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .browse-btn:hover {
+      border-color: rgba(34,211,238,.45);
+      background: #132b4d;
+    }
+
+    #audioFile {
+      display: none;
+    }
+
+    .selected-file {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+      padding: 13px;
+      border: 1px solid rgba(96,165,250,.12);
+      border-radius: 13px;
+      background: rgba(15,30,53,.7);
+    }
+
+    .selected-file.show {
+      display: flex;
+    }
+
+    .file-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: rgba(34,211,238,.09);
+      color: #67e8f9;
+      flex: 0 0 auto;
+    }
+
+    .file-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .file-info strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+
+    .file-info small {
+      color: #607894;
+      font-size: 10px;
+    }
+
+    .remove-file {
+      border: 0;
+      background: transparent;
+      color: #7188a4;
+      cursor: pointer;
+    }
+
+    .remove-file:hover {
+      color: #f87171;
+    }
+
+    .controls {
+      margin-top: 22px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #a9bdd4;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .select-control {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid rgba(96,165,250,.15);
+      border-radius: 11px;
+      outline: none;
+      background: #08172e;
+      color: #dbeafe;
+      font-size: 12px;
+    }
+
+    .select-control:focus {
+      border-color: rgba(34,211,238,.5);
+    }
+
+    .check-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .check-card {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 12px;
+      border: 1px solid rgba(96,165,250,.12);
+      border-radius: 12px;
+      background: rgba(6,17,34,.6);
+      color: #91a7c0;
+      font-size: 11px;
+    }
+
+    .check-card input {
+      accent-color: #22d3ee;
+    }
+
+    .generate-btn {
+      width: 100%;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+      margin-top: 22px;
+      padding: 14px 18px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      background: linear-gradient(90deg,#2563eb,#0891b2);
+      color: white;
+      font-weight: 800;
+      font-size: 13px;
+      box-shadow: 0 12px 35px rgba(14,165,233,.18);
+    }
+
+    .generate-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .generate-btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .side-card {
+      padding: 22px;
+    }
+
+    .side-card h3 {
+      margin: 0 0 16px;
+      font-size: 14px;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .feature {
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
+    }
+
+    .feature-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 10px;
+      background: rgba(59,130,246,.09);
+      color: #60a5fa;
+    }
+
+    .feature strong {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 3px;
+    }
+
+    .feature span {
+      display: block;
+      color: #657c97;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .result-panel {
+      display: none;
+      margin-top: 22px;
+    }
+
+    .result-panel.show {
+      display: block;
+    }
+
+    .result-audio {
+      width: 100%;
+      margin: 5px 0 15px;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border: 1px solid rgba(96,165,250,.18);
+      border-radius: 10px;
+      background: #10213c;
+      color: #dbeafe;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .status {
+      display: none;
+      margin-top: 15px;
+      padding: 12px 14px;
+      border-radius: 11px;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.error {
+      color: #fecaca;
+      background: rgba(127,29,29,.22);
+      border: 1px solid rgba(248,113,113,.18);
+    }
+
+    .status.loading {
+      color: #bae6fd;
+      background: rgba(8,47,73,.28);
+      border: 1px solid rgba(34,211,238,.15);
+    }
+
+    .status.success {
+      color: #bbf7d0;
+      background: rgba(20,83,45,.22);
+      border: 1px solid rgba(74,222,128,.15);
+    }
+
+    .info-box {
+      margin-top: 18px;
+      padding: 13px;
+      border-radius: 12px;
+      background: rgba(59,130,246,.05);
+      border: 1px solid rgba(96,165,250,.10);
+      color: #7188a4;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 850px) {
+      .isolator-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page-shell {
+        width: min(100% - 20px, 1180px);
+        padding-top: 42px;
+      }
+
+      .panel-body,
+      .side-card {
+        padding: 17px;
+      }
+
+      .panel-head {
+        padding: 16px;
+      }
+
+      .check-row {
+        grid-template-columns: 1fr;
+      }
+
+      .upload-zone {
+        min-height: 230px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-mark">
+        <i data-lucide="audio-lines"></i>
+      </span>
+      <span>VoiceAI</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="tools.html">AI Tools</a>
+      <a href="voices.html">Voices</a>
+      <a href="studio.html">Studio</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="login.html" class="secondary-btn">Login</a>
+      <a href="signup.html" class="primary-btn">Get Started</a>
+    </div>
+  </div>
+</header>
+
+<main class="page-shell">
+
+  <section class="tool-hero">
+    <div class="tool-badge">
+      <i data-lucide="waveform" size="14"></i>
+      AI AUDIO CLEANUP
+    </div>
+
+    <h1>
+      Voice <span>Isolator</span>
+    </h1>
+
+    <p>
+      Remove background noise, music and unwanted sounds from recordings
+      and keep the voice clean, clear and ready for production.
+    </p>
+  </section>
+
+  <section class="isolator-layout">
+
+    <div class="panel">
+
+      <div class="panel-head">
+        <div class="panel-title">
+          <div class="panel-title-icon">
+            <i data-lucide="waveform"></i>
+          </div>
+
+          <div>
+            <h2>Isolate Voice</h2>
+            <p>Upload an audio or video recording</p>
+          </div>
+        </div>
+
+        <div class="usage-pill" id="usageBadge">
+          Checking usage...
+        </div>
+      </div>
+
+      <div class="panel-body">
+
+        <div class="upload-zone" id="uploadZone">
+
+          <div>
+            <div class="upload-icon">
+              <i data-lucide="upload-cloud" size="28"></i>
+            </div>
+
+            <h3>Drop your recording here</h3>
+
+            <p>
+              Upload MP3, WAV, M4A, MP4, MOV or other supported media.
+              Maximum file size is 25 MB.
+            </p>
+
+            <label class="browse-btn" for="audioFile">
+              <i data-lucide="folder-open" size="15"></i>
+              Choose File
+            </label>
+
+            <input
+              type="file"
+              id="audioFile"
+              accept="audio/*,video/mp4,video/quicktime"
+            >
+          </div>
+
+        </div>
+
+        <div class="selected-file" id="selectedFile">
+
+          <div class="file-icon">
+            <i data-lucide="file-audio"></i>
+          </div>
+
+          <div class="file-info">
+            <strong id="fileName">No file selected</strong>
+            <small id="fileSize"></small>
+          </div>
+
+          <button
+            type="button"
+            class="remove-file"
+            id="removeFile"
+            aria-label="Remove file"
+          >
+            <i data-lucide="x" size="17"></i>
+          </button>
+
+        </div>
+
+        <div class="controls">
+
+          <div class="field">
+            <label for="outputMode">Isolation Mode</label>
+
+            <select id="outputMode" class="select-control">
+              <option value="voice">Voice Only</option>
+              <option value="voice_music">Voice + Music</option>
+              <option value="background">Background Only</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Processing Options</label>
+
+            <div class="check-row">
+
+              <label class="check-card">
+                <input type="checkbox" id="enhanceVoice" checked>
+                <span>Enhance voice clarity</span>
+              </label>
+
+              <label class="check-card">
+                <input type="checkbox" id="removeReverb">
+                <span>Reduce room reverb</span>
+              </label>
+
+            </div>
+          </div>
+
+        </div>
+
+        <button
+          type="button"
+          class="generate-btn"
+          id="isolateBtn"
+        >
+          <i data-lucide="sparkles" size="17"></i>
+          Isolate Voice
+        </button>
+
+        <div class="status" id="statusBox"></div>
+
+        <div class="result-panel panel" id="resultPanel">
+
+          <div class="panel-head">
+            <div class="panel-title">
+              <div class="panel-title-icon">
+                <i data-lucide="volume-2"></i>
+              </div>
+
+              <div>
+                <h2>Clean Result</h2>
+                <p>Your processed voice recording</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-body">
+
+            <audio
+              id="resultAudio"
+              class="result-audio"
+              controls
+            ></audio>
+
+            <a
+              id="downloadResult"
+              class="download-btn"
+              href="#"
+              download="voiceai-isolated.wav"
+            >
+              <i data-lucide="download" size="15"></i>
+              Download Audio
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <aside class="panel side-card">
+
+      <h3>Professional Voice Isolation</h3>
+
+      <div class="feature-list">
+
+        <div class="feature">
+          <div class="feature-icon">
+            <i data-lucide="volume-x" size="17"></i>
+          </div>
+
+          <div>
+            <strong>Noise Removal</strong>
+            <span>
+              Reduce unwanted environmental and microphone noise.
+            </span>
+          </div>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <i data-lucide="mic-2" size="17"></i>
+          </div>
+
+          <div>
+            <strong>Clear Speech</strong>
+            <span>
+              Keep dialogue crisp for podcasts, videos and advertisements.
+            </span>
+          </div>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <i data-lucide="waves" size="17"></i>
+          </div>
+
+          <div>
+            <strong>Audio Separation</strong>
+            <span>
+              Separate voice and background elements when supported.
+            </span>
+          </div>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">
+            <i data-lucide="zap" size="17"></i>
+          </div>
+
+          <div>
+            <strong>Fast Processing</strong>
+            <span>
+              Designed for quick creator workflows and production tasks.
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="info-box">
+        <strong>Free plan:</strong>
+        5 AI processing uses per 24 hours for this section.
+        Premium users can use the tool without the app-level 5-use restriction.
+      </div>
+
+    </aside>
+
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <strong>VoiceAI</strong>
+      <span>AI Voice Studio</span>
+    </div>
+
+    <div>
+      © 2026 VoiceAI. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+  const uploadZone = document.getElementById("uploadZone");
+  const fileInput = document.getElementById("audioFile");
+  const selectedFile = document.getElementById("selectedFile");
+  const fileName = document.getElementById("fileName");
+  const fileSize = document.getElementById("fileSize");
+  const removeFile = document.getElementById("removeFile");
+  const isolateBtn = document.getElementById("isolateBtn");
+  const statusBox = document.getElementById("statusBox");
+  const usageBadge = document.getElementById("usageBadge");
+  const resultPanel = document.getElementById("resultPanel");
+  const resultAudio = document.getElementById("resultAudio");
+  const downloadResult = document.getElementById("downloadResult");
+
+  let selected = null;
+
+  function setStatus(message, type) {
+    statusBox.textContent = message;
+    statusBox.className = "status show " + type;
+  }
+
+  function clearStatus() {
+    statusBox.textContent = "";
+    statusBox.className = "status";
+  }
+
+  function formatBytes(bytes) {
+    if (!bytes) return "0 B";
+
+    const units = ["B", "KB", "MB", "GB"];
+    const index = Math.floor(
+      Math.log(bytes) / Math.log(1024)
+    );
+
+    return (
+      (bytes / Math.pow(1024, index)).toFixed(1) +
+      " " +
+      units[index]
+    );
+  }
+
+  function displayFile(file) {
+    selected = file;
+
+    fileName.textContent = file.name;
+    fileSize.textContent = formatBytes(file.size);
+
+    selectedFile.classList.add("show");
+    clearStatus();
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  }
+
+  function clearFile() {
+    selected = null;
+    fileInput.value = "";
+    selectedFile.classList.remove("show");
+    resultPanel.classList.remove("show");
+    clearStatus();
+  }
+
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+
+    if (!file) return;
+
+    if (file.size > 25 * 1024 * 1024) {
+      setStatus(
+        "File is larger than 25 MB. Please choose a smaller file.",
+        "error"
+      );
+
+      fileInput.value = "";
+      return;
+    }
+
+    displayFile(file);
+  });
+
+  removeFile.addEventListener("click", clearFile);
+
+  uploadZone.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    uploadZone.classList.add("dragover");
+  });
+
+  uploadZone.addEventListener("dragleave", () => {
+    uploadZone.classList.remove("dragover");
+  });
+
+  uploadZone.addEventListener("drop", (event) => {
+    event.preventDefault();
+    uploadZone.classList.remove("dragover");
+
+    const file = event.dataTransfer.files[0];
+
+    if (!file) return;
+
+    if (
+      !file.type.startsWith("audio/") &&
+      !file.type.startsWith("video/")
+    ) {
+      setStatus(
+        "Please upload a supported audio or video file.",
+        "error"
+      );
+
+      return;
+    }
+
+    if (file.size > 25 * 1024 * 1024) {
+      setStatus(
+        "File is larger than 25 MB. Please choose a smaller file.",
+        "error"
+      );
+
+      return;
+    }
+
+    displayFile(file);
+  });
+
+  async function getSession() {
+    if (!window.supabaseClient) {
+      throw new Error("Supabase is not configured.");
+    }
+
+    const {
+      data,
+      error
+    } = await window.supabaseClient.auth.getSession();
+
+    if (error) {
+      throw error;
+    }
+
+    return data.session;
+  }
+
+  async function loadUsage() {
+    try {
+      const session = await getSession();
+
+      if (!session) {
+        usageBadge.textContent = "Login required";
+        return;
+      }
+
+      const response = await fetch(
+        "/api/usage?action=voice_isolator",
+        {
+          headers: {
+            Authorization: "Bearer " + session.access_token
+          }
+        }
+      );
+
+      if (!response.ok) {
+        usageBadge.textContent = "5 free uses / 24h";
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.unlimited || data.plan === "premium") {
+        usageBadge.textContent = "Premium • Unlimited";
+        return;
+      }
+
+      const used = Number(data.used || 0);
+      const limit = Number(data.limit || 5);
+
+      usageBadge.textContent =
+        `${Math.max(0, limit - used)} / ${limit} uses left`;
+    } catch (error) {
+      usageBadge.textContent = "5 free uses / 24h";
+    }
+  }
+
+  await loadUsage();
+
+  isolateBtn.addEventListener("click", async () => {
+
+    clearStatus();
+    resultPanel.classList.remove("show");
+
+    if (!selected) {
+      setStatus(
+        "Please upload an audio or video file first.",
+        "error"
+      );
+      return;
+    }
+
+    isolateBtn.disabled = true;
+
+    const originalText = isolateBtn.innerHTML;
+
+    isolateBtn.innerHTML = `
+      <i data-lucide="loader-circle" size="17"></i>
+      Processing...
+    `;
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+    try {
+
+      const session = await getSession();
+
+      if (!session) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      setStatus(
+        "Uploading your recording and starting AI processing...",
+        "loading"
+      );
+
+      const formData = new FormData();
+
+      formData.append("file", selected);
+
+      formData.append(
+        "mode",
+        document.getElementById("outputMode").value
+      );
+
+      formData.append(
+        "enhance_voice",
+        document.getElementById("enhanceVoice").checked
+          ? "true"
+          : "false"
+      );
+
+      formData.append(
+        "remove_reverb",
+        document.getElementById("removeReverb").checked
+          ? "true"
+          : "false"
+      );
+
+      const response = await fetch(
+        "/api/voice-isolator",
+        {
+          method: "POST",
+
+          headers: {
+            Authorization:
+              "Bearer " + session.access_token
+          },
+
+          body: formData
+        }
+      );
+
+      let data = {};
+
+      try {
+        data = await response.json();
+      } catch (_) {
+        data = {};
+      }
+
+      if (response.status === 401) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      if (response.status === 429) {
+        setStatus(
+          data.error ||
+          "Daily limit reached. You have used all 5 free uses for this section. Please try again after 24 hours.",
+          "error"
+        );
+
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "Voice isolation failed. Please try again."
+        );
+      }
+
+      if (!data.audio_url && !data.audio_base64) {
+        throw new Error(
+          "The server did not return processed audio."
+        );
+      }
+
+      let audioUrl = data.audio_url;
+
+      if (!audioUrl && data.audio_base64) {
+
+        audioUrl =
+          data.audio_base64.startsWith("data:")
+            ? data.audio_base64
+            : "data:audio/wav;base64," +
+              data.audio_base64;
+      }
+
+      resultAudio.src = audioUrl;
+      downloadResult.href = audioUrl;
+
+      resultPanel.classList.add("show");
+
+      setStatus(
+        "Voice isolation completed successfully.",
+        "success"
+      );
+
+      await loadUsage();
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      setStatus(
+        error.message ||
+        "Something went wrong while processing the recording.",
+        "error"
+      );
+
+    } finally {
+
+      isolateBtn.disabled = false;
+      isolateBtn.innerHTML = originalText;
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+  });
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+});
+</script>
+
+</body>
+</html>

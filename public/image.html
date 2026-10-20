@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Gemini Image Generator — VoiceAI</title>
+
+  <link rel="stylesheet" href="./style.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="nav-inner">
+
+    <a href="index.html" class="brand">
+      <span class="brand-mark">
+        <i data-lucide="audio-lines"></i>
+      </span>
+      <span>VoiceAI</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="tools.html">AI Tools</a>
+      <a href="voices.html">Voices</a>
+      <a href="studio.html">Studio</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-ghost">Login</a>
+      <a href="pricing.html" class="btn btn-primary">Get Started</a>
+    </div>
+
+  </div>
+</header>
+
+
+<main class="image-page">
+
+  <!-- HERO -->
+
+  <section class="image-hero">
+
+    <div>
+
+      <div class="eyebrow">
+        <i data-lucide="image"></i>
+        Gemini Image Generator
+      </div>
+
+      <h1>
+        Turn ideas into
+        <span>images.</span>
+      </h1>
+
+      <p>
+        Create high-quality AI visuals from simple text prompts
+        for advertisements, social media, videos and creative projects.
+      </p>
+
+    </div>
+
+    <div class="image-usage" id="imageUsage">
+      Checking usage...
+    </div>
+
+  </section>
+
+
+  <!-- WORKSPACE -->
+
+  <section class="image-workspace">
+
+    <!-- CONTROLS -->
+
+    <aside class="image-controls">
+
+      <div class="control-heading">
+        <div>
+          <strong>Generate Image</strong>
+          <span>Describe what you want to create.</span>
+        </div>
+
+        <div class="gemini-badge">
+          <i data-lucide="sparkles"></i>
+          Gemini
+        </div>
+      </div>
+
+
+      <!-- PROMPT -->
+
+      <div class="image-field">
+
+        <div class="field-label-row">
+
+          <label for="imagePrompt">
+            Prompt
+          </label>
+
+          <span id="promptCounter">
+            0 / 4000
+          </span>
+
+        </div>
+
+        <textarea
+          id="imagePrompt"
+          maxlength="4000"
+          rows="8"
+          placeholder="Example: A premium cinematic advertisement for a futuristic electric car, dramatic blue lighting, luxury studio environment, photorealistic, ultra detailed..."
+        ></textarea>
+
+      </div>
+
+
+      <!-- STYLE -->
+
+      <div class="image-field">
+
+        <label>
+          Style
+        </label>
+
+        <div class="style-grid">
+
+          <button
+            type="button"
+            class="style-option active"
+            data-style="Photorealistic"
+          >
+            <i data-lucide="camera"></i>
+            <span>Photorealistic</span>
+          </button>
+
+          <button
+            type="button"
+            class="style-option"
+            data-style="Cinematic"
+          >
+            <i data-lucide="clapperboard"></i>
+            <span>Cinematic</span>
+          </button>
+
+          <button
+            type="button"
+            class="style-option"
+            data-style="Illustration"
+          >
+            <i data-lucide="brush"></i>
+            <span>Illustration</span>
+          </button>
+
+          <button
+            type="button"
+            class="style-option"
+            data-style="3D"
+          >
+            <i data-lucide="box"></i>
+            <span>3D</span>
+          </button>
+
+          <button
+            type="button"
+            class="style-option"
+            data-style="Anime"
+          >
+            <i data-lucide="palette"></i>
+            <span>Anime</span>
+          </button>
+
+          <button
+            type="button"
+            class="style-option"
+            data-style="Minimal"
+          >
+            <i data-lucide="square"></i>
+            <span>Minimal</span>
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- OPTIONS -->
+
+      <div class="image-options">
+
+        <div class="image-field">
+
+          <label for="aspectRatio">
+            Aspect ratio
+          </label>
+
+          <select id="aspectRatio">
+
+            <option value="1:1">
+              1:1 — Square
+            </option>
+
+            <option value="16:9">
+              16:9 — Landscape
+            </option>
+
+            <option value="9:16">
+              9:16 — Portrait
+            </option>
+
+            <option value="4:3">
+              4:3 — Standard
+            </option>
+
+            <option value="3:4">
+              3:4 — Portrait
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="image-field">
+
+          <label for="imageCount">
+            Images
+          </label>
+
+          <select id="imageCount">
+
+            <option value="1">
+              1 image
+            </option>
+
+            <option value="2">
+              2 images
+            </option>
+
+            <option value="4">
+              4 images
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <!-- QUALITY -->
+
+      <div class="image-field">
+
+        <label for="imageQuality">
+          Quality
+        </label>
+
+        <select id="imageQuality">
+
+          <option value="standard">
+            Standard
+          </option>
+
+          <option value="high">
+            High
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- ACTIONS -->
+
+      <div class="image-actions">
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="clearPromptBtn"
+        >
+          <i data-lucide="rotate-ccw"></i>
+          Clear
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-primary generate-image-btn"
+          id="generateImageBtn"
+        >
+          <i data-lucide="sparkles"></i>
+          Generate
+        </button>
+
+      </div>
+
+
+      <div class="image-note">
+
+        <i data-lucide="shield-check"></i>
+
+        <span>
+          Your Gemini API key stays securely on the server.
+        </span>
+
+      </div>
+
+    </aside>
+
+
+    <!-- PREVIEW -->
+
+    <section class="image-preview">
+
+      <div class="preview-header">
+
+        <div>
+
+          <div class="preview-label">
+            Output
+          </div>
+
+          <h2>
+            Generated images
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          class="icon-button"
+          id="refreshPreviewBtn"
+          title="Clear output"
+        >
+          <i data-lucide="trash-2"></i>
+        </button>
+
+      </div>
+
+
+      <div
+        class="image-results"
+        id="imageResults"
+      >
+
+        <div class="image-empty">
+
+          <div class="image-empty-icon">
+            <i data-lucide="image-plus"></i>
+          </div>
+
+          <h3>
+            Your generated image will appear here
+          </h3>
+
+          <p>
+            Enter a prompt and click Generate to create
+            your first Gemini image.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </section>
+
+
+  <!-- PROMPT IDEAS -->
+
+  <section class="prompt-section">
+
+    <div class="section-heading">
+
+      <div class="eyebrow">
+        <i data-lucide="lightbulb"></i>
+        Prompt ideas
+      </div>
+
+      <h2>
+        Start with an idea.
+      </h2>
+
+    </div>
+
+
+    <div class="prompt-grid">
+
+      <button
+        class="prompt-card"
+        data-prompt="Premium product advertisement, luxury black background, dramatic blue studio lighting, glossy reflections, photorealistic commercial photography."
+      >
+
+        <i data-lucide="shopping-bag"></i>
+
+        <strong>
+          Product Advertisement
+        </strong>
+
+        <span>
+          Create premium product visuals.
+        </span>
+
+      </button>
+
+
+      <button
+        class="prompt-card"
+        data-prompt="Cinematic futuristic city at night, glowing blue neon signs, rain reflections, dramatic atmosphere, ultra detailed cinematic photography."
+      >
+
+        <i data-lucide="building-2"></i>
+
+        <strong>
+          Cinematic Scene
+        </strong>
+
+        <span>
+          Create dramatic visuals.
+        </span>
+
+      </button>
+
+
+      <button
+        class="prompt-card"
+        data-prompt="Modern social media advertisement with a stylish young professional, clean premium composition, bright studio lighting, commercial photography."
+      >
+
+        <i data-lucide="smartphone"></i>
+
+        <strong>
+          Social Media
+        </strong>
+
+        <span>
+          Make social content faster.
+        </span>
+
+      </button>
+
+
+      <button
+        class="prompt-card"
+        data-prompt="Futuristic AI technology concept, glowing neural network, holographic interface, deep blue environment, premium technology advertisement."
+      >
+
+        <i data-lucide="cpu"></i>
+
+        <strong>
+          AI Technology
+        </strong>
+
+        <span>
+          Generate futuristic concepts.
+        </span>
+
+      </button>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+  <div class="footer-inner">
+
+    <div class="footer-brand">
+
+      <div class="brand">
+        <span class="brand-mark">
+          <i data-lucide="audio-lines"></i>
+        </span>
+        VoiceAI
+      </div>
+
+      <p>
+        AI voice and creative tools for modern creators.
+      </p>
+
+    </div>
+
+    <div class="footer-links">
+      <a href="about.html">About</a>
+      <a href="faq.html">FAQ</a>
+      <a href="contact.html">Contact</a>
+      <a href="pricing.html">Pricing</a>
+    </div>
+
+  </div>
+
+</footer>
+
+
+<style>
+
+.image-page {
+  width: min(1500px, calc(100% - 36px));
+  margin: auto;
+  padding: 55px 0 80px;
+}
+
+.image-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: 35px;
+}
+
+.image-hero h1 {
+  margin: 10px 0 15px;
+  font-size: clamp(40px, 5vw, 68px);
+  line-height: 1;
+  letter-spacing: -2.5px;
+}
+
+.image-hero h1 span {
+  color: #55c7ff;
+}
+
+.image-hero p {
+  max-width: 670px;
+  color: #8ca4bd;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+.image-usage {
+  padding: 9px 13px;
+  border: 1px solid rgba(96,160,210,.17);
+  border-radius: 999px;
+  color: #7f97b0;
+  background: rgba(255,255,255,.025);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.image-workspace {
+  display: grid;
+  grid-template-columns: 420px minmax(0,1fr);
+  min-height: 700px;
+  overflow: hidden;
+  border: 1px solid rgba(95,145,190,.18);
+  border-radius: 22px;
+  background: rgba(6,16,32,.82);
+  box-shadow: 0 25px 80px rgba(0,0,0,.25);
+}
+
+.image-controls {
+  padding: 24px;
+  border-right: 1px solid rgba(100,160,210,.12);
+  background: rgba(8,22,42,.68);
+}
+
+.control-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.control-heading strong {
+  display: block;
+  color: #e8f4ff;
+  font-size: 16px;
+}
+
+.control-heading span {
+  display: block;
+  margin-top: 5px;
+  color: #657e99;
+  font-size: 10px;
+}
+
+.gemini-badge {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: #66ceff !important;
+  background: rgba(75,190,255,.08);
+  font-size: 9px !important;
+  font-weight: 800;
+}
+
+.gemini-badge svg {
+  width: 12px;
+}
+
+.image-field {
+  margin-bottom: 20px;
+}
+
+.image-field label {
+  display: block;
+  margin-bottom: 8px;
+  color: #cfe1f2;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.field-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.field-label-row label {
+  margin: 0;
+}
+
+.field-label-row span {
+  color: #58728d;
+  font-size: 9px;
+}
+
+.image-field textarea,
+.image-field select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(96,150,200,.18);
+  border-radius: 12px;
+  outline: none;
+  background: #08182d;
+  color: #e8f4ff;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.image-field textarea {
+  padding: 13px;
+  resize: vertical;
+  line-height: 1.65;
+}
+
+.image-field textarea:focus,
+.image-field select:focus {
+  border-color: rgba(75,190,255,.55);
+  box-shadow: 0 0 0 3px rgba(75,190,255,.06);
+}
+
+.image-field select {
+  padding: 12px;
+  cursor: pointer;
+}
+
+.style-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+
+.style-option {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid rgba(96,150,200,.13);
+  border-radius: 10px;
+  background: rgba(255,255,255,.025);
+  color: #7189a2;
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.style-option svg {
+  width: 14px;
+}
+
+.style-option:hover,
+.style-option.active {
+  border-color: rgba(75,190,255,.45);
+  background: rgba(75,190,255,.07);
+  color: #cfeeff;
+}
+
+.style-option.active svg {
+  color: #55c7ff;
+}
+
+.image-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.image-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 7px;
+}
+
+.image-actions .btn {
+  flex: 1;
+}
+
+.generate-image-btn {
+  justify-content: center;
+}
+
+.image-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 18px;
+  padding: 10px;
+  border-radius: 10px;
+  color: #59738e;
+  background: rgba(255,255,255,.02);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.image-note svg {
+  width: 13px;
+  flex: 0 0 auto;
+  color: #55c7ff;
+}
+
+
+/* PREVIEW */
+
+.image-preview {
+  min-width: 0;
+  padding: 24px;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.preview-label {
+  color: #607994;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.preview-header h2 {
+  margin: 5px 0 0;
+  color: #e6f3ff;
+  font-size: 20px;
+}
+
+.image-results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 15px;
+}
+
+.image-empty {
+  grid-column: 1 / -1;
+  min-height: 580px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  border: 1px dashed rgba(96,150,200,.2);
+  border-radius: 17px;
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(75,190,255,.04),
+      transparent 55%
+    );
+}
+
+.image-empty-icon {
+  width: 65px;
+  height: 65px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 17px;
+  border-radius: 18px;
+  color: #55c7ff;
+  background: rgba(75,190,255,.08);
+}
+
+.image-empty-icon svg {
+  width: 28px;
+}
+
+.image-empty h3 {
+  margin: 0 0 8px;
+  color: #cfe2f3;
+  font-size: 14px;
+}
+
+.image-empty p {
+  max-width: 390px;
+  margin: 0;
+  color: #617993;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+
+/* RESULT CARD */
+
+.generated-image-card {
+  overflow: hidden;
+  border: 1px solid rgba(96,150,200,.17);
+  border-radius: 15px;
+  background: #08182d;
+}
+
+.generated-image-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: block;
+  object-fit: cover;
+  background: #061224;
+}
+
+.generated-image-info {
+  padding: 12px;
+}
+
+.generated-image-info p {
+  margin: 0 0 10px;
+  color: #7891aa;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.generated-image-actions {
+  display: flex;
+  gap: 7px;
+}
+
+.generated-image-actions button,
+.generated-image-actions a {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 6px 8px;
+  border: 1px solid rgba(96,150,200,.16);
+  border-radius: 8px;
+  background: rgba(255,255,255,.025);
+  color: #8fa7be;
+  font-family: inherit;
+  font-size: 9px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.generated-image-actions button:hover,
+.generated-image-actions a:hover {
+  color: #d9efff;
+  border-color: rgba(75,190,255,.35);
+}
+
+.generated-image-actions svg {
+  width: 13px;
+}
+
+
+/* PROMPTS */
+
+.prompt-section {
+  margin-top: 70px;
+}
+
+.section-heading {
+  margin-bottom: 24px;
+}
+
+.section-heading h2 {
+  margin: 7px 0 0;
+  color: #e7f4ff;
+  font-size: 28px;
+}
+
+.prompt-grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 13px;
+}
+
+.prompt-card {
+  padding: 20px;
+  border: 1px solid rgba(96,150,200,.14);
+  border-radius: 15px;
+  background: rgba(7,18,36,.65);
+  color: #8aa2ba;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.prompt-card:hover {
+  border-color: rgba(75,190,255,.35);
+  background: rgba(75,190,255,.045);
+  transform: translateY(-2px);
+}
+
+.prompt-card svg {
+  width: 19px;
+  margin-bottom: 15px;
+  color: #55c7ff;
+}
+
+.prompt-card strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #d8eafb;
+  font-size: 12px;
+}
+
+.prompt-card span {
+  display: block;
+  color: #627b95;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+
+/* LOADING */
+
+.image-loading {
+  grid-column: 1 / -1;
+  min-height: 580px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 15px;
+  border: 1px solid rgba(75,190,255,.12);
+  border-radius: 17px;
+  background: rgba(75,190,255,.025);
+}
+
+.image-loading-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  background: rgba(75,190,255,.08);
+  color: #55c7ff;
+}
+
+.image-loading-icon svg {
+  width: 22px;
+  animation: spin 1.2s linear infinite;
+}
+
+.image-loading strong {
+  color: #dceeff;
+  font-size: 13px;
+}
+
+.image-loading span {
+  color: #627c96;
+  font-size: 10px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+
+  .image-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .image-controls {
+    border-right: 0;
+    border-bottom: 1px solid rgba(100,160,210,.12);
+  }
+
+  .prompt-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+}
+
+@media (max-width: 650px) {
+
+  .image-page {
+    width: calc(100% - 24px);
+    padding-top: 35px;
+  }
+
+  .image-hero {
+    display: block;
+  }
+
+  .image-usage {
+    display: inline-block;
+    margin-top: 18px;
+  }
+
+  .image-controls,
+  .image-preview {
+    padding: 17px;
+  }
+
+  .image-options {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .image-results {
+    grid-template-columns: 1fr;
+  }
+
+  .prompt-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+</style>
+
+
+<script>
+
+"use strict";
+
+let imageSession = null;
+let selectedStyle = "Photorealistic";
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+  await loadImageSession();
+
+  setupImagePage();
+
+  await loadImageUsage();
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+});
+
+
+async function loadImageSession() {
+
+  try {
+
+    if (!window.supabaseClient) {
+      return;
+    }
+
+    const result =
+      await window.supabaseClient.auth.getSession();
+
+    imageSession =
+      result.data.session;
+
+  } catch (error) {
+
+    console.error(
+      "Image session error:",
+      error
+    );
+
+  }
+
+}
+
+
+function setupImagePage() {
+
+  const prompt =
+    document.getElementById("imagePrompt");
+
+  const counter =
+    document.getElementById("promptCounter");
+
+  const generate =
+    document.getElementById("generateImageBtn");
+
+  const clear =
+    document.getElementById("clearPromptBtn");
+
+  const refresh =
+    document.getElementById("refreshPreviewBtn");
+
+
+  prompt?.addEventListener(
+    "input",
+    () => {
+
+      counter.textContent =
+        `${prompt.value.length} / 4000`;
+
+    }
+  );
+
+
+  generate?.addEventListener(
+    "click",
+    generateImages
+  );
+
+
+  clear?.addEventListener(
+    "click",
+    clearPrompt
+  );
+
+
+  refresh?.addEventListener(
+    "click",
+    clearResults
+  );
+
+
+  document
+    .querySelectorAll(".style-option")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll(".style-option")
+            .forEach(item =>
+              item.classList.remove("active")
+            );
+
+          button.classList.add("active");
+
+          selectedStyle =
+            button.dataset.style ||
+            "Photorealistic";
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(".prompt-card")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          prompt.value =
+            button.dataset.prompt || "";
+
+          counter.textContent =
+            `${prompt.value.length} / 4000`;
+
+          prompt.focus();
+
+        }
+      );
+
+    });
+
+}
+
+
+async function generateImages() {
+
+  const promptInput =
+    document.getElementById("imagePrompt");
+
+  const button =
+    document.getElementById("generateImageBtn");
+
+  const prompt =
+    promptInput.value.trim();
+
+
+  if (!prompt) {
+
+    VoiceAI.toast(
+      "Please enter an image prompt."
+    );
+
+    promptInput.focus();
+
+    return;
+
+  }
+
+
+  if (!imageSession) {
+
+    VoiceAI.toast(
+      "Please login to generate images."
+    );
+
+    setTimeout(() => {
+
+      window.location.href =
+        "login.html";
+
+    }, 700);
+
+    return;
+
+  }
+
+
+  const aspectRatio =
+    document.getElementById(
+      "aspectRatio"
+    ).value;
+
+
+  const count =
+    Number(
+      document.getElementById(
+        "imageCount"
+      ).value
+    );
+
+
+  const quality =
+    document.getElementById(
+      "imageQuality"
+    ).value;
+
+
+  const finalPrompt =
+    `${prompt}
+
+Style: ${selectedStyle}
+Aspect ratio: ${aspectRatio}
+Quality: ${quality}`;
+
+
+  button.disabled = true;
+
+  button.innerHTML =
+    `<i data-lucide="loader-circle"></i> Generating...`;
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+
+  showLoading();
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/image/generate",
+        {
+
+          method: "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json",
+
+            "Authorization":
+              `Bearer ${imageSession.access_token}`
+
+          },
+
+          body: JSON.stringify({
+
+            prompt: finalPrompt,
+
+            count,
+
+            aspect_ratio: aspectRatio,
+
+            quality,
+
+            style: selectedStyle
+
+          })
+
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      if (response.status === 429) {
+
+        throw new Error(
+          data.error ||
+          "Image generation limit reached. Please try again after 24 hours."
+        );
+
+      }
+
+      throw new Error(
+        data.error ||
+        "Image generation failed."
+      );
+
+    }
+
+
+    renderImages(data);
+
+
+    await loadImageUsage();
+
+
+  } catch (error) {
+
+    console.error(
+      "Image generation error:",
+      error
+    );
+
+
+    showError(
+      error.message ||
+      "Unable to generate image."
+    );
+
+  } finally {
+
+    button.disabled = false;
+
+    button.innerHTML =
+      `<i data-lucide="sparkles"></i> Generate`;
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+  }
+
+}
+
+
+function showLoading() {
+
+  const results =
+    document.getElementById(
+      "imageResults"
+    );
+
+
+  results.innerHTML = `
+
+    <div class="image-loading">
+
+      <div class="image-loading-icon">
+
+        <i data-lucide="loader-circle"></i>
+
+      </div>
+
+      <strong>
+        Gemini is creating your image...
+      </strong>
+
+      <span>
+        This can take a few moments.
+      </span>
+
+    </div>
+
+  `;
+
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+}
+
+
+function renderImages(data) {
+
+  const results =
+    document.getElementById(
+      "imageResults"
+    );
+
+
+  /*
+   * Backend may return:
+   *
+   * data.images = [
+   *   { url: "..." },
+   *   { data_url: "..." },
+   *   { base64: "..." }
+   * ]
+   *
+   * This frontend supports all three.
+   */
+
+
+  const images =
+    Array.isArray(data.images)
+      ? data.images
+      : data.image
+        ? [data.image]
+        : [];
+
+
+  if (!images.length) {
+
+    showError(
+      "The server did not return an image."
+    );
+
+    return;
+
+  }
+
+
+  results.innerHTML = "";
+
+
+  images.forEach(
+    (image, index) => {
+
+      let src = "";
+
+
+      if (
+        typeof image === "string"
+      ) {
+
+        src = image;
+
+      } else if (
+        image.url
+      ) {
+
+        src = image.url;
+
+      } else if (
+        image.data_url
+      ) {
+
+        src = image.data_url;
+
+      } else if (
+        image.base64
+      ) {
+
+        src =
+          `data:image/png;base64,${image.base64}`;
+
+      }
+
+
+      if (!src) return;
+
+
+      const card =
+        document.createElement(
+          "article"
+        );
+
+
+      card.className =
+        "generated-image-card";
+
+
+      card.innerHTML = `
+
+        <img
+          src="${escapeHtml(src)}"
+          alt="AI generated image ${index + 1}"
+        >
+
+        <div class="generated-image-info">
+
+          <p>
+            Gemini generated image
+            ${index + 1}
+          </p>
+
+          <div class="generated-image-actions">
+
+            <a
+              href="${escapeHtml(src)}"
+              download="voiceai-gemini-image-${index + 1}.png"
+              target="_blank"
+            >
+              <i data-lucide="download"></i>
+              Download
+            </a>
+
+            <button
+              type="button"
+              data-copy-image="${escapeHtml(src)}"
+            >
+              <i data-lucide="copy"></i>
+              Copy URL
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+
+      results.appendChild(card);
+
+    }
+  );
+
+
+  results
+    .querySelectorAll(
+      "[data-copy-image]"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          try {
+
+            await navigator.clipboard.writeText(
+              button.dataset.copyImage
+            );
+
+            VoiceAI.toast(
+              "Image URL copied."
+            );
+
+          } catch {
+
+            VoiceAI.toast(
+              "Unable to copy image URL."
+            );
+
+          }
+
+        }
+      );
+
+    });
+
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+}
+
+
+function showError(message) {
+
+  const results =
+    document.getElementById(
+      "imageResults"
+    );
+
+
+  results.innerHTML = `
+
+    <div class="image-empty">
+
+      <div class="image-empty-icon">
+        <i data-lucide="triangle-alert"></i>
+      </div>
+
+      <h3>
+        Generation failed
+      </h3>
+
+      <p>
+        ${escapeHtml(message)}
+      </p>
+
+    </div>
+
+  `;
+
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+}
+
+
+function clearPrompt() {
+
+  const prompt =
+    document.getElementById(
+      "imagePrompt"
+    );
+
+  const counter =
+    document.getElementById(
+      "promptCounter"
+    );
+
+
+  prompt.value = "";
+
+  counter.textContent =
+    "0 / 4000";
+
+  prompt.focus();
+
+}
+
+
+function clearResults() {
+
+  const results =
+    document.getElementById(
+      "imageResults"
+    );
+
+
+  results.innerHTML = `
+
+    <div class="image-empty">
+
+      <div class="image-empty-icon">
+        <i data-lucide="image-plus"></i>
+      </div>
+
+      <h3>
+        Your generated image will appear here
+      </h3>
+
+      <p>
+        Enter a prompt and click Generate to create
+        your first Gemini image.
+      </p>
+
+    </div>
+
+  `;
+
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+}
+
+
+async function loadImageUsage() {
+
+  const target =
+    document.getElementById(
+      "imageUsage"
+    );
+
+
+  if (!target) return;
+
+
+  if (!imageSession) {
+
+    target.textContent =
+      "Login required";
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/usage?action=image",
+        {
+
+          headers: {
+
+            "Authorization":
+              `Bearer ${imageSession.access_token}`
+
+          }
+
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+      throw new Error(
+        data.error ||
+        "Usage unavailable"
+      );
+    }
+
+
+    if (data.unlimited) {
+
+      target.textContent =
+        "Premium • Unlimited";
+
+      return;
+
+    }
+
+
+    const used =
+      Number(data.used || 0);
+
+    const limit =
+      Number(data.limit || 5);
+
+
+    target.textContent =
+      `${used}/${limit} free uses`;
+
+  } catch {
+
+    target.textContent =
+      "Usage unavailable";
+
+  }
+
+}
+
+
+function escapeHtml(value) {
+
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+</script>
+
+</body>
+</html>

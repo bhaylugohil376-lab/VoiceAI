@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050b18">
+
+  <title>Voice Design — VoiceAI</title>
+  <meta name="description" content="Design a custom AI voice using the available VoiceAI voice generation tools.">
+
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .design-page {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 50px 20px 80px;
+    }
+
+    .design-header {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .design-header h1 {
+      margin: 15px 0 10px;
+    }
+
+    .design-header p {
+      max-width: 680px;
+      margin: auto;
+      color: #8da2bd;
+      line-height: 1.7;
+    }
+
+    .design-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      gap: 22px;
+    }
+
+    .design-panel,
+    .design-card {
+      background: linear-gradient(
+        145deg,
+        rgba(15, 31, 57, .97),
+        rgba(8, 19, 38, .97)
+      );
+      border: 1px solid rgba(110, 150, 200, .15);
+      border-radius: 18px;
+    }
+
+    .design-panel {
+      padding: 26px;
+    }
+
+    .design-card {
+      padding: 20px;
+    }
+
+    .design-title {
+      margin-bottom: 25px;
+    }
+
+    .design-title h2 {
+      margin: 0 0 7px;
+    }
+
+    .design-title p {
+      margin: 0;
+      color: #8196b0;
+      font-size: 13px;
+    }
+
+    .design-group {
+      margin-bottom: 20px;
+    }
+
+    .design-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #dcecff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .design-input,
+    .design-select,
+    .design-textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px 14px;
+      border-radius: 11px;
+      border: 1px solid rgba(120, 150, 190, .18);
+      background: #0a172d;
+      color: #eef7ff;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .design-input:focus,
+    .design-select:focus,
+    .design-textarea:focus {
+      border-color: rgba(34, 211, 238, .55);
+    }
+
+    .design-textarea {
+      min-height: 125px;
+      resize: vertical;
+    }
+
+    .design-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .range-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .range-row input {
+      flex: 1;
+      accent-color: #18bfd9;
+    }
+
+    .range-value {
+      min-width: 45px;
+      text-align: right;
+      color: #59d9ed;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .design-submit {
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      color: white;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #1677c8, #13b8d5);
+    }
+
+    .design-submit:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .design-message {
+      margin-top: 15px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .design-error {
+      color: #ffb5b5;
+      background: rgba(239, 68, 68, .08);
+      border: 1px solid rgba(239, 68, 68, .2);
+    }
+
+    .design-success {
+      color: #9ef0d0;
+      background: rgba(16, 185, 129, .08);
+      border: 1px solid rgba(16, 185, 129, .2);
+    }
+
+    .design-side {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .design-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(34, 211, 238, .1);
+      color: #35d5ed;
+      margin-bottom: 14px;
+    }
+
+    .design-card h3 {
+      margin: 0 0 8px;
+      color: #eef7ff;
+      font-size: 15px;
+    }
+
+    .design-card p {
+      margin: 0;
+      color: #8196b0;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .design-result {
+      margin-top: 22px;
+      padding: 20px;
+      border-radius: 15px;
+      background: #09162b;
+      border: 1px solid rgba(34, 211, 238, .15);
+    }
+
+    .design-result h3 {
+      margin: 0 0 8px;
+      color: #eaf4ff;
+    }
+
+    .design-result p {
+      margin: 0;
+      color: #8196b0;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .result-actions button {
+      flex: 1;
+    }
+
+    @media (max-width: 820px) {
+      .design-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .design-page {
+        padding: 30px 15px 60px;
+      }
+
+      .design-panel {
+        padding: 20px;
+      }
+
+      .design-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .voice-preview-list {
+      display: grid;
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .voice-preview-card {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid rgba(120, 150, 190, .2);
+      border-radius: 12px;
+      background: rgba(8, 19, 38, .55);
+    }
+
+    .voice-preview-card strong {
+      color: #eaf4ff;
+      font-size: 13px;
+    }
+
+    .voice-preview-card audio {
+      width: 100%;
+      max-width: 100%;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-inner">
+
+      <a href="index.html" class="logo">
+        <span class="logo-mark">
+          <i data-lucide="audio-lines"></i>
+        </span>
+        <span>VoiceAI</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="tools.html">AI Tools</a>
+        <a href="voices.html">Voices</a>
+        <a href="studio.html">Studio</a>
+        <a href="pricing.html">Pricing</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="login.html" class="secondary-btn">
+          Login
+        </a>
+
+        <a href="pricing.html" class="primary-btn">
+          Get Premium
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+
+  <!-- PAGE -->
+  <main class="design-page">
+
+    <section class="design-header">
+
+      <div class="hero-badge">
+        <i data-lucide="sliders"></i>
+        Voice Design
+      </div>
+
+      <h1>
+        Design a voice
+        <span>from your idea.</span>
+      </h1>
+
+      <p>
+        Describe the voice you want and configure its character,
+        style and delivery for your next AI project.
+      </p>
+
+    </section>
+
+
+    <section class="design-layout">
+
+      <!-- MAIN -->
+      <div class="design-panel">
+
+        <div class="design-title">
+
+          <h2>
+            Create your voice
+          </h2>
+
+          <p>
+            Define the personality and delivery of your custom voice.
+          </p>
+
+        </div>
+
+
+        <!-- VOICE NAME -->
+        <div class="design-group">
+
+          <label for="designName">
+            Voice name
+          </label>
+
+          <input
+            id="designName"
+            class="design-input"
+            type="text"
+            maxlength="80"
+            placeholder="e.g. Premium Ad Voice"
+          />
+
+        </div>
+
+
+        <!-- DESCRIPTION -->
+        <div class="design-group">
+
+          <label for="designPrompt">
+            Describe the voice
+          </label>
+
+          <textarea
+            id="designPrompt"
+            class="design-textarea"
+            maxlength="1000"
+            placeholder="Example: A confident, warm male voice for premium advertisements..."
+          ></textarea>
+
+        </div>
+
+
+        <!-- SELECTS -->
+        <div class="design-grid">
+
+          <div class="design-group">
+
+            <label for="designGender">
+              Gender
+            </label>
+
+            <select
+              id="designGender"
+              class="design-select"
+            >
+              <option value="neutral">
+                Neutral
+              </option>
+
+              <option value="male">
+                Male
+              </option>
+
+              <option value="female">
+                Female
+              </option>
+            </select>
+
+          </div>
+
+
+          <div class="design-group">
+
+            <label for="designAge">
+              Age
+            </label>
+
+            <select
+              id="designAge"
+              class="design-select"
+            >
+              <option value="young-adult">
+                Young Adult
+              </option>
+
+              <option value="adult" selected>
+                Adult
+              </option>
+
+              <option value="mature">
+                Mature
+              </option>
+
+              <option value="senior">
+                Senior
+              </option>
+            </select>
+
+          </div>
+
+
+          <div class="design-group">
+
+            <label for="designAccent">
+              Accent
+            </label>
+
+            <select
+              id="designAccent"
+              class="design-select"
+            >
+              <option value="neutral">
+                Neutral English
+              </option>
+
+              <option value="american">
+                American English
+              </option>
+
+              <option value="british">
+                British English
+              </option>
+
+              <option value="indian">
+                Indian English
+              </option>
+
+              <option value="australian">
+                Australian English
+              </option>
+            </select>
+
+          </div>
+
+
+          <div class="design-group">
+
+            <label for="designStyle">
+              Style
+            </label>
+
+            <select
+              id="designStyle"
+              class="design-select"
+            >
+              <option value="professional">
+                Professional
+              </option>
+
+              <option value="advertising">
+                Advertising
+              </option>
+
+              <option value="narration">
+                Narration
+              </option>
+
+              <option value="podcast">
+                Podcast
+              </option>
+
+              <option value="conversational">
+                Conversational
+              </option>
+
+              <option value="energetic">
+                Energetic
+              </option>
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- SETTINGS -->
+        <div class="design-grid">
+
+          <div class="design-group">
+
+            <label for="designStability">
+              Stability
+            </label>
+
+            <div class="range-row">
+
+              <input
+                id="designStability"
+                type="range"
+                min="0"
+                max="100"
+                value="60"
+              />
+
+              <span
+                id="stabilityValue"
+                class="range-value"
+              >
+                60%
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="design-group">
+
+            <label for="designEnergy">
+              Energy
+            </label>
+
+            <div class="range-row">
+
+              <input
+                id="designEnergy"
+                type="range"
+                min="0"
+                max="100"
+                value="55"
+              />
+
+              <span
+                id="energyValue"
+                class="range-value"
+              >
+                55%
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- BUTTON -->
+        <button
+          id="designBtn"
+          class="design-submit"
+          type="button"
+        >
+          <i data-lucide="wand-sparkles"></i>
+          Design Voice
+        </button>
+
+
+        <!-- MESSAGE -->
+        <div
+          id="designMessage"
+          class="design-message"
+          hidden
+        ></div>
+
+
+        <!-- RESULT -->
+        <div
+          id="designResult"
+          class="design-result"
+          hidden
+        >
+
+          <h3>
+            Voice design created
+          </h3>
+
+          <p id="designResultText">
+            Your custom voice configuration is ready.
+          </p>
+
+          <div id="voicePreviewList" class="voice-preview-list" aria-live="polite"></div>
+
+          <div class="result-actions">
+
+            <button
+              id="useDesignedVoice"
+              class="primary-btn"
+              type="button"
+            >
+              <i data-lucide="volume-2"></i>
+              Use in TTS
+            </button>
+
+            <button
+              id="saveDesignedVoice"
+              class="secondary-btn"
+              type="button"
+            >
+              <i data-lucide="save"></i>
+              Save
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- SIDEBAR -->
+      <aside class="design-side">
+
+        <div class="design-card">
+
+          <div class="design-icon">
+            <i data-lucide="brain-circuit"></i>
+          </div>
+
+          <h3>
+            Describe naturally
+          </h3>
+
+          <p>
+            You can describe the voice in normal language.
+            Mention personality, tone, audience and use case.
+          </p>
+
+        </div>
+
+
+        <div class="design-card">
+
+          <div class="design-icon">
+            <i data-lucide="megaphone"></i>
+          </div>
+
+          <h3>
+            Built for content
+          </h3>
+
+          <p>
+            Design voices for ads, YouTube videos, podcasts,
+            reels, narration and conversational experiences.
+          </p>
+
+        </div>
+
+
+        <div class="design-card">
+
+          <div class="design-icon">
+            <i data-lucide="gauge"></i>
+          </div>
+
+          <h3>
+            Independent usage limit
+          </h3>
+
+          <p>
+            Free users receive the configured 5-use / 24-hour
+            limit for the Voice Design section.
+          </p>
+
+        </div>
+
+      </aside>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="footer">
+
+    <div class="footer-inner">
+
+      <div>
+        <strong>VoiceAI</strong>
+        <span>AI Voice Studio</span>
+      </div>
+
+      <div>
+        © 2026 VoiceAI. All rights reserved.
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+
+
+  <script>
+    "use strict";
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+
+      const nameInput =
+        document.getElementById("designName");
+
+      const promptInput =
+        document.getElementById("designPrompt");
+
+      const genderInput =
+        document.getElementById("designGender");
+
+      const ageInput =
+        document.getElementById("designAge");
+
+      const accentInput =
+        document.getElementById("designAccent");
+
+      const styleInput =
+        document.getElementById("designStyle");
+
+      const stabilityInput =
+        document.getElementById("designStability");
+
+      const energyInput =
+        document.getElementById("designEnergy");
+
+      const stabilityValue =
+        document.getElementById("stabilityValue");
+
+      const energyValue =
+        document.getElementById("energyValue");
+
+      const designBtn =
+        document.getElementById("designBtn");
+
+      const message =
+        document.getElementById("designMessage");
+
+      const result =
+        document.getElementById("designResult");
+
+      const resultText =
+        document.getElementById("designResultText");
+
+      const useBtn =
+        document.getElementById("useDesignedVoice");
+
+      const saveBtn =
+        document.getElementById("saveDesignedVoice");
+
+
+      /* -----------------------------
+         RANGE VALUES
+      ----------------------------- */
+
+      function updateRanges() {
+
+        stabilityValue.textContent =
+          `${stabilityInput.value}%`;
+
+        energyValue.textContent =
+          `${energyInput.value}%`;
+
+      }
+
+      stabilityInput.addEventListener(
+        "input",
+        updateRanges
+      );
+
+      energyInput.addEventListener(
+        "input",
+        updateRanges
+      );
+
+      updateRanges();
+
+
+      function showMessage(
+        text,
+        type = "error"
+      ) {
+
+        message.textContent =
+          text;
+
+        message.className =
+          `design-message ${
+            type === "success"
+              ? "design-success"
+              : "design-error"
+          }`;
+
+        message.hidden = false;
+
+      }
+
+
+      /* -----------------------------
+         DESIGN VOICE
+      ----------------------------- */
+
+      designBtn.addEventListener(
+        "click",
+        async () => {
+
+          message.hidden = true;
+          result.hidden = true;
+
+
+          const name =
+            nameInput.value.trim();
+
+          const prompt =
+            promptInput.value.trim();
+
+
+          if (!name) {
+
+            showMessage(
+              "Please enter a voice name."
+            );
+
+            nameInput.focus();
+
+            return;
+          }
+
+
+          if (!prompt) {
+
+            showMessage(
+              "Please describe the voice you want."
+            );
+
+            promptInput.focus();
+
+            return;
+          }
+
+
+          try {
+
+            let accessToken = null;
+
+
+            /* SUPABASE SESSION */
+
+            if (window.supabaseClient) {
+
+              const {
+                data
+              } =
+                await window.supabaseClient
+                  .auth
+                  .getSession();
+
+              accessToken =
+                data?.session?.access_token || null;
+
+            }
+
+
+            if (!accessToken) {
+
+              window.location.href =
+                "login.html";
+
+              return;
+
+            }
+
+
+            /* LOADING */
+
+            designBtn.disabled = true;
+
+            designBtn.innerHTML = `
+              <i data-lucide="loader-circle"></i>
+              Designing...
+            `;
+
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+
+
+            /* REQUEST */
+
+            const payload = {
+
+              name,
+
+              prompt,
+
+              gender:
+                genderInput.value,
+
+              age:
+                ageInput.value,
+
+              accent:
+                accentInput.value,
+
+              style:
+                styleInput.value,
+
+              stability:
+                Number(
+                  stabilityInput.value
+                ),
+
+              energy:
+                Number(
+                  energyInput.value
+                )
+
+            };
+
+
+            const response =
+              await fetch(
+                "/api/voice-design",
+                {
+                  method: "POST",
+
+                  headers: {
+                    "Content-Type":
+                      "application/json",
+
+                    "Authorization":
+                      `Bearer ${accessToken}`
+                  },
+
+                  body:
+                    JSON.stringify(payload)
+                }
+              );
+
+
+            const data =
+              await response.json();
+
+
+            if (!response.ok) {
+
+              throw new Error(
+                data?.error ||
+                "Voice design failed."
+              );
+
+            }
+
+
+            /* SAVE DESIGN LOCALLY */
+
+            sessionStorage.setItem(
+              "voiceai_designed_voice",
+              JSON.stringify({
+                ...payload,
+                result: data
+              })
+            );
+
+
+            resultText.textContent =
+              data?.message ||
+              "Voice preview generated. Listen to the available samples.";
+
+            const previewList = document.getElementById("voicePreviewList");
+            previewList.replaceChildren();
+
+            for (const [index, preview] of (Array.isArray(data?.previews) ? data.previews : []).entries()) {
+              if (!preview?.audio_base64) continue;
+
+              const card = document.createElement("div");
+              card.className = "voice-preview-card";
+
+              const title = document.createElement("strong");
+              title.textContent = `Voice preview ${index + 1}`;
+
+              const audio = document.createElement("audio");
+              audio.controls = true;
+              audio.preload = "none";
+              const mediaType = /^audio\/[a-z0-9.+-]+$/i.test(preview.media_type || "")
+                ? preview.media_type
+                : "audio/mpeg";
+              audio.src = `data:${mediaType};base64,${preview.audio_base64}`;
+
+              card.append(title, audio);
+              previewList.append(card);
+            }
+
+            if (!previewList.childElementCount) {
+              resultText.textContent = "The provider returned no playable previews. Check the provider response and try again.";
+            }
+
+
+            result.hidden = false;
+
+
+            showMessage(
+              "Voice design completed successfully.",
+              "success"
+            );
+
+
+          } catch (error) {
+
+            console.error(
+              "Voice Design Error:",
+              error
+            );
+
+            showMessage(
+              error.message ||
+              "Something went wrong while designing the voice."
+            );
+
+          } finally {
+
+            designBtn.disabled = false;
+
+            designBtn.innerHTML = `
+              <i data-lucide="wand-sparkles"></i>
+              Design Voice
+            `;
+
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+
+          }
+
+        }
+      );
+
+
+      /* -----------------------------
+         USE IN TTS
+      ----------------------------- */
+
+      useBtn.addEventListener(
+        "click",
+        () => {
+
+          const design =
+            sessionStorage.getItem(
+              "voiceai_designed_voice"
+            );
+
+          if (design) {
+
+            sessionStorage.setItem(
+              "voiceai_tts_voice_design",
+              design
+            );
+
+          }
+
+          window.location.href =
+            "tts.html";
+
+        }
+      );
+
+
+      /* -----------------------------
+         SAVE
+      ----------------------------- */
+
+      saveBtn.addEventListener(
+        "click",
+        () => {
+
+          const design =
+            sessionStorage.getItem(
+              "voiceai_designed_voice"
+            );
+
+          if (!design) {
+
+            showMessage(
+              "No voice design is available to save."
+            );
+
+            return;
+          }
+
+
+          localStorage.setItem(
+            "voiceai_saved_voice_design",
+            design
+          );
+
+
+          showMessage(
+            "Voice design saved successfully.",
+            "success"
+          );
+
+        }
+      );
+
+    });
+  </script>
+
+</body>
+</html>

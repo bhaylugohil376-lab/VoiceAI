@@ -19,7 +19,8 @@ app.use((req, res, next) => {
 });
 const port = process.env.PORT || 3000;
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-const API_DIR = path.join(ROOT, "api");
+const HANDLERS_DIR = path.join(ROOT, "handlers");
+const PUBLIC_DIR = path.join(ROOT, "public");
 
 // Stripe requires the untouched request body for signature verification.
 // This route must be registered before JSON parsing.
@@ -28,7 +29,7 @@ app.post(
   express.raw({ type: "application/json", limit: "2mb" }),
   async (req, res) => {
     try {
-      const { default: handler } = await import("./api/stripe-webhook.js");
+      const { default: handler } = await import("./handlers/stripe-webhook.js");
       return await handler(req, res);
     } catch (error) {
       console.error("Stripe webhook error:", error);
@@ -59,8 +60,8 @@ app.all("/api/*", async (req, res, next) => {
     return res.status(404).json({ success: false, error: "API route not found." });
   }
 
-  const handlerPath = path.resolve(API_DIR, ...segments) + ".js";
-  if (!handlerPath.startsWith(API_DIR + path.sep)) {
+  const handlerPath = path.resolve(HANDLERS_DIR, ...segments) + ".js";
+  if (!handlerPath.startsWith(HANDLERS_DIR + path.sep)) {
     return res.status(404).json({ success: false, error: "API route not found." });
   }
 
@@ -89,10 +90,13 @@ app.all("/api/*", async (req, res, next) => {
 });
 
 // Static frontend
+app.use(express.static(PUBLIC_DIR, { extensions: ["html"] }));
 app.use(express.static(ROOT, { extensions: ["html"] }));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(ROOT, "index.html"));
+  res.sendFile(path.join(PUBLIC_DIR, "index.html"), (error) => {
+    if (error && !res.headersSent) res.status(404).send("Page not found.");
+  });
 });
 
 app.listen(port, () => {

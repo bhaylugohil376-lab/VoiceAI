@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Sound Effects — VoiceAI</title>
+  <meta
+    name="description"
+    content="Generate custom AI sound effects for videos, podcasts, games and creative projects."
+  >
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="./style.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="site-header">
+    <div class="container nav-container">
+
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <i data-lucide="audio-lines"></i>
+        </span>
+        <span>VoiceAI</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="tools.html" class="active">AI Tools</a>
+        <a href="voices.html">Voices</a>
+        <a href="studio.html">Studio</a>
+        <a href="pricing.html">Pricing</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="login.html" class="nav-login">Login</a>
+
+        <a href="signup.html" class="btn btn-primary">
+          Get Started
+          <i data-lucide="arrow-right"></i>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+
+  <!-- ================= MAIN ================= -->
+  <main>
+
+    <!-- HERO -->
+    <section class="page-hero">
+      <div class="container">
+
+        <div class="eyebrow">
+          <i data-lucide="audio-lines"></i>
+          AI SOUND EFFECTS
+        </div>
+
+        <h1>
+          Create the perfect
+          <span>sound effect.</span>
+        </h1>
+
+        <p>
+          Describe the sound you need and generate production-ready
+          effects for videos, podcasts, games, ads and creative projects.
+        </p>
+
+      </div>
+    </section>
+
+
+    <!-- ================= GENERATOR ================= -->
+    <section class="tools-section">
+      <div class="container">
+
+        <div
+          class="sound-layout"
+          style="
+            display:grid;
+            grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);
+            gap:24px;
+            align-items:start;
+          "
+        >
+
+          <!-- LEFT -->
+          <section
+            style="
+              background:rgba(10,25,48,.78);
+              border:1px solid rgba(96,165,250,.16);
+              border-radius:20px;
+              padding:24px;
+              box-shadow:0 20px 60px rgba(0,0,0,.22);
+            "
+          >
+
+            <div
+              style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:15px;
+                flex-wrap:wrap;
+                margin-bottom:20px;
+              "
+            >
+
+              <div>
+                <span class="section-kicker">GENERATOR</span>
+
+                <h2 style="margin:5px 0 0;">
+                  Describe your sound
+                </h2>
+              </div>
+
+              <span
+                id="usageBadge"
+                style="
+                  display:inline-flex;
+                  align-items:center;
+                  gap:7px;
+                  padding:8px 12px;
+                  border-radius:999px;
+                  background:rgba(59,130,246,.10);
+                  border:1px solid rgba(96,165,250,.18);
+                  color:#9fc7ff;
+                  font-size:11px;
+                  font-weight:700;
+                "
+              >
+                <i
+                  data-lucide="zap"
+                  style="width:14px;height:14px;"
+                ></i>
+
+                Free: 5 uses / 24h
+              </span>
+
+            </div>
+
+
+            <!-- Prompt -->
+            <label
+              style="
+                display:block;
+                color:#91a6c2;
+                font-size:12px;
+                font-weight:600;
+                margin-bottom:8px;
+              "
+            >
+              Sound description
+            </label>
+
+            <textarea
+              id="soundPrompt"
+              maxlength="1000"
+              rows="7"
+              placeholder="Example: Heavy rain falling on a metal rooftop with distant thunder..."
+              style="
+                width:100%;
+                resize:vertical;
+                padding:15px;
+                border-radius:13px;
+                border:1px solid rgba(96,165,250,.18);
+                background:#08162d;
+                color:#eaf4ff;
+                outline:none;
+                font-family:inherit;
+                line-height:1.55;
+                box-sizing:border-box;
+              "
+            ></textarea>
+
+
+            <div
+              style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-top:6px;
+                color:#526984;
+                font-size:10px;
+              "
+            >
+              <span>
+                Be specific about environment, intensity and movement.
+              </span>
+
+              <span id="promptCount">
+                0/1000
+              </span>
+            </div>
+
+
+            <!-- Presets -->
+            <div style="margin-top:22px;">
+
+              <label
+                style="
+                  display:block;
+                  color:#91a6c2;
+                  font-size:12px;
+                  font-weight:600;
+                  margin-bottom:10px;
+                "
+              >
+                Quick presets
+              </label>
+
+              <div
+                id="presetList"
+                style="
+                  display:flex;
+                  flex-wrap:wrap;
+                  gap:8px;
+                "
+              >
+
+                <button
+                  type="button"
+                  class="sound-preset"
+                  data-prompt="Heavy rain falling on a metal rooftop with distant thunder"
+                >
+                  <i data-lucide="cloud-rain"></i>
+                  Rain
+                </button>
+
+                <button
+                  type="button"
+                  class="sound-preset"
+                  data-prompt="Cinematic thunder strike with deep low-frequency rumble"
+                >
+                  <i data-lucide="cloud-lightning"></i>
+                  Thunder
+                </button>
+
+                <button
+                  type="button"
+                  class="sound-preset"
+                  data-prompt="Fast futuristic electronic whoosh passing from left to right"
+                >
+                  <i data-lucide="wind"></i>
+                  Whoosh
+                </button>
+
+                <button
+                  type="button"
+                  class="sound-preset"
+                  data-prompt="Modern cinematic camera shutter click with subtle mechanical movement"
+                >
+                  <i data-lucide="camera"></i>
+                  Camera
+                </button>
+
+                <button
+                  type="button"
+                  class="sound-preset"
+                  data-prompt="Realistic wooden door opening slowly with a soft creaking sound"
+                >
+                  <i data-lucide="door-open"></i>
+                  Door
+                </button>
+
+                <button
+                  type="button"
+                  class="sound-preset"
+                  data-prompt="Busy modern city street with distant traffic, people and occasional horns"
+                >
+                  <i data-lucide="building-2"></i>
+                  City
+                </button>
+
+              </div>
+
+            </div>
+
+
+            <!-- Settings -->
+            <div
+              style="
+                display:grid;
+                grid-template-columns:repeat(2,1fr);
+                gap:12px;
+                margin-top:22px;
+              "
+              class="sound-settings"
+            >
+
+              <label
+                style="
+                  display:flex;
+                  flex-direction:column;
+                  gap:7px;
+                  color:#91a6c2;
+                  font-size:12px;
+                  font-weight:600;
+                "
+              >
+                Duration
+
+                <select
+                  id="soundDuration"
+                  style="
+                    width:100%;
+                    padding:12px;
+                    border-radius:11px;
+                    border:1px solid rgba(96,165,250,.18);
+                    background:#08162d;
+                    color:#eaf4ff;
+                    outline:none;
+                  "
+                >
+                  <option value="5">5 seconds</option>
+                  <option value="10">10 seconds</option>
+                  <option value="15">15 seconds</option>
+                  <option value="30">30 seconds</option>
+                </select>
+              </label>
+
+
+              <label
+                style="
+                  display:flex;
+                  flex-direction:column;
+                  gap:7px;
+                  color:#91a6c2;
+                  font-size:12px;
+                  font-weight:600;
+                "
+              >
+                Intensity
+
+                <select
+                  id="soundIntensity"
+                  style="
+                    width:100%;
+                    padding:12px;
+                    border-radius:11px;
+                    border:1px solid rgba(96,165,250,.18);
+                    background:#08162d;
+                    color:#eaf4ff;
+                    outline:none;
+                  "
+                >
+                  <option value="low">Low</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="high">High</option>
+                  <option value="cinematic">Cinematic</option>
+                </select>
+              </label>
+
+            </div>
+
+
+            <!-- Category -->
+            <label
+              style="
+                display:flex;
+                flex-direction:column;
+                gap:7px;
+                color:#91a6c2;
+                font-size:12px;
+                font-weight:600;
+                margin-top:12px;
+              "
+            >
+              Category
+
+              <select
+                id="soundCategory"
+                style="
+                  width:100%;
+                  padding:12px;
+                  border-radius:11px;
+                  border:1px solid rgba(96,165,250,.18);
+                  background:#08162d;
+                  color:#eaf4ff;
+                  outline:none;
+                "
+              >
+                <option value="general">General</option>
+                <option value="cinematic">Cinematic</option>
+                <option value="nature">Nature</option>
+                <option value="technology">Technology</option>
+                <option value="game">Game</option>
+                <option value="ui">UI / App</option>
+                <option value="environment">Environment</option>
+                <option value="impact">Impact</option>
+              </select>
+            </label>
+
+
+            <!-- Generate -->
+            <button
+              id="generateSoundBtn"
+              type="button"
+              class="btn btn-primary"
+              style="
+                width:100%;
+                justify-content:center;
+                padding:14px;
+                margin-top:22px;
+                font-size:14px;
+              "
+            >
+              <i data-lucide="sparkles"></i>
+              Generate Sound Effect
+            </button>
+
+          </section>
+
+
+          <!-- RIGHT OUTPUT -->
+          <aside
+            class="sound-output"
+            style="
+              position:sticky;
+              top:90px;
+              background:rgba(10,25,48,.78);
+              border:1px solid rgba(96,165,250,.16);
+              border-radius:20px;
+              padding:22px;
+              box-shadow:0 20px 60px rgba(0,0,0,.22);
+            "
+          >
+
+            <div
+              style="
+                display:flex;
+                align-items:center;
+                gap:10px;
+                margin-bottom:18px;
+              "
+            >
+
+              <span
+                style="
+                  width:38px;
+                  height:38px;
+                  display:grid;
+                  place-items:center;
+                  border-radius:11px;
+                  background:rgba(34,211,238,.10);
+                  color:#67e8f9;
+                "
+              >
+                <i data-lucide="headphones"></i>
+              </span>
+
+              <div>
+                <span class="section-kicker">OUTPUT</span>
+
+                <h3 style="margin:3px 0 0;">
+                  Generated Effect
+                </h3>
+              </div>
+
+            </div>
+
+
+            <!-- Empty -->
+            <div
+              id="soundEmpty"
+              style="
+                padding:40px 15px;
+                text-align:center;
+                border:1px dashed rgba(96,165,250,.16);
+                border-radius:15px;
+                color:#7186a4;
+              "
+            >
+
+              <i
+                data-lucide="audio-waveform"
+                style="
+                  width:36px;
+                  height:36px;
+                  margin-bottom:12px;
+                "
+              ></i>
+
+              <p
+                style="
+                  margin:0;
+                  font-size:13px;
+                  line-height:1.5;
+                "
+              >
+                Your generated sound effect will appear here.
+              </p>
+
+            </div>
+
+
+            <!-- Result -->
+            <div id="soundResult" hidden>
+
+              <div
+                style="
+                  padding:14px;
+                  border-radius:14px;
+                  background:rgba(3,12,28,.55);
+                  border:1px solid rgba(96,165,250,.12);
+                  margin-bottom:12px;
+                "
+              >
+
+                <div
+                  style="
+                    display:flex;
+                    align-items:center;
+                    gap:8px;
+                    color:#9fc7ff;
+                    font-size:11px;
+                    font-weight:700;
+                    margin-bottom:8px;
+                  "
+                >
+                  <i
+                    data-lucide="check-circle-2"
+                    style="width:15px;"
+                  ></i>
+
+                  Generation complete
+                </div>
+
+                <p
+                  id="resultDescription"
+                  style="
+                    margin:0;
+                    color:#7186a4;
+                    font-size:11px;
+                    line-height:1.6;
+                  "
+                ></p>
+
+              </div>
+
+
+              <audio
+                id="soundAudio"
+                controls
+                style="width:100%;"
+              ></audio>
+
+
+              <a
+                id="downloadSound"
+                href="#"
+                download="voiceai-sound-effect.mp3"
+                class="btn"
+                style="
+                  width:100%;
+                  justify-content:center;
+                  margin-top:12px;
+                  border:1px solid rgba(96,165,250,.18);
+                  background:rgba(59,130,246,.07);
+                  color:#b9d6ff;
+                "
+              >
+                <i data-lucide="download"></i>
+                Download Effect
+              </a>
+
+            </div>
+
+
+            <!-- Info -->
+            <div
+              style="
+                margin-top:18px;
+                padding:14px;
+                border-radius:13px;
+                background:rgba(59,130,246,.05);
+                border:1px solid rgba(96,165,250,.10);
+              "
+            >
+
+              <div
+                style="
+                  display:flex;
+                  align-items:center;
+                  gap:8px;
+                  color:#9fc7ff;
+                  font-size:11px;
+                  font-weight:700;
+                  margin-bottom:7px;
+                "
+              >
+                <i
+                  data-lucide="lightbulb"
+                  style="width:14px;"
+                ></i>
+
+                PROMPT TIP
+              </div>
+
+              <p
+                style="
+                  margin:0;
+                  color:#7186a4;
+                  font-size:11px;
+                  line-height:1.6;
+                "
+              >
+                Describe the source, environment, movement and
+                intensity for more precise sound generation.
+              </p>
+
+            </div>
+
+          </aside>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ================= USE CASES ================= -->
+    <section class="tools-section">
+
+      <div class="container">
+
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">USE CASES</span>
+
+            <h2>
+              Made for every kind of production
+            </h2>
+          </div>
+        </div>
+
+
+        <div
+          class="sound-use-grid"
+          style="
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:16px;
+          "
+        >
+
+          <div class="tool-card">
+
+            <div class="tool-icon">
+              <i data-lucide="film"></i>
+            </div>
+
+            <div class="tool-card-content">
+
+              <h3>Film & Video</h3>
+
+              <p>
+                Add cinematic ambience, impacts and transitions.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="tool-card">
+
+            <div class="tool-icon">
+              <i data-lucide="gamepad-2"></i>
+            </div>
+
+            <div class="tool-card-content">
+
+              <h3>Games</h3>
+
+              <p>
+                Create effects for gameplay, menus and environments.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="tool-card">
+
+            <div class="tool-icon">
+              <i data-lucide="podcast"></i>
+            </div>
+
+            <div class="tool-card-content">
+
+              <h3>Podcasts</h3>
+
+              <p>
+                Add ambience, transitions and production effects.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="tool-card">
+
+            <div class="tool-icon">
+              <i data-lucide="megaphone"></i>
+            </div>
+
+            <div class="tool-card-content">
+
+              <h3>Advertising</h3>
+
+              <p>
+                Create attention-grabbing sounds for commercials.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= CTA ================= -->
+    <section class="cta-section">
+
+      <div class="container">
+
+        <div class="cta-card">
+
+          <div>
+
+            <span class="section-kicker">
+              VOICEAI CREATIVE SUITE
+            </span>
+
+            <h2>
+              Build richer audio with AI.
+            </h2>
+
+            <p>
+              Combine voices, music and sound effects in one workflow.
+            </p>
+
+          </div>
+
+          <a href="studio.html" class="btn btn-primary">
+            Open Studio
+            <i data-lucide="arrow-right"></i>
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer">
+
+    <div class="container">
+
+      <div class="footer-main">
+
+        <div class="footer-brand">
+
+          <a href="index.html" class="brand">
+
+            <span class="brand-mark">
+              <i data-lucide="audio-lines"></i>
+            </span>
+
+            <span>VoiceAI</span>
+
+          </a>
+
+          <p>
+            AI-powered voice and creative tools for modern content creators.
+          </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+          <div>
+            <h4>Product</h4>
+
+            <a href="tools.html">AI Tools</a>
+            <a href="voices.html">Voices</a>
+            <a href="studio.html">Studio</a>
+            <a href="pricing.html">Pricing</a>
+          </div>
+
+
+          <div>
+            <h4>Company</h4>
+
+            <a href="about.html">About</a>
+            <a href="faq.html">FAQ</a>
+            <a href="contact.html">Contact</a>
+          </div>
+
+
+          <div>
+            <h4>Account</h4>
+
+            <a href="login.html">Login</a>
+            <a href="signup.html">Sign Up</a>
+            <a href="profile.html">Profile</a>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="footer-bottom">
+
+        <span>
+          © 2026 VoiceAI. All rights reserved.
+        </span>
+
+        <div>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- ================= SCRIPTS ================= -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./script.js"></script>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      const prompt =
+        document.getElementById("soundPrompt");
+
+      const promptCount =
+        document.getElementById("promptCount");
+
+      const generateBtn =
+        document.getElementById("generateSoundBtn");
+
+      const emptyState =
+        document.getElementById("soundEmpty");
+
+      const result =
+        document.getElementById("soundResult");
+
+      const audio =
+        document.getElementById("soundAudio");
+
+      const download =
+        document.getElementById("downloadSound");
+
+      const resultDescription =
+        document.getElementById("resultDescription");
+
+
+      /* ================= COUNTER ================= */
+
+      function updateCounter() {
+
+        if (!prompt || !promptCount) return;
+
+        promptCount.textContent =
+          `${prompt.value.length}/1000`;
+
+      }
+
+      prompt?.addEventListener(
+        "input",
+        updateCounter
+      );
+
+      updateCounter();
+
+
+      /* ================= PRESETS ================= */
+
+      document
+        .querySelectorAll(".sound-preset")
+        .forEach((button) => {
+
+          button.addEventListener("click", () => {
+
+            const value =
+              button.dataset.prompt || "";
+
+            prompt.value = value;
+
+            updateCounter();
+
+            prompt.focus();
+
+          });
+
+        });
+
+
+      /* ================= SESSION ================= */
+
+      async function getSession() {
+
+        if (
+          window.supabaseClient &&
+          window.supabaseClient.auth
+        ) {
+
+          return await window.supabaseClient
+            .auth
+            .getSession();
+
+        }
+
+        return {
+          data: {
+            session: null
+          }
+        };
+
+      }
+
+
+      /* ================= GENERATE ================= */
+
+      generateBtn?.addEventListener(
+        "click",
+        async () => {
+
+          const text =
+            prompt.value.trim();
+
+
+          if (!text) {
+
+            prompt.focus();
+
+            if (window.VoiceAI) {
+              VoiceAI.toast(
+                "Describe the sound you want to generate."
+              );
+            }
+
+            return;
+
+          }
+
+
+          const originalHTML =
+            generateBtn.innerHTML;
+
+
+          generateBtn.disabled = true;
+
+          if (audio) {
+            audio.pause();
+            audio.removeAttribute("src");
+            audio.load();
+          }
+          if (result) result.hidden = true;
+          if (emptyState) emptyState.hidden = false;
+
+          generateBtn.innerHTML = `
+            <i data-lucide="loader-circle"></i>
+            Generating...
+          `;
+
+
+          if (window.lucide) {
+            lucide.createIcons();
+          }
+
+
+          try {
+
+            const sessionResult =
+              await getSession();
+
+            const session =
+              sessionResult?.data?.session;
+
+
+            if (!session?.access_token) {
+
+              if (window.VoiceAI) {
+                VoiceAI.toast(
+                  "Please login before generating sound effects."
+                );
+              }
+
+              setTimeout(() => {
+
+                window.location.href =
+                  "login.html?redirect=sound-effects.html";
+
+              }, 500);
+
+              return;
+
+            }
+
+
+            const duration =
+              document.getElementById(
+                "soundDuration"
+              ).value;
+
+
+            const intensity =
+              document.getElementById(
+                "soundIntensity"
+              ).value;
+
+
+            const category =
+              document.getElementById(
+                "soundCategory"
+              ).value;
+
+
+            // The backend route is /api/sound-effects (not /api/sound-effects/generate).
+            // The provider adapter accepts prompt + duration, so fold the UI options into
+            // the prompt to ensure category/intensity are not silently discarded.
+            const enrichedPrompt = [
+              text,
+              `Sound category: ${category}.`,
+              `Intensity: ${intensity}.`
+            ].join("\n");
+
+            const response = await fetch("/api/sound-effects", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${session.access_token}`
+              },
+              body: JSON.stringify({
+                prompt: enrichedPrompt,
+                duration: Number(duration)
+              })
+            });
+
+
+            const data =
+              await response.json();
+
+
+            if (!response.ok) {
+
+              throw new Error(
+                data?.error ||
+                "Sound generation failed."
+              );
+
+            }
+
+
+            const audioUrl =
+              data.audio_url ||
+              data.audioUrl ||
+              data.url;
+
+            if (!audioUrl) {
+              if (data.job_id || data.status === "processing") {
+                throw new Error(
+                  "The provider accepted the job, but no audio URL was returned. This project does not yet have a job-status polling endpoint; configure the provider adapter to return audio_url."
+                );
+              }
+              throw new Error("The server did not return an audio file URL.");
+            }
+
+            // Support both absolute URLs and provider-relative audio paths.
+            const resolvedAudioUrl = new URL(audioUrl, window.location.origin).href;
+            audio.pause();
+            audio.removeAttribute("src");
+            audio.load();
+            audio.src = resolvedAudioUrl;
+            audio.load();
+            download.href = resolvedAudioUrl;
+            download.setAttribute("download", "voiceai-sound-effect");
+
+
+            resultDescription.textContent =
+              `${category} sound • ${duration}s • ${intensity} intensity`;
+
+
+            emptyState.hidden = true;
+
+            result.hidden = false;
+
+
+            if (window.VoiceAI) {
+
+              VoiceAI.toast(
+                "Sound effect generated successfully."
+              );
+
+            }
+
+
+          } catch (error) {
+
+            console.error(
+              "Sound effect generation error:",
+              error
+            );
+
+
+            if (window.VoiceAI) {
+
+              VoiceAI.toast(
+                error.message ||
+                "Unable to generate sound effect."
+              );
+
+            }
+
+
+          } finally {
+
+            generateBtn.disabled = false;
+
+            generateBtn.innerHTML =
+              originalHTML;
+
+
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+
+          }
+
+        }
+      );
+
+
+      /* ================= ICONS ================= */
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+    });
+  </script>
+
+
+  <!-- ================= RESPONSIVE ================= -->
+  <style>
+
+    .sound-preset {
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:9px 11px;
+      border-radius:10px;
+      border:1px solid rgba(96,165,250,.15);
+      background:rgba(59,130,246,.05);
+      color:#9fc7ff;
+      font-family:inherit;
+      font-size:11px;
+      font-weight:600;
+      cursor:pointer;
+      transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+    }
+
+    .sound-preset:hover {
+      background:rgba(59,130,246,.12);
+      border-color:rgba(96,165,250,.30);
+      transform:translateY(-1px);
+    }
+
+    .sound-preset svg {
+      width:14px;
+      height:14px;
+    }
+
+
+    @media (max-width: 950px) {
+
+      .sound-layout {
+        grid-template-columns:1fr !important;
+      }
+
+      .sound-output {
+        position:static !important;
+      }
+
+      .sound-use-grid {
+        grid-template-columns:repeat(2,1fr) !important;
+      }
+
+    }
+
+
+    @media (max-width: 650px) {
+
+      .nav-links {
+        display:flex;
+        flex-wrap:nowrap;
+        gap:14px;
+        max-width:100%;
+        overflow-x:auto;
+        white-space:nowrap;
+        scrollbar-width:none;
+      }
+
+      .nav-links::-webkit-scrollbar {
+        display:none;
+      }
+
+      .nav-login {
+        display:none;
+      }
+
+      .sound-settings {
+        grid-template-columns:1fr !important;
+      }
+
+      .sound-use-grid {
+        grid-template-columns:1fr !important;
+      }
+
+      .nav-actions .btn {
+        padding:9px 12px;
+        font-size:11px;
+      }
+
+    }
+
+  </style>
+
+</body>
+</html>

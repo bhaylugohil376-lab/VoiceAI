@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AI Assistant — VoiceAI</title>
+  <meta
+    name="description"
+    content="VoiceAI Gemini-powered AI Assistant."
+  >
+
+  <link rel="stylesheet" href="./style.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="nav-inner">
+
+    <a href="index.html" class="brand">
+      <span class="brand-mark">
+        <i data-lucide="audio-lines"></i>
+      </span>
+      <span>VoiceAI</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="tools.html">AI Tools</a>
+      <a href="voices.html">Voices</a>
+      <a href="studio.html">Studio</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-ghost">
+        Login
+      </a>
+
+      <a href="pricing.html" class="btn btn-primary">
+        Get Started
+      </a>
+    </div>
+
+  </div>
+</header>
+
+
+<main class="assistant-page">
+
+  <!-- HERO -->
+
+  <section class="assistant-hero">
+
+    <div>
+
+      <div class="eyebrow">
+        <i data-lucide="brain-circuit"></i>
+        Gemini AI Assistant
+      </div>
+
+      <h1>
+        Your AI workspace,
+        <span>inside VoiceAI.</span>
+      </h1>
+
+      <p>
+        Brainstorm scripts, improve content, write prompts,
+        plan voice projects and get instant AI assistance.
+      </p>
+
+    </div>
+
+    <div class="assistant-actions">
+
+      <button
+        class="btn btn-secondary"
+        id="newChatBtn"
+      >
+        <i data-lucide="plus"></i>
+        New Chat
+      </button>
+
+      <button
+        class="btn btn-primary"
+        id="clearChatBtn"
+      >
+        <i data-lucide="trash-2"></i>
+        Clear
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- WORKSPACE -->
+
+  <section class="assistant-workspace">
+
+    <!-- SIDEBAR -->
+
+    <aside class="assistant-sidebar">
+
+      <div class="assistant-sidebar-head">
+
+        <strong>AI Assistant</strong>
+
+        <button
+          class="icon-button"
+          id="newSidebarChat"
+          title="New chat"
+        >
+          <i data-lucide="square-pen"></i>
+        </button>
+
+      </div>
+
+
+      <div class="quick-title">
+        Quick actions
+      </div>
+
+
+      <button
+        class="quick-action"
+        data-prompt="Write a professional advertisement script for my product."
+      >
+        <i data-lucide="megaphone"></i>
+        <span>Ad Script</span>
+      </button>
+
+
+      <button
+        class="quick-action"
+        data-prompt="Create a professional YouTube video script."
+      >
+        <i data-lucide="youtube"></i>
+        <span>Video Script</span>
+      </button>
+
+
+      <button
+        class="quick-action"
+        data-prompt="Give me 5 creative voice-over ideas for social media."
+      >
+        <i data-lucide="lightbulb"></i>
+        <span>Creative Ideas</span>
+      </button>
+
+
+      <button
+        class="quick-action"
+        data-prompt="Rewrite this text in a professional and natural tone."
+      >
+        <i data-lucide="wand-sparkles"></i>
+        <span>Rewrite</span>
+      </button>
+
+
+      <button
+        class="quick-action"
+        data-prompt="Create a detailed prompt for an AI voice generation project."
+      >
+        <i data-lucide="file-pen-line"></i>
+        <span>Write Prompt</span>
+      </button>
+
+
+      <div class="sidebar-divider"></div>
+
+
+      <div class="quick-title">
+        Model
+      </div>
+
+
+      <select id="assistantModel" class="assistant-select">
+
+        <option value="gemini-2.5-flash">
+          Gemini 2.5 Flash
+        </option>
+
+        <option value="gemini-2.5-pro">
+          Gemini 2.5 Pro
+        </option>
+
+      </select>
+
+
+      <div class="assistant-sidebar-bottom">
+
+        <a href="usage.html">
+          <i data-lucide="gauge"></i>
+          Usage
+        </a>
+
+        <a href="pricing.html">
+          <i data-lucide="crown"></i>
+          Upgrade
+        </a>
+
+      </div>
+
+    </aside>
+
+
+    <!-- CHAT -->
+
+    <section class="assistant-chat">
+
+      <div class="chat-topbar">
+
+        <div class="chat-title">
+
+          <div class="assistant-avatar">
+            <i data-lucide="brain-circuit"></i>
+          </div>
+
+          <div>
+
+            <strong>VoiceAI Assistant</strong>
+
+            <span>
+              Gemini-powered
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="assistant-usage" id="assistantUsage">
+          Checking usage...
+        </div>
+
+      </div>
+
+
+      <div
+        class="assistant-messages"
+        id="assistantMessages"
+      >
+
+        <div class="welcome-assistant">
+
+          <div class="welcome-icon">
+            <i data-lucide="sparkles"></i>
+          </div>
+
+          <h2>
+            What can I help you create?
+          </h2>
+
+          <p>
+            Ask anything about scripts, voice-over,
+            content, prompts or your VoiceAI projects.
+          </p>
+
+
+          <div class="suggestion-grid">
+
+            <button
+              class="suggestion"
+              data-prompt="Write a 30-second advertisement script for a premium product."
+            >
+              <i data-lucide="megaphone"></i>
+              <span>
+                Create an ad script
+              </span>
+            </button>
+
+
+            <button
+              class="suggestion"
+              data-prompt="Give me 10 ideas for short social media voice-over videos."
+            >
+              <i data-lucide="lightbulb"></i>
+              <span>
+                Generate ideas
+              </span>
+            </button>
+
+
+            <button
+              class="suggestion"
+              data-prompt="Improve this sentence and make it sound natural and professional."
+            >
+              <i data-lucide="wand-sparkles"></i>
+              <span>
+                Improve content
+              </span>
+            </button>
+
+
+            <button
+              class="suggestion"
+              data-prompt="Create a professional prompt for generating an AI voice."
+            >
+              <i data-lucide="file-pen-line"></i>
+              <span>
+                Create a prompt
+              </span>
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- INPUT -->
+
+      <div class="assistant-composer">
+
+        <div class="composer-box">
+
+          <textarea
+            id="assistantInput"
+            rows="3"
+            maxlength="6000"
+            placeholder="Ask VoiceAI Assistant anything..."
+          ></textarea>
+
+
+          <div class="composer-bottom">
+
+            <div class="composer-hint">
+              <span>
+                <i data-lucide="corner-down-left"></i>
+                Enter to send
+              </span>
+
+              <span id="assistantCharCount">
+                0 / 6000
+              </span>
+            </div>
+
+
+            <button
+              id="assistantSendBtn"
+              class="send-button"
+              title="Send message"
+            >
+              <i data-lucide="arrow-up"></i>
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="assistant-disclaimer">
+        AI responses can contain mistakes. Review important content before publishing.
+      </div>
+
+    </section>
+
+  </section>
+
+
+  <!-- FEATURES -->
+
+  <section class="assistant-features">
+
+    <div class="section-heading">
+
+      <div class="eyebrow">
+        <i data-lucide="sparkles"></i>
+        Built for creators
+      </div>
+
+      <h2>
+        More than a chatbot.
+      </h2>
+
+      <p>
+        Use the assistant as part of your complete AI voice workflow.
+      </p>
+
+    </div>
+
+
+    <div class="assistant-feature-grid">
+
+      <article class="assistant-feature-card">
+
+        <div class="feature-icon">
+          <i data-lucide="scroll-text"></i>
+        </div>
+
+        <h3>Script writing</h3>
+
+        <p>
+          Generate ads, narration, social content,
+          dialogue and video scripts.
+        </p>
+
+      </article>
+
+
+      <article class="assistant-feature-card">
+
+        <div class="feature-icon">
+          <i data-lucide="wand-sparkles"></i>
+        </div>
+
+        <h3>Content enhancement</h3>
+
+        <p>
+          Rewrite, shorten, expand or improve your
+          content before sending it to TTS.
+        </p>
+
+      </article>
+
+
+      <article class="assistant-feature-card">
+
+        <div class="feature-icon">
+          <i data-lucide="workflow"></i>
+        </div>
+
+        <h3>Creative workflow</h3>
+
+        <p>
+          Move from idea to script, voice and studio
+          production faster.
+        </p>
+
+      </article>
+
+
+      <article class="assistant-feature-card">
+
+        <div class="feature-icon">
+          <i data-lucide="code-2"></i>
+        </div>
+
+        <h3>Developer help</h3>
+
+        <p>
+          Generate prompts, API examples and
+          technical explanations for your projects.
+        </p>
+
+      </article>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+  <div class="footer-inner">
+
+    <div class="footer-brand">
+
+      <div class="brand">
+        <span class="brand-mark">
+          <i data-lucide="audio-lines"></i>
+        </span>
+        VoiceAI
+      </div>
+
+      <p>
+        AI voice tools for creators, businesses and developers.
+      </p>
+
+    </div>
+
+
+    <div class="footer-links">
+
+      <a href="about.html">About</a>
+      <a href="faq.html">FAQ</a>
+      <a href="contact.html">Contact</a>
+      <a href="pricing.html">Pricing</a>
+
+    </div>
+
+  </div>
+
+</footer>
+
+
+<style>
+
+.assistant-page {
+  width: min(1500px, calc(100% - 36px));
+  margin: 0 auto;
+  padding: 55px 0 80px;
+}
+
+.assistant-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: 35px;
+}
+
+.assistant-hero h1 {
+  margin: 10px 0 15px;
+  max-width: 850px;
+  font-size: clamp(38px, 5vw, 64px);
+  line-height: 1;
+  letter-spacing: -2.5px;
+}
+
+.assistant-hero h1 span {
+  color: #55c7ff;
+}
+
+.assistant-hero p {
+  max-width: 650px;
+  color: #8ca4bd;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+.assistant-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.assistant-workspace {
+  display: grid;
+  grid-template-columns: 245px minmax(0, 1fr);
+  min-height: 720px;
+  overflow: hidden;
+  border: 1px solid rgba(95,145,190,.18);
+  border-radius: 22px;
+  background: rgba(6,16,32,.82);
+  box-shadow: 0 25px 80px rgba(0,0,0,.25);
+}
+
+
+/* SIDEBAR */
+
+.assistant-sidebar {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border-right: 1px solid rgba(100,160,210,.12);
+  background: rgba(8,22,42,.72);
+}
+
+.assistant-sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #e5f2ff;
+  font-size: 13px;
+  margin-bottom: 25px;
+}
+
+.assistant-sidebar-head .icon-button {
+  width: 32px;
+  height: 32px;
+}
+
+.quick-title {
+  margin: 10px 0 9px;
+  color: #607994;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  font-weight: 800;
+}
+
+.quick-action {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  margin-bottom: 4px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #91a7be;
+  font-family: inherit;
+  text-align: left;
+  font-size: 11px;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.quick-action:hover {
+  color: #d9edff;
+  background: rgba(72,185,255,.07);
+}
+
+.quick-action svg {
+  width: 15px;
+  color: #58c8ff;
+}
+
+.sidebar-divider {
+  height: 1px;
+  margin: 18px 0 10px;
+  background: rgba(100,160,210,.1);
+}
+
+.assistant-select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px;
+  border: 1px solid rgba(100,160,210,.16);
+  border-radius: 10px;
+  outline: none;
+  background: #08182d;
+  color: #bcd3e8;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.assistant-sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: auto;
+  padding-top: 25px;
+}
+
+.assistant-sidebar-bottom a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px;
+  border-radius: 9px;
+  color: #7088a1;
+  text-decoration: none;
+  font-size: 11px;
+}
+
+.assistant-sidebar-bottom a:hover {
+  color: #55c7ff;
+  background: rgba(72,185,255,.06);
+}
+
+.assistant-sidebar-bottom svg {
+  width: 15px;
+}
+
+
+/* CHAT */
+
+.assistant-chat {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background:
+    radial-gradient(
+      circle at 70% 0%,
+      rgba(41,159,219,.06),
+      transparent 35%
+    );
+}
+
+.chat-topbar {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 22px;
+  border-bottom: 1px solid rgba(100,160,210,.12);
+}
+
+.chat-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.assistant-avatar {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #62ccff;
+  background: rgba(71,191,255,.09);
+}
+
+.assistant-avatar svg {
+  width: 18px;
+}
+
+.chat-title strong {
+  display: block;
+  color: #e3f1ff;
+  font-size: 12px;
+}
+
+.chat-title span {
+  display: block;
+  margin-top: 3px;
+  color: #5e7792;
+  font-size: 9px;
+}
+
+.assistant-usage {
+  padding: 7px 10px;
+  border: 1px solid rgba(96,160,210,.15);
+  border-radius: 999px;
+  color: #7891aa;
+  background: rgba(255,255,255,.025);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.assistant-messages {
+  flex: 1;
+  min-height: 450px;
+  max-height: 560px;
+  padding: 30px clamp(18px, 5vw, 80px);
+  overflow-y: auto;
+}
+
+.welcome-assistant {
+  max-width: 750px;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.welcome-icon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  border: 1px solid rgba(75,190,255,.2);
+  border-radius: 17px;
+  color: #55c7ff;
+  background: rgba(75,190,255,.08);
+  box-shadow: 0 0 45px rgba(40,170,240,.08);
+}
+
+.welcome-icon svg {
+  width: 25px;
+}
+
+.welcome-assistant h2 {
+  margin: 0 0 10px;
+  color: #e7f4ff;
+  font-size: 24px;
+}
+
+.welcome-assistant > p {
+  max-width: 500px;
+  margin: 0 auto 28px;
+  color: #7189a4;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.suggestion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.suggestion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 12px;
+  border: 1px solid rgba(95,150,200,.15);
+  border-radius: 12px;
+  background: rgba(255,255,255,.025);
+  color: #8da5bd;
+  text-align: left;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.suggestion:hover {
+  color: #d9edff;
+  border-color: rgba(75,190,255,.32);
+  background: rgba(75,190,255,.05);
+  transform: translateY(-1px);
+}
+
+.suggestion svg {
+  width: 17px;
+  flex: 0 0 auto;
+  color: #55c7ff;
+}
+
+
+/* CHAT MESSAGE */
+
+.assistant-message {
+  display: flex;
+  gap: 12px;
+  max-width: 850px;
+  margin: 0 auto 25px;
+}
+
+.assistant-message.user {
+  flex-direction: row-reverse;
+}
+
+.chat-message-icon {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #55c7ff;
+  background: rgba(75,190,255,.08);
+}
+
+.assistant-message.user .chat-message-icon {
+  color: #a4b9ff;
+  background: rgba(100,110,255,.09);
+}
+
+.chat-message-icon svg {
+  width: 15px;
+}
+
+.chat-message-body {
+  min-width: 0;
+  max-width: 780px;
+}
+
+.chat-message-label {
+  margin-bottom: 5px;
+  color: #6f89a4;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.chat-message-text {
+  padding: 12px 14px;
+  border: 1px solid rgba(95,150,200,.12);
+  border-radius: 12px;
+  background: rgba(255,255,255,.025);
+  color: #c5d7e8;
+  font-size: 12px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.assistant-message.user .chat-message-text {
+  background: rgba(75,120,255,.08);
+}
+
+
+/* COMPOSER */
+
+.assistant-composer {
+  padding: 14px clamp(15px, 4vw, 65px) 5px;
+}
+
+.composer-box {
+  position: relative;
+  border: 1px solid rgba(96,160,210,.2);
+  border-radius: 15px;
+  background: #08182d;
+  box-shadow: 0 12px 35px rgba(0,0,0,.18);
+}
+
+.composer-box:focus-within {
+  border-color: rgba(75,190,255,.45);
+  box-shadow:
+    0 0 0 3px rgba(75,190,255,.05),
+    0 15px 45px rgba(0,0,0,.2);
+}
+
+.composer-box textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 75px;
+  padding: 15px 16px 5px;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: #e9f5ff;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.composer-box textarea::placeholder {
+  color: #536d88;
+}
+
+.composer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px 10px 15px;
+}
+
+.composer-hint {
+  display: flex;
+  gap: 15px;
+  color: #4f6881;
+  font-size: 9px;
+}
+
+.composer-hint span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.composer-hint svg {
+  width: 11px;
+}
+
+.send-button {
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: #1595ce;
+  color: white;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.send-button:hover {
+  background: #2ab2eb;
+  transform: translateY(-1px);
+}
+
+.send-button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.send-button svg {
+  width: 17px;
+}
+
+.assistant-disclaimer {
+  padding: 8px 20px 13px;
+  color: #405872;
+  text-align: center;
+  font-size: 8px;
+}
+
+
+/* FEATURES */
+
+.assistant-features {
+  margin-top: 75px;
+}
+
+.section-heading {
+  margin-bottom: 25px;
+}
+
+.section-heading h2 {
+  margin: 8px 0 7px;
+  color: #e7f4ff;
+  font-size: 28px;
+}
+
+.section-heading p {
+  margin: 0;
+  color: #6d86a0;
+  font-size: 12px;
+}
+
+.assistant-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.assistant-feature-card {
+  padding: 22px;
+  border: 1px solid rgba(95,150,200,.15);
+  border-radius: 17px;
+  background: rgba(7,18,36,.65);
+}
+
+.assistant-feature-card .feature-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 15px;
+  border-radius: 11px;
+  color: #55c7ff;
+  background: rgba(75,190,255,.08);
+}
+
+.assistant-feature-card .feature-icon svg {
+  width: 19px;
+}
+
+.assistant-feature-card h3 {
+  margin: 0 0 8px;
+  color: #dcecff;
+  font-size: 13px;
+}
+
+.assistant-feature-card p {
+  margin: 0;
+  color: #7189a3;
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 850px) {
+
+  .assistant-hero {
+    display: block;
+  }
+
+  .assistant-actions {
+    margin-top: 20px;
+  }
+
+  .assistant-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .assistant-sidebar {
+    border-right: 0;
+    border-bottom: 1px solid rgba(100,160,210,.12);
+  }
+
+  .assistant-sidebar-bottom {
+    display: none;
+  }
+
+  .suggestion-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .assistant-messages {
+    max-height: none;
+  }
+
+  .assistant-feature-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+}
+
+@media (max-width: 560px) {
+
+  .assistant-page {
+    width: calc(100% - 24px);
+    padding-top: 35px;
+  }
+
+  .assistant-hero h1 {
+    font-size: 38px;
+  }
+
+  .chat-topbar {
+    padding: 0 14px;
+  }
+
+  .assistant-usage {
+    display: none;
+  }
+
+  .assistant-messages {
+    padding: 20px 12px;
+  }
+
+  .assistant-composer {
+    padding: 10px 10px 4px;
+  }
+
+  .assistant-feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+</style>
+
+
+<script>
+
+"use strict";
+
+
+let assistantSession = null;
+let conversation = [];
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  initLucide();
+
+  await loadAssistantSession();
+
+  setupAssistant();
+
+  loadSavedConversation();
+
+  await loadAssistantUsage();
+
+  initLucide();
+
+});
+
+
+function initLucide() {
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+}
+
+
+async function loadAssistantSession() {
+
+  try {
+
+    if (!window.supabaseClient) {
+      return;
+    }
+
+    const result =
+      await window.supabaseClient.auth.getSession();
+
+    assistantSession =
+      result.data.session;
+
+  } catch (error) {
+
+    console.error(
+      "Assistant session error:",
+      error
+    );
+
+  }
+
+}
+
+
+function setupAssistant() {
+
+  const sendButton =
+    document.getElementById("assistantSendBtn");
+
+  const input =
+    document.getElementById("assistantInput");
+
+  const newChat =
+    document.getElementById("newChatBtn");
+
+  const sidebarNewChat =
+    document.getElementById("newSidebarChat");
+
+  const clearChat =
+    document.getElementById("clearChatBtn");
+
+
+  sendButton?.addEventListener(
+    "click",
+    sendAssistantMessage
+  );
+
+
+  input?.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Enter" &&
+        !event.shiftKey
+      ) {
+
+        event.preventDefault();
+
+        sendAssistantMessage();
+
+      }
+
+    }
+  );
+
+
+  input?.addEventListener(
+    "input",
+    updateCharacterCount
+  );
+
+
+  newChat?.addEventListener(
+    "click",
+    startNewChat
+  );
+
+
+  sidebarNewChat?.addEventListener(
+    "click",
+    startNewChat
+  );
+
+
+  clearChat?.addEventListener(
+    "click",
+    clearConversation
+  );
+
+
+  document
+    .querySelectorAll("[data-prompt]")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const prompt =
+            button.dataset.prompt || "";
+
+          input.value = prompt;
+
+          updateCharacterCount();
+
+          input.focus();
+
+        }
+      );
+
+    });
+
+
+  updateCharacterCount();
+
+}
+
+
+function updateCharacterCount() {
+
+  const input =
+    document.getElementById("assistantInput");
+
+  const counter =
+    document.getElementById("assistantCharCount");
+
+  if (!input || !counter) return;
+
+  counter.textContent =
+    `${input.value.length} / 6000`;
+
+}
+
+
+async function sendAssistantMessage() {
+
+  const input =
+    document.getElementById("assistantInput");
+
+  const button =
+    document.getElementById("assistantSendBtn");
+
+  const message =
+    input.value.trim();
+
+
+  if (!message) {
+
+    input.focus();
+
+    return;
+
+  }
+
+
+  if (!assistantSession) {
+
+    VoiceAI.toast(
+      "Please login to use AI Assistant."
+    );
+
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 700);
+
+    return;
+
+  }
+
+
+  const model =
+    document.getElementById("assistantModel").value;
+
+
+  addMessage(
+    "user",
+    message
+  );
+
+
+  input.value = "";
+
+  updateCharacterCount();
+
+
+  button.disabled = true;
+
+  button.innerHTML =
+    `<i data-lucide="loader-circle"></i>`;
+
+  initLucide();
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/assistant",
+        {
+
+          method: "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json",
+
+            "Authorization":
+              `Bearer ${assistantSession.access_token}`
+
+          },
+
+          body: JSON.stringify({
+
+            message,
+
+            model,
+
+            conversation
+
+          })
+
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      if (response.status === 429) {
+
+        addMessage(
+          "assistant",
+          data.error ||
+          "Your free AI Assistant limit has been reached. Please try again after 24 hours."
+        );
+
+      } else {
+
+        addMessage(
+          "assistant",
+          data.error ||
+          "Unable to get an AI response."
+        );
+
+      }
+
+      return;
+
+    }
+
+
+    const reply =
+      data.reply ||
+      data.message ||
+      data.text ||
+      "No response received.";
+
+
+    addMessage(
+      "assistant",
+      reply
+    );
+
+
+    conversation.push({
+      role: "user",
+      content: message
+    });
+
+
+    conversation.push({
+      role: "assistant",
+      content: reply
+    });
+
+
+    saveConversation();
+
+    await loadAssistantUsage();
+
+
+  } catch (error) {
+
+    console.error(
+      "Assistant request error:",
+      error
+    );
+
+
+    addMessage(
+      "assistant",
+      "Something went wrong. Please try again."
+    );
+
+  } finally {
+
+    button.disabled = false;
+
+    button.innerHTML =
+      `<i data-lucide="arrow-up"></i>`;
+
+    initLucide();
+
+  }
+
+}
+
+
+function addMessage(role, text) {
+
+  const container =
+    document.getElementById(
+      "assistantMessages"
+    );
+
+
+  const welcome =
+    container.querySelector(
+      ".welcome-assistant"
+    );
+
+
+  if (welcome) {
+    welcome.remove();
+  }
+
+
+  const message =
+    document.createElement("div");
+
+
+  message.className =
+    `assistant-message ${role}`;
+
+
+  message.innerHTML = `
+
+    <div class="chat-message-icon">
+
+      <i data-lucide="${
+        role === "user"
+          ? "user"
+          : "brain-circuit"
+      }"></i>
+
+    </div>
+
+    <div class="chat-message-body">
+
+      <div class="chat-message-label">
+        ${
+          role === "user"
+            ? "You"
+            : "VoiceAI Assistant"
+        }
+      </div>
+
+      <div class="chat-message-text">
+        ${escapeHtml(text)}
+      </div>
+
+    </div>
+
+  `;
+
+
+  container.appendChild(message);
+
+
+  container.scrollTop =
+    container.scrollHeight;
+
+
+  initLucide();
+
+}
+
+
+function saveConversation() {
+
+  try {
+
+    localStorage.setItem(
+      "voiceai_assistant_conversation",
+      JSON.stringify(conversation)
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "Conversation storage failed:",
+      error
+    );
+
+  }
+
+}
+
+
+function loadSavedConversation() {
+
+  try {
+
+    const saved =
+      localStorage.getItem(
+        "voiceai_assistant_conversation"
+      );
+
+
+    if (!saved) return;
+
+
+    const parsed =
+      JSON.parse(saved);
+
+
+    if (!Array.isArray(parsed)) return;
+
+
+    conversation =
+      parsed;
+
+
+    conversation.forEach(message => {
+
+      if (
+        message &&
+        message.role &&
+        message.content
+      ) {
+
+        addMessage(
+          message.role,
+          message.content
+        );
+
+      }
+
+    });
+
+  } catch (error) {
+
+    console.warn(
+      "Saved conversation unavailable:",
+      error
+    );
+
+  }
+
+}
+
+
+function startNewChat() {
+
+  conversation = [];
+
+
+  localStorage.removeItem(
+    "voiceai_assistant_conversation"
+  );
+
+
+  const container =
+    document.getElementById(
+      "assistantMessages"
+    );
+
+
+  container.innerHTML = `
+
+    <div class="welcome-assistant">
+
+      <div class="welcome-icon">
+        <i data-lucide="sparkles"></i>
+      </div>
+
+      <h2>
+        What can I help you create?
+      </h2>
+
+      <p>
+        Ask anything about scripts, voice-over,
+        content, prompts or your VoiceAI projects.
+      </p>
+
+      <div class="suggestion-grid">
+
+        <button
+          class="suggestion"
+          data-prompt="Write a 30-second advertisement script for a premium product."
+        >
+          <i data-lucide="megaphone"></i>
+          <span>Create an ad script</span>
+        </button>
+
+        <button
+          class="suggestion"
+          data-prompt="Give me 10 ideas for short social media voice-over videos."
+        >
+          <i data-lucide="lightbulb"></i>
+          <span>Generate ideas</span>
+        </button>
+
+        <button
+          class="suggestion"
+          data-prompt="Improve this sentence and make it sound natural and professional."
+        >
+          <i data-lucide="wand-sparkles"></i>
+          <span>Improve content</span>
+        </button>
+
+        <button
+          class="suggestion"
+          data-prompt="Create a professional prompt for generating an AI voice."
+        >
+          <i data-lucide="file-pen-line"></i>
+          <span>Create a prompt</span>
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  bindSuggestionButtons();
+
+  initLucide();
+
+}
+
+
+function clearConversation() {
+
+  conversation = [];
+
+
+  localStorage.removeItem(
+    "voiceai_assistant_conversation"
+  );
+
+
+  startNewChat();
+
+  VoiceAI.toast(
+    "Conversation cleared."
+  );
+
+}
+
+
+function bindSuggestionButtons() {
+
+  const input =
+    document.getElementById(
+      "assistantInput"
+    );
+
+
+  document
+    .querySelectorAll("[data-prompt]")
+    .forEach(button => {
+
+      button.onclick = () => {
+
+        input.value =
+          button.dataset.prompt || "";
+
+        updateCharacterCount();
+
+        input.focus();
+
+      };
+
+    });
+
+}
+
+
+async function loadAssistantUsage() {
+
+  const target =
+    document.getElementById(
+      "assistantUsage"
+    );
+
+
+  if (!target) return;
+
+
+  if (!assistantSession) {
+
+    target.textContent =
+      "Login required";
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/usage?action=assistant",
+        {
+
+          headers: {
+
+            "Authorization":
+              `Bearer ${assistantSession.access_token}`
+
+          }
+
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Usage unavailable"
+      );
+
+    }
+
+
+    if (data.unlimited) {
+
+      target.textContent =
+        "Premium • Unlimited";
+
+      return;
+
+    }
+
+
+    const used =
+      Number(data.used || 0);
+
+    const limit =
+      Number(data.limit || 5);
+
+
+    target.textContent =
+      `${used}/${limit} free uses`;
+
+  } catch {
+
+    target.textContent =
+      "Usage unavailable";
+
+  }
+
+}
+
+
+function escapeHtml(value) {
+
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+setTimeout(() => {
+
+  initLucide();
+
+}, 100);
+
+</script>
+
+</body>
+</html>

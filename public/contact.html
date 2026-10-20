@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Contact Support — VoiceAI</title>
+  <meta
+    name="description"
+    content="Contact VoiceAI support for account, billing, AI generation and technical problems."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg: #06101f;
+      --bg2: #09182b;
+      --card: #0b1b31;
+      --card2: #0d2139;
+
+      --text: #f4f8ff;
+      --muted: #91a6c1;
+      --muted2: #7188a5;
+
+      --cyan: #22d3ee;
+      --blue: #3b82f6;
+      --green: #2dd4bf;
+      --red: #fb7185;
+
+      --border: rgba(113, 163, 220, 0.16);
+
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, sans-serif;
+      color: var(--text);
+
+      background:
+        radial-gradient(
+          circle at 10% 0%,
+          rgba(37, 99, 235, 0.14),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 90% 10%,
+          rgba(34, 211, 238, 0.08),
+          transparent 28%
+        ),
+        var(--bg);
+
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 36px));
+      margin: auto;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+
+      background: rgba(6, 16, 31, 0.88);
+      backdrop-filter: blur(18px);
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav {
+      min-height: 72px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      font-size: 19px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 35px;
+      height: 35px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 11px;
+
+      color: #03131e;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--cyan),
+          var(--blue)
+        );
+
+      box-shadow:
+        0 8px 28px rgba(34, 211, 238, 0.2);
+    }
+
+    .brand-mark svg {
+      width: 19px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-links a {
+      padding: 9px 11px;
+
+      border-radius: 9px;
+
+      color: var(--muted);
+
+      font-size: 13px;
+      font-weight: 600;
+
+      transition: 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      padding: 9px 14px;
+
+      border: 1px solid var(--border);
+      border-radius: 10px;
+
+      background: rgba(255, 255, 255, 0.035);
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .nav-btn.primary {
+      color: #03131e;
+      border-color: transparent;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--cyan),
+          #60a5fa
+        );
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero {
+      padding: 75px 0 45px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      padding: 7px 11px;
+
+      border: 1px solid rgba(34, 211, 238, 0.22);
+      border-radius: 999px;
+
+      color: #9cecf6;
+      background: rgba(34, 211, 238, 0.08);
+
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .hero h1 {
+      margin: 20px auto 12px;
+
+      max-width: 760px;
+
+      font-size: clamp(36px, 5vw, 58px);
+      line-height: 1.05;
+      letter-spacing: -0.045em;
+    }
+
+    .hero h1 span {
+      color: var(--cyan);
+    }
+
+    .hero p {
+      max-width: 650px;
+      margin: auto;
+
+      color: var(--muted);
+
+      font-size: 14px;
+    }
+
+    /* =========================
+       SUPPORT EMAIL
+    ========================= */
+
+    .support-email {
+      max-width: 700px;
+      margin: 25px auto 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+
+      padding: 13px 16px;
+
+      border: 1px solid rgba(34, 211, 238, 0.16);
+      border-radius: 13px;
+
+      background: rgba(34, 211, 238, 0.045);
+
+      color: var(--muted);
+
+      font-size: 13px;
+    }
+
+    .support-email svg {
+      width: 18px;
+      color: var(--cyan);
+    }
+
+    .support-email strong {
+      color: var(--text);
+    }
+
+    .support-email a {
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    /* =========================
+       CONTENT
+    ========================= */
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 0.8fr 1.4fr;
+
+      gap: 22px;
+
+      max-width: 1050px;
+
+      margin: 25px auto 85px;
+    }
+
+    /* =========================
+       INFO CARD
+    ========================= */
+
+    .info-card,
+    .form-card {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(13, 33, 57, 0.9),
+          rgba(8, 21, 38, 0.94)
+        );
+
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .info-card {
+      padding: 27px;
+    }
+
+    .info-card h2 {
+      margin-bottom: 9px;
+
+      font-size: 22px;
+      letter-spacing: -0.02em;
+    }
+
+    .info-card > p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .info-list {
+      margin-top: 25px;
+
+      display: grid;
+      gap: 12px;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+
+      padding: 14px;
+
+      border: 1px solid var(--border);
+      border-radius: 13px;
+
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .info-icon {
+      width: 34px;
+      height: 34px;
+
+      flex: 0 0 34px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 10px;
+
+      color: var(--cyan);
+      background: var(--cyan-soft, rgba(34, 211, 238, 0.08));
+    }
+
+    .info-icon svg {
+      width: 17px;
+    }
+
+    .info-item h3 {
+      margin-bottom: 2px;
+
+      font-size: 12px;
+    }
+
+    .info-item p {
+      color: var(--muted);
+
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    /* =========================
+       FORM
+    ========================= */
+
+    .form-card {
+      padding: 29px;
+    }
+
+    .form-card h2 {
+      font-size: 23px;
+      margin-bottom: 6px;
+    }
+
+    .form-card > p {
+      margin-bottom: 24px;
+
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      color: #cbd9eb;
+
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+
+      border: 1px solid var(--border);
+      border-radius: 11px;
+
+      outline: none;
+
+      color: var(--text);
+      background: rgba(3, 12, 25, 0.7);
+
+      transition: 0.2s ease;
+    }
+
+    .field input,
+    .field select {
+      height: 45px;
+      padding: 0 13px;
+    }
+
+    .field textarea {
+      min-height: 155px;
+
+      resize: vertical;
+
+      padding: 12px 13px;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: #5f7693;
+    }
+
+    .field select option {
+      color: #111827;
+      background: white;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: rgba(34, 211, 238, 0.48);
+
+      box-shadow:
+        0 0 0 3px rgba(34, 211, 238, 0.07);
+    }
+
+    .form-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 15px;
+
+      margin-top: 18px;
+    }
+
+    .form-note {
+      color: var(--muted2);
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .submit-btn {
+      min-height: 45px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      padding: 0 19px;
+
+      border: 0;
+      border-radius: 11px;
+
+      color: #03131e;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--cyan),
+          #60a5fa
+        );
+
+      cursor: pointer;
+
+      font-size: 12px;
+      font-weight: 800;
+
+      transition: 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 10px 25px rgba(34, 211, 238, 0.16);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* =========================
+       DIRECT EMAIL
+    ========================= */
+
+    .email-button {
+      width: 100%;
+
+      min-height: 45px;
+
+      margin-top: 10px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      border: 1px solid rgba(34, 211, 238, 0.22);
+      border-radius: 11px;
+
+      color: #b9f5fb;
+
+      background: rgba(34, 211, 238, 0.055);
+
+      font-size: 12px;
+      font-weight: 800;
+
+      transition: 0.2s ease;
+    }
+
+    .email-button:hover {
+      border-color: rgba(34, 211, 238, 0.42);
+      background: rgba(34, 211, 238, 0.09);
+    }
+
+    /* =========================
+       STATUS
+    ========================= */
+
+    .status {
+      display: none;
+
+      margin-bottom: 18px;
+
+      padding: 12px 14px;
+
+      border-radius: 11px;
+
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .status.success {
+      display: block;
+
+      color: #a7f3d0;
+      border: 1px solid rgba(45, 212, 191, 0.25);
+      background: rgba(45, 212, 191, 0.08);
+    }
+
+    .status.error {
+      display: block;
+
+      color: #fecdd3;
+      border: 1px solid rgba(251, 113, 133, 0.25);
+      background: rgba(251, 113, 133, 0.08);
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    .site-footer {
+      padding: 35px 0;
+
+      border-top: 1px solid var(--border);
+
+      color: var(--muted2);
+
+      font-size: 11px;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .footer-links a:hover {
+      color: var(--text);
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 900px) {
+
+      .nav-links {
+        display: none;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+
+      .container {
+        width: min(
+          var(--max),
+          calc(100% - 24px)
+        );
+      }
+
+      .nav {
+        min-height: 64px;
+      }
+
+      .nav-btn.login {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 55px;
+      }
+
+      .hero h1 {
+        font-size: 39px;
+      }
+
+      .hero p {
+        font-size: 12px;
+      }
+
+      .support-email {
+        flex-wrap: wrap;
+        font-size: 11px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .form-card,
+      .info-card {
+        padding: 21px;
+      }
+
+      .form-footer {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .submit-btn {
+        width: 100%;
+      }
+
+      .footer-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+
+  <header class="site-header">
+
+    <div class="container nav">
+
+      <a class="brand" href="index.html">
+
+        <span class="brand-mark">
+          <i data-lucide="waves"></i>
+        </span>
+
+        <span>VoiceAI</span>
+
+      </a>
+
+      <nav class="nav-links">
+
+        <a href="index.html">Home</a>
+        <a href="tools.html">AI Tools</a>
+        <a href="voices.html">Voices</a>
+        <a href="studio.html">Studio</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="faq.html">FAQ</a>
+        <a class="active" href="contact.html">Contact</a>
+
+      </nav>
+
+      <div class="nav-actions">
+
+        <a
+          class="nav-btn login"
+          href="login.html"
+        >
+          Login
+        </a>
+
+        <a
+          class="nav-btn primary"
+          href="signup.html"
+        >
+          Get Started
+        </a>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+
+  <main>
+
+    <section class="hero">
+
+      <div class="container">
+
+        <div class="eyebrow">
+          <i data-lucide="headset"></i>
+          VoiceAI Support
+        </div>
+
+        <h1>
+          How can we <span>help?</span>
+        </h1>
+
+        <p>
+          Having a problem with VoiceAI? Send us the details and our
+          support team can review your issue.
+        </p>
+
+        <div class="support-email">
+
+          <i data-lucide="mail"></i>
+
+          <span>
+            Support email:
+            <strong>
+              bhaylugohil376@gmail.com
+            </strong>
+          </span>
+
+          <a
+            href="mailto:bhaylugohil376@gmail.com"
+          >
+            Email us
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         CONTACT AREA
+    ========================== -->
+
+    <section class="container contact-grid">
+
+      <!-- INFO -->
+
+      <aside class="info-card">
+
+        <h2>Support Center</h2>
+
+        <p>
+          Tell us what went wrong. Include useful details such as
+          the page, error message and what you were trying to do.
+        </p>
+
+        <div class="info-list">
+
+          <div class="info-item">
+
+            <div class="info-icon">
+              <i data-lucide="bug"></i>
+            </div>
+
+            <div>
+              <h3>Technical problem</h3>
+              <p>
+                Generation errors, pages not loading,
+                API problems or unexpected behavior.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="info-item">
+
+            <div class="info-icon">
+              <i data-lucide="user-round"></i>
+            </div>
+
+            <div>
+              <h3>Account problem</h3>
+              <p>
+                Login, signup, password reset or
+                account-related issues.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="info-item">
+
+            <div class="info-icon">
+              <i data-lucide="credit-card"></i>
+            </div>
+
+            <div>
+              <h3>Billing problem</h3>
+              <p>
+                Premium subscription, payment,
+                checkout or billing questions.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="info-item">
+
+            <div class="info-icon">
+              <i data-lucide="audio-lines"></i>
+            </div>
+
+            <div>
+              <h3>AI generation problem</h3>
+              <p>
+                TTS, voice cloning, Gemini, image,
+                STT or other AI tool problems.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="info-item">
+
+            <div class="info-icon">
+              <i data-lucide="shield-alert"></i>
+            </div>
+
+            <div>
+              <h3>Report an issue</h3>
+              <p>
+                Report abuse, security concerns or
+                other important problems.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+        <a
+          class="email-button"
+          href="mailto:bhaylugohil376@gmail.com?subject=VoiceAI%20Support%20Request"
+        >
+          <i data-lucide="mail"></i>
+          Email Support Directly
+        </a>
+
+      </aside>
+
+
+      <!-- FORM -->
+
+      <section class="form-card">
+
+        <h2>Send a support request</h2>
+
+        <p>
+          Fill out the form below. Your request will be saved
+          and you can also contact support directly by email.
+        </p>
+
+        <div
+          id="status"
+          class="status"
+        ></div>
+
+        <form id="contactForm">
+
+          <div class="form-grid">
+
+            <div class="field">
+
+              <label for="name">
+                Your name
+              </label>
+
+              <input
+                id="name"
+                name="name"
+                type="text"
+                autocomplete="name"
+                placeholder="Enter your name"
+                maxlength="100"
+                required
+              />
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="email">
+                Email address
+              </label>
+
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                placeholder="you@example.com"
+                maxlength="160"
+                required
+              />
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="category">
+                Problem type
+              </label>
+
+              <select
+                id="category"
+                name="category"
+                required
+              >
+
+                <option value="">
+                  Select problem
+                </option>
+
+                <option value="Technical">
+                  Technical problem
+                </option>
+
+                <option value="Account">
+                  Account problem
+                </option>
+
+                <option value="Billing">
+                  Billing / Premium
+                </option>
+
+                <option value="TTS">
+                  Text to Speech
+                </option>
+
+                <option value="Voice Cloning">
+                  Voice Cloning
+                </option>
+
+                <option value="Gemini">
+                  Gemini Assistant / Image
+                </option>
+
+                <option value="Studio">
+                  Studio / Projects
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="subject">
+                Subject
+              </label>
+
+              <input
+                id="subject"
+                name="subject"
+                type="text"
+                placeholder="Short description"
+                maxlength="180"
+                required
+              />
+
+            </div>
+
+
+            <div class="field full">
+
+              <label for="message">
+                Describe your problem
+              </label>
+
+              <textarea
+                id="message"
+                name="message"
+                placeholder="Explain what happened, which page you were using, and any error message you saw..."
+                maxlength="5000"
+                required
+              ></textarea>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-footer">
+
+            <div class="form-note">
+              Please don't include passwords, API keys,
+              secret tokens or other sensitive credentials.
+            </div>
+
+            <button
+              id="submitBtn"
+              class="submit-btn"
+              type="submit"
+            >
+              <i data-lucide="send"></i>
+              Send Request
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+
+  <footer class="site-footer">
+
+    <div class="container footer-inner">
+
+      <div>
+        © 2026 VoiceAI. All rights reserved.
+      </div>
+
+      <div class="footer-links">
+
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="login.html">Login</a>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- =========================
+       SUPABASE
+  ========================== -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+
+
+  <script>
+    "use strict";
+
+    const SUPPORT_EMAIL =
+      "bhaylugohil376@gmail.com";
+
+    const form =
+      document.getElementById("contactForm");
+
+    const statusBox =
+      document.getElementById("status");
+
+    const submitBtn =
+      document.getElementById("submitBtn");
+
+
+    function showStatus(message, type) {
+
+      statusBox.textContent = message;
+
+      statusBox.className =
+        "status " + type;
+
+    }
+
+
+    function clearStatus() {
+
+      statusBox.textContent = "";
+      statusBox.className = "status";
+
+    }
+
+
+    function escapeHtml(value) {
+
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+    }
+
+
+    async function getCurrentUser() {
+
+      try {
+
+        if (!window.supabaseClient) {
+          return null;
+        }
+
+        const {
+          data
+        } = await window.supabaseClient
+          .auth
+          .getUser();
+
+        return data?.user || null;
+
+      } catch (error) {
+
+        console.warn(
+          "Could not read current user.",
+          error
+        );
+
+        return null;
+
+      }
+
+    }
+
+
+    form.addEventListener(
+      "submit",
+      async (event) => {
+
+        event.preventDefault();
+
+        clearStatus();
+
+        const name =
+          document
+            .getElementById("name")
+            .value
+            .trim();
+
+        const email =
+          document
+            .getElementById("email")
+            .value
+            .trim();
+
+        const category =
+          document
+            .getElementById("category")
+            .value;
+
+        const subject =
+          document
+            .getElementById("subject")
+            .value
+            .trim();
+
+        const message =
+          document
+            .getElementById("message")
+            .value
+            .trim();
+
+
+        if (
+          !name ||
+          !email ||
+          !category ||
+          !subject ||
+          !message
+        ) {
+
+          showStatus(
+            "Please complete all required fields.",
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        if (message.length < 10) {
+
+          showStatus(
+            "Please describe your problem in a little more detail.",
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        submitBtn.disabled = true;
+
+        submitBtn.innerHTML = `
+          <i data-lucide="loader-circle"></i>
+          Sending...
+        `;
+
+        refreshIcons();
+
+
+        try {
+
+          const user =
+            await getCurrentUser();
+
+
+          /*
+           * Save to Supabase.
+           *
+           * Expected contact_messages columns:
+           *
+           * id
+           * user_id
+           * name
+           * email
+           * category
+           * subject
+           * message
+           * status
+           * created_at
+           */
+
+          if (!window.supabaseClient) {
+
+            throw new Error(
+              "Supabase is not configured."
+            );
+
+          }
+
+
+          const {
+            error
+          } = await window.supabaseClient
+            .from("contact_messages")
+            .insert({
+              user_id: user?.id || null,
+              name,
+              email,
+              category,
+              subject,
+              message,
+              status: "open"
+            });
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          showStatus(
+            "Your support request has been submitted successfully. We will review it and contact you by email.",
+            "success"
+          );
+
+
+          form.reset();
+
+
+          /*
+           * Also prepare an email draft.
+           *
+           * Browser security prevents a website from
+           * silently sending an email through Gmail.
+           *
+           * This opens the user's configured mail app.
+           */
+
+          const emailSubject =
+            encodeURIComponent(
+              `[VoiceAI Support] ${subject}`
+            );
+
+          const emailBody =
+            encodeURIComponent(
+              `Hello VoiceAI Support,
+
+Name: ${name}
+Email: ${email}
+Problem type: ${category}
+
+Problem:
+${message}
+
+Regards,
+${name}`
+            );
+
+
+          setTimeout(() => {
+
+            window.location.href =
+              `mailto:${SUPPORT_EMAIL}?subject=${emailSubject}&body=${emailBody}`;
+
+          }, 900);
+
+
+        } catch (error) {
+
+          console.error(
+            "Support request error:",
+            error
+          );
+
+          showStatus(
+            "We could not save your request right now. Please email bhaylugohil376@gmail.com directly.",
+            "error"
+          );
+
+        } finally {
+
+          submitBtn.disabled = false;
+
+          submitBtn.innerHTML = `
+            <i data-lucide="send"></i>
+            Send Request
+          `;
+
+          refreshIcons();
+
+        }
+
+      }
+    );
+
+
+    function refreshIcons() {
+
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+
+    }
+
+
+    refreshIcons();
+
+  </script>
+
+
+  <script src="./script.js"></script>
+
+</body>
+</html>

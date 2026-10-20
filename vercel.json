@@ -4,6 +4,12 @@
   "framework": "express",
   "cleanUrls": true,
   "trailingSlash": false,
+  "functions": {
+    "server.js": {
+      "includeFiles": "handlers/**/*.js",
+      "maxDuration": 60
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",
@@ -22,7 +28,7 @@
         },
         {
           "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=()"
+          "value": "camera=(self), microphone=(self), geolocation=()"
         }
       ]
     }

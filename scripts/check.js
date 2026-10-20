@@ -27,11 +27,11 @@ for (const configPath of ["package.json", "vercel.json"]) {
 }
 
 for (const requiredPath of [
-  "api/health.js",
-  "api/tts.js",
-  "api/voices.js",
-  "api/_lib/auth.js",
-  "api/_lib/supabase.js",
+  "handlers/health.js",
+  "handlers/tts.js",
+  "handlers/voices.js",
+  "handlers/_lib/auth.js",
+  "handlers/_lib/supabase.js",
   "supabase/usage_limits.sql",
   ".env.example"
 ]) {

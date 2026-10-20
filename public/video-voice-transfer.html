@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050b18">
+
+  <title>Video Voice Transfer — VoiceAI</title>
+
+  <meta
+    name="description"
+    content="Transform the voice in your videos with VoiceAI."
+  />
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+  <header class="site-header">
+
+    <div class="container nav-container">
+
+      <a href="index.html" class="brand">
+
+        <span class="brand-mark">
+          <i data-lucide="audio-waveform"></i>
+        </span>
+
+        <span>VoiceAI</span>
+
+      </a>
+
+
+      <nav class="nav-links">
+
+        <a href="index.html">Home</a>
+        <a href="tools.html">AI Tools</a>
+        <a href="voices.html">Voices</a>
+        <a href="studio.html">Studio</a>
+        <a href="pricing.html">Pricing</a>
+
+      </nav>
+
+
+      <div class="nav-actions">
+
+        <a
+          href="login.html"
+          class="btn btn-secondary"
+        >
+          Login
+        </a>
+
+        <a
+          href="pricing.html"
+          class="btn btn-primary"
+        >
+          Get Started
+        </a>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+  <main>
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+    <section class="page-hero">
+
+      <div class="container">
+
+        <div class="page-hero-icon">
+          <i data-lucide="video"></i>
+        </div>
+
+
+        <div class="eyebrow">
+          VIDEO VOICE TRANSFER
+        </div>
+
+
+        <h1>
+          Change the Voice
+          <span>Inside Your Video</span>
+        </h1>
+
+
+        <p>
+          Upload a video and transform its spoken voice
+          while keeping the original video experience.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         WORKSPACE
+    ========================== -->
+    <section class="tool-workspace-section">
+
+      <div class="container">
+
+        <div class="tool-workspace">
+
+
+          <!-- =====================
+               LEFT PANEL
+          ====================== -->
+          <div class="tool-panel">
+
+
+            <div class="panel-header">
+
+              <div>
+
+                <h2>
+                  Voice Transfer
+                </h2>
+
+                <p>
+                  Configure your video voice transformation.
+                </p>
+
+              </div>
+
+
+              <div
+                id="usageBadge"
+                class="usage-badge"
+              >
+                Checking usage...
+              </div>
+
+            </div>
+
+
+            <!-- =====================
+                 VIDEO UPLOAD
+            ====================== -->
+            <div class="form-group">
+
+              <label>
+                Video file
+              </label>
+
+
+              <div
+                id="uploadBox"
+                class="upload-box"
+              >
+
+                <input
+                  id="videoFile"
+                  type="file"
+                  accept="video/*"
+                  hidden
+                />
+
+
+                <div class="upload-icon">
+
+                  <i data-lucide="video"></i>
+
+                </div>
+
+
+                <h3>
+                  Upload your video
+                </h3>
+
+
+                <p>
+                  MP4, MOV or WEBM
+                </p>
+
+
+                <span class="upload-limit">
+                  Maximum 100 MB
+                </span>
+
+
+                <button
+                  type="button"
+                  id="browseBtn"
+                  class="btn btn-secondary"
+                >
+
+                  <i data-lucide="folder-open"></i>
+
+                  Choose Video
+
+                </button>
+
+              </div>
+
+
+              <div
+                id="selectedFile"
+                class="selected-file"
+                style="display:none;"
+              >
+
+                <div class="selected-file-icon">
+
+                  <i data-lucide="file-video"></i>
+
+                </div>
+
+
+                <div class="selected-file-info">
+
+                  <strong id="fileName">
+                    video.mp4
+                  </strong>
+
+                  <span id="fileSize">
+                    0 MB
+                  </span>
+
+                </div>
+
+
+                <button
+                  type="button"
+                  id="removeFileBtn"
+                  class="icon-btn"
+                  title="Remove video"
+                >
+
+                  <i data-lucide="x"></i>
+
+                </button>
+
+              </div>
+
+            </div>
+
+
+            <!-- =====================
+                 TARGET VOICE
+            ====================== -->
+            <div class="form-group">
+
+              <label for="voiceSelect">
+                Target voice
+              </label>
+
+
+              <select id="voiceSelect">
+
+                <option value="auto">
+                  Auto Select
+                </option>
+
+                <option value="bryan">
+                  Bryan — Professional Male
+                </option>
+
+                <option value="hale">
+                  Hale — Confident Male
+                </option>
+
+                <option value="juniper">
+                  Juniper — Grounded Female
+                </option>
+
+                <option value="jessica">
+                  Jessica — Conversational Female
+                </option>
+
+                <option value="allison">
+                  Allison — Energetic Female
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- =====================
+                 TRANSFER MODE
+            ====================== -->
+            <div class="form-group">
+
+              <label for="transferMode">
+                Transfer mode
+              </label>
+
+
+              <select id="transferMode">
+
+                <option value="natural" selected>
+                  Natural Voice
+                </option>
+
+                <option value="expressive">
+                  Expressive
+                </option>
+
+                <option value="studio">
+                  Studio Quality
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- =====================
+                 CONTROLS
+            ====================== -->
+            <div class="form-group">
+
+              <label>
+                Voice controls
+              </label>
+
+
+              <div class="range-stack">
+
+
+                <div>
+
+                  <div class="range-label">
+
+                    <span>
+                      Similarity
+                    </span>
+
+                    <strong id="similarityValue">
+                      85%
+                    </strong>
+
+                  </div>
+
+
+                  <input
+                    id="similarity"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="85"
+                  />
+
+                </div>
+
+
+                <div>
+
+                  <div class="range-label">
+
+                    <span>
+                      Clarity
+                    </span>
+
+                    <strong id="clarityValue">
+                      90%
+                    </strong>
+
+                  </div>
+
+
+                  <input
+                    id="clarity"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="90"
+                  />
+
+                </div>
+
+
+                <div>
+
+                  <div class="range-label">
+
+                    <span>
+                      Expression
+                    </span>
+
+                    <strong id="expressionValue">
+                      70%
+                    </strong>
+
+                  </div>
+
+
+                  <input
+                    id="expression"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="70"
+                  />
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- =====================
+                 OPTIONS
+            ====================== -->
+            <div class="form-group">
+
+              <label>
+                Output options
+              </label>
+
+
+              <div class="option-list">
+
+
+                <label class="check-option">
+
+                  <input
+                    id="preserveMusic"
+                    type="checkbox"
+                    checked
+                  />
+
+                  <span class="custom-check"></span>
+
+                  <span>
+
+                    <strong>
+                      Preserve background music
+                    </strong>
+
+                    <small>
+                      Keep the original music and ambience.
+                    </small>
+
+                  </span>
+
+                </label>
+
+
+                <label class="check-option">
+
+                  <input
+                    id="preserveTiming"
+                    type="checkbox"
+                    checked
+                  />
+
+                  <span class="custom-check"></span>
+
+                  <span>
+
+                    <strong>
+                      Preserve timing
+                    </strong>
+
+                    <small>
+                      Keep the original speech timing.
+                    </small>
+
+                  </span>
+
+                </label>
+
+
+                <label class="check-option">
+
+                  <input
+                    id="enhanceAudio"
+                    type="checkbox"
+                    checked
+                  />
+
+                  <span class="custom-check"></span>
+
+                  <span>
+
+                    <strong>
+                      Enhance output audio
+                    </strong>
+
+                    <small>
+                      Improve clarity and loudness.
+                    </small>
+
+                  </span>
+
+                </label>
+
+              </div>
+
+            </div>
+
+
+            <!-- =====================
+                 GENERATE
+            ====================== -->
+            <div class="generator-actions">
+
+              <button
+                type="button"
+                id="generateBtn"
+                class="btn btn-primary btn-large"
+              >
+
+                <i data-lucide="wand-sparkles"></i>
+
+                Transfer Voice
+
+              </button>
+
+
+              <span class="generation-note">
+                Processing time depends on video length.
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- =====================
+               RIGHT PANEL
+          ====================== -->
+          <aside class="tool-preview-panel">
+
+
+            <div class="preview-header">
+
+              <div>
+
+                <span class="preview-label">
+                  RESULT
+                </span>
+
+                <h3>
+                  Transformed video
+                </h3>
+
+              </div>
+
+
+              <i data-lucide="video"></i>
+
+            </div>
+
+
+            <!-- EMPTY -->
+            <div
+              id="emptyResult"
+              class="empty-result"
+            >
+
+              <div class="empty-icon">
+
+                <i data-lucide="video"></i>
+
+              </div>
+
+
+              <h3>
+                Your video will appear here
+              </h3>
+
+
+              <p>
+                Upload a video and choose a target
+                voice to begin.
+              </p>
+
+            </div>
+
+
+            <!-- LOADING -->
+            <div
+              id="loadingResult"
+              class="empty-result"
+              style="display:none;"
+            >
+
+              <div class="loading-spinner"></div>
+
+
+              <h3 id="loadingTitle">
+                Preparing video...
+              </h3>
+
+
+              <p id="loadingText">
+                VoiceAI is processing your video.
+              </p>
+
+
+              <div
+                class="progress-bar"
+                style="
+                  width:100%;
+                  margin-top:20px;
+                "
+              >
+
+                <span
+                  id="progressBar"
+                  style="width:12%;"
+                ></span>
+
+              </div>
+
+
+              <small
+                id="progressPercent"
+                style="margin-top:10px;"
+              >
+                12%
+              </small>
+
+            </div>
+
+
+            <!-- RESULT -->
+            <div
+              id="videoResult"
+              class="sound-result"
+              style="display:none;"
+            >
+
+
+              <div class="result-cover">
+
+                <div class="result-cover-icon">
+
+                  <i data-lucide="play"></i>
+
+                </div>
+
+              </div>
+
+
+              <div class="result-info">
+
+                <span class="preview-label">
+                  VOICE TRANSFER COMPLETE
+                </span>
+
+
+                <h3 id="resultTitle">
+                  Transformed Video
+                </h3>
+
+
+                <p id="resultMeta">
+                  AI Voice · Studio Quality
+                </p>
+
+              </div>
+
+
+              <video
+                id="videoPlayer"
+                controls
+                playsinline
+                style="
+                  width:100%;
+                  margin-top:18px;
+                  border-radius:14px;
+                  background:#050b17;
+                "
+              ></video>
+
+
+              <div class="result-actions">
+
+                <a
+                  id="downloadBtn"
+                  class="btn btn-primary"
+                  download="voiceai-voice-transfer.mp4"
+                >
+
+                  <i data-lucide="download"></i>
+
+                  Download Video
+
+                </a>
+
+
+                <button
+                  type="button"
+                  id="newProjectBtn"
+                  class="btn btn-secondary"
+                >
+
+                  <i data-lucide="plus"></i>
+
+                  New Project
+
+                </button>
+
+              </div>
+
+            </div>
+
+          </aside>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         FEATURES
+    ========================== -->
+    <section class="feature-strip">
+
+      <div class="container">
+
+        <div class="feature-strip-grid">
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i data-lucide="mic"></i>
+            </div>
+
+            <div>
+
+              <h3>
+                Natural Voices
+              </h3>
+
+              <p>
+                Transform dialogue with realistic AI voices.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i data-lucide="music-2"></i>
+            </div>
+
+            <div>
+
+              <h3>
+                Preserve Audio
+              </h3>
+
+              <p>
+                Keep music and ambience when required.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i data-lucide="clock-3"></i>
+            </div>
+
+            <div>
+
+              <h3>
+                Timing Match
+              </h3>
+
+              <p>
+                Keep speech aligned with your video.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i data-lucide="sparkles"></i>
+            </div>
+
+            <div>
+
+              <h3>
+                Studio Output
+              </h3>
+
+              <p>
+                Create cleaner production-ready audio.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+  <footer class="site-footer">
+
+    <div class="container footer-container">
+
+
+      <div class="footer-brand">
+
+        <a
+          href="index.html"
+          class="brand"
+        >
+
+          <span class="brand-mark">
+
+            <i data-lucide="audio-waveform"></i>
+
+          </span>
+
+          <span>
+            VoiceAI
+          </span>
+
+        </a>
+
+
+        <p>
+          AI-powered voice and audio studio
+          for creators and businesses.
+        </p>
+
+      </div>
+
+
+      <div class="footer-links">
+
+        <a href="about.html">
+          About
+        </a>
+
+        <a href="faq.html">
+          FAQ
+        </a>
+
+        <a href="contact.html">
+          Contact
+        </a>
+
+        <a href="pricing.html">
+          Pricing
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="container footer-bottom">
+
+      © 2026 VoiceAI. All rights reserved.
+
+    </div>
+
+  </footer>
+
+
+  <!-- =========================
+       SUPABASE
+  ========================== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="./supabase-config.js"></script>
+
+  <script src="./script.js"></script>
+
+
+  <!-- =========================
+       PAGE SCRIPT
+  ========================== -->
+  <script>
+
+    "use strict";
+
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+
+        const videoFile =
+          document.getElementById(
+            "videoFile"
+          );
+
+
+        const uploadBox =
+          document.getElementById(
+            "uploadBox"
+          );
+
+
+        const browseBtn =
+          document.getElementById(
+            "browseBtn"
+          );
+
+
+        const selectedFile =
+          document.getElementById(
+            "selectedFile"
+          );
+
+
+        const fileName =
+          document.getElementById(
+            "fileName"
+          );
+
+
+        const fileSize =
+          document.getElementById(
+            "fileSize"
+          );
+
+
+        const removeFileBtn =
+          document.getElementById(
+            "removeFileBtn"
+          );
+
+
+        const generateBtn =
+          document.getElementById(
+            "generateBtn"
+          );
+
+
+        const usageBadge =
+          document.getElementById(
+            "usageBadge"
+          );
+
+
+        const emptyResult =
+          document.getElementById(
+            "emptyResult"
+          );
+
+
+        const loadingResult =
+          document.getElementById(
+            "loadingResult"
+          );
+
+
+        const videoResult =
+          document.getElementById(
+            "videoResult"
+          );
+
+
+        const videoPlayer =
+          document.getElementById(
+            "videoPlayer"
+          );
+
+
+        const downloadBtn =
+          document.getElementById(
+            "downloadBtn"
+          );
+
+
+        const newProjectBtn =
+          document.getElementById(
+            "newProjectBtn"
+          );
+
+
+        let selectedVideo = null;
+
+
+        /* =========================
+           FILE SIZE
+        ========================== */
+
+        function formatFileSize(bytes) {
+
+          if (!bytes) {
+            return "0 MB";
+          }
+
+
+          return (
+            bytes /
+            (1024 * 1024)
+          ).toFixed(2) +
+            " MB";
+
+        }
+
+
+        /* =========================
+           FILE HANDLING
+        ========================== */
+
+        browseBtn.addEventListener(
+          "click",
+          () => {
+
+            videoFile.click();
+
+          }
+        );
+
+
+        uploadBox.addEventListener(
+          "click",
+          (event) => {
+
+            if (
+              event.target.closest(
+                "button"
+              )
+            ) {
+              return;
+            }
+
+            videoFile.click();
+
+          }
+        );
+
+
+        videoFile.addEventListener(
+          "change",
+          () => {
+
+            const file =
+              videoFile.files?.[0];
+
+
+            if (!file) {
+              return;
+            }
+
+
+            handleVideo(file);
+
+          }
+        );
+
+
+        function handleVideo(file) {
+
+          const maxSize =
+            100 *
+            1024 *
+            1024;
+
+
+          if (
+            !file.type.startsWith(
+              "video/"
+            )
+          ) {
+
+            if (window.VoiceAI) {
+
+              VoiceAI.toast(
+                "Please select a valid video file."
+              );
+
+            }
+
+            videoFile.value = "";
+
+            return;
+
+          }
+
+
+          if (file.size > maxSize) {
+
+            if (window.VoiceAI) {
+
+              VoiceAI.toast(
+                "Maximum video size is 100 MB."
+              );
+
+            }
+
+            videoFile.value = "";
+
+            return;
+
+          }
+
+
+          selectedVideo = file;
+
+
+          fileName.textContent =
+            file.name;
+
+
+          fileSize.textContent =
+            formatFileSize(
+              file.size
+            );
+
+
+          uploadBox.style.display =
+            "none";
+
+
+          selectedFile.style.display =
+            "flex";
+
+
+          if (window.lucide) {
+            lucide.createIcons();
+          }
+
+        }
+
+
+        /* =========================
+           REMOVE VIDEO
+        ========================== */
+
+        removeFileBtn.addEventListener(
+          "click",
+          () => {
+
+            selectedVideo = null;
+
+            videoFile.value = "";
+
+            selectedFile.style.display =
+              "none";
+
+            uploadBox.style.display =
+              "flex";
+
+          }
+        );
+
+
+        /* =========================
+           DRAG & DROP
+        ========================== */
+
+        [
+          "dragenter",
+          "dragover"
+        ].forEach(
+          (eventName) => {
+
+            uploadBox.addEventListener(
+              eventName,
+              (event) => {
+
+                event.preventDefault();
+
+                uploadBox.classList.add(
+                  "drag-active"
+                );
+
+              }
+            );
+
+          }
+        );
+
+
+        [
+          "dragleave",
+          "drop"
+        ].forEach(
+          (eventName) => {
+
+            uploadBox.addEventListener(
+              eventName,
+              (event) => {
+
+                event.preventDefault();
+
+                uploadBox.classList.remove(
+                  "drag-active"
+                );
+
+              }
+            );
+
+          }
+        );
+
+
+        uploadBox.addEventListener(
+          "drop",
+          (event) => {
+
+            const file =
+              event.dataTransfer.files?.[0];
+
+
+            if (!file) {
+              return;
+            }
+
+
+            handleVideo(file);
+
+          }
+        );
+
+
+        /* =========================
+           RANGE CONTROLS
+        ========================== */
+
+        const similarity =
+          document.getElementById(
+            "similarity"
+          );
+
+
+        const clarity =
+          document.getElementById(
+            "clarity"
+          );
+
+
+        const expression =
+          document.getElementById(
+            "expression"
+          );
+
+
+        similarity.addEventListener(
+          "input",
+          () => {
+
+            document.getElementById(
+              "similarityValue"
+            ).textContent =
+              `${similarity.value}%`;
+
+          }
+        );
+
+
+        clarity.addEventListener(
+          "input",
+          () => {
+
+            document.getElementById(
+              "clarityValue"
+            ).textContent =
+              `${clarity.value}%`;
+
+          }
+        );
+
+
+        expression.addEventListener(
+          "input",
+          () => {
+
+            document.getElementById(
+              "expressionValue"
+            ).textContent =
+              `${expression.value}%`;
+
+          }
+        );
+
+
+        /* =========================
+           SUPABASE SESSION
+        ========================== */
+
+        async function getSession() {
+
+          if (!window.supabaseClient) {
+
+            throw new Error(
+              "Supabase is not configured."
+            );
+
+          }
+
+
+          const {
+            data,
+            error
+          } =
+            await window.supabaseClient.auth
+              .getSession();
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          return data.session;
+
+        }
+
+
+        /* =========================
+           USAGE
+        ========================== */
+
+        async function loadUsage() {
+
+          try {
+
+            const session =
+              await getSession();
+
+
+            if (!session) {
+
+              usageBadge.textContent =
+                "Login required";
+
+              return;
+
+            }
+
+
+            const response =
+              await fetch(
+                "/api/usage?action=video_voice_transfer",
+                {
+                  headers: {
+                    Authorization:
+                      `Bearer ${session.access_token}`
+                  }
+                }
+              );
+
+
+            if (!response.ok) {
+
+              usageBadge.textContent =
+                "Usage unavailable";
+
+              return;
+
+            }
+
+
+            const data =
+              await response.json();
+
+
+            if (
+              data.unlimited ||
+              data.plan === "premium" ||
+              data.plan === "admin"
+            ) {
+
+              usageBadge.textContent =
+                "Premium · Unlimited";
+
+
+              usageBadge.classList.add(
+                "usage-unlimited"
+              );
+
+
+              return;
+
+            }
+
+
+            const used =
+              Number(
+                data.used || 0
+              );
+
+
+            const limit =
+              Number(
+                data.limit || 5
+              );
+
+
+            usageBadge.textContent =
+              `${Math.max(
+                0,
+                limit - used
+              )} free uses left`;
+
+          } catch (error) {
+
+            console.error(
+              "Usage error:",
+              error
+            );
+
+
+            usageBadge.textContent =
+              "Free plan · 5 uses";
+
+          }
+
+        }
+
+
+        loadUsage();
+
+
+        /* =========================
+           GENERATE
+        ========================== */
+
+        generateBtn.addEventListener(
+          "click",
+          async () => {
+
+
+            if (!selectedVideo) {
+
+              if (window.VoiceAI) {
+
+                VoiceAI.toast(
+                  "Please upload a video first."
+                );
+
+              }
+
+              return;
+
+            }
+
+
+            let session;
+
+
+            try {
+
+              session =
+                await getSession();
+
+            } catch (error) {
+
+              console.error(error);
+
+
+              if (window.VoiceAI) {
+
+                VoiceAI.toast(
+                  "Unable to connect to Supabase."
+                );
+
+              }
+
+              return;
+
+            }
+
+
+            if (!session) {
+
+              sessionStorage.setItem(
+                "voiceai_return_url",
+                "video-voice-transfer.html"
+              );
+
+
+              if (window.VoiceAI) {
+
+                VoiceAI.toast(
+                  "Please login before transferring voice."
+                );
+
+              }
+
+
+              setTimeout(
+                () => {
+
+                  window.location.href =
+                    "login.html";
+
+                },
+                700
+              );
+
+
+              return;
+
+            }
+
+
+            /* =====================
+               LOADING
+            ====================== */
+
+            generateBtn.disabled =
+              true;
+
+
+            generateBtn.innerHTML = `
+              <span class="loading-spinner-small"></span>
+              Processing...
+            `;
+
+
+            emptyResult.style.display =
+              "none";
+
+
+            videoResult.style.display =
+              "none";
+
+
+            loadingResult.style.display =
+              "flex";
+
+
+            const progressBar =
+              document.getElementById(
+                "progressBar"
+              );
+
+
+            const progressPercent =
+              document.getElementById(
+                "progressPercent"
+              );
+
+
+            const loadingTitle =
+              document.getElementById(
+                "loadingTitle"
+              );
+
+
+            const loadingText =
+              document.getElementById(
+                "loadingText"
+              );
+
+
+            let progress = 12;
+
+
+            const progressTimer =
+              setInterval(
+                () => {
+
+                  if (progress < 90) {
+
+                    progress +=
+                      Math.floor(
+                        Math.random() * 8
+                      );
+
+
+                    progress =
+                      Math.min(
+                        progress,
+                        90
+                      );
+
+
+                    progressBar.style.width =
+                      `${progress}%`;
+
+
+                    progressPercent.textContent =
+                      `${progress}%`;
+
+
+                    if (
+                      progress < 35
+                    ) {
+
+                      loadingTitle.textContent =
+                        "Analyzing video...";
+
+
+                      loadingText.textContent =
+                        "Detecting speech and preparing the audio track.";
+
+                    } else if (
+                      progress < 65
+                    ) {
+
+                      loadingTitle.textContent =
+                        "Transforming voice...";
+
+
+                      loadingText.textContent =
+                        "Applying the selected AI voice.";
+
+                    } else {
+
+                      loadingTitle.textContent =
+                        "Rendering video...";
+
+
+                      loadingText.textContent =
+                        "Combining the transformed audio with your video.";
+
+                    }
+
+                  }
+
+                },
+                900
+              );
+
+
+            try {
+
+              const formData =
+                new FormData();
+
+
+              formData.append(
+                "file",
+                selectedVideo
+              );
+
+
+              formData.append(
+                "voiceId",
+                document.getElementById(
+                  "voiceSelect"
+                ).value
+              );
+
+
+              formData.append(
+                "transferMode",
+                document.getElementById(
+                  "transferMode"
+                ).value
+              );
+
+
+              formData.append(
+                "similarity",
+                similarity.value
+              );
+
+
+              formData.append(
+                "clarity",
+                clarity.value
+              );
+
+
+              formData.append(
+                "expression",
+                expression.value
+              );
+
+
+              formData.append(
+                "preserveMusic",
+                document.getElementById(
+                  "preserveMusic"
+                ).checked
+              );
+
+
+              formData.append(
+                "preserveTiming",
+                document.getElementById(
+                  "preserveTiming"
+                ).checked
+              );
+
+
+              formData.append(
+                "enhanceAudio",
+                document.getElementById(
+                  "enhanceAudio"
+                ).checked
+              );
+
+
+              const response =
+                await fetch(
+                  "/api/video-voice-transfer",
+                  {
+                    method: "POST",
+
+                    headers: {
+                      Authorization:
+                        `Bearer ${session.access_token}`
+                    },
+
+                    body: formData
+
+                  }
+                );
+
+
+              // Parse JSON defensively; an unimplemented route may return an HTML 404 page.
+              const responseText = await response.text();
+              let data = {};
+              try {
+                data = responseText ? JSON.parse(responseText) : {};
+              } catch (_) {
+                data = {};
+              }
+
+              if (!response.ok) {
+                if (response.status === 429) {
+                  throw new Error(
+                    data.message || data.error ||
+                    "Daily limit reached. Please try again after 24 hours."
+                  );
+                }
+
+                if (response.status === 404) {
+                  throw new Error(
+                    "Video Voice Transfer API is not installed on this server yet. The page is ready, but /api/video-voice-transfer must be implemented before real processing can work."
+                  );
+                }
+
+                if (response.status === 501) {
+                  throw new Error(
+                    data.message || data.error ||
+                    "The voice-transfer provider adapter is not implemented yet."
+                  );
+                }
+
+                throw new Error(
+                  data.message || data.error ||
+                  `Voice transfer failed (HTTP ${response.status}).`
+                );
+              }
+
+              let outputUrl =
+                data.outputUrl ||
+                data.videoUrl ||
+                data.url;
+
+              if (!outputUrl && data.base64) {
+                outputUrl = `data:video/mp4;base64,${data.base64}`;
+              }
+
+              if (!outputUrl) {
+                throw new Error(
+                  "The API response did not include a video URL or base64 video output. No result was created."
+                );
+              }
+
+
+              videoPlayer.src =
+                outputUrl;
+
+
+              downloadBtn.href =
+                outputUrl;
+
+
+              downloadBtn.download =
+                data.fileName ||
+                "voiceai-voice-transfer.mp4";
+
+
+              document.getElementById(
+                "resultTitle"
+              ).textContent =
+                data.title ||
+                "Transformed Video";
+
+
+              document.getElementById(
+                "resultMeta"
+              ).textContent =
+                `${
+                  document.getElementById(
+                    "voiceSelect"
+                  ).selectedOptions[0].text
+                } · ${
+                  document.getElementById(
+                    "transferMode"
+                  ).selectedOptions[0].text
+                }`;
+
+
+              clearInterval(
+                progressTimer
+              );
+
+
+              progressBar.style.width =
+                "100%";
+
+
+              progressPercent.textContent =
+                "100%";
+
+
+              setTimeout(
+                () => {
+
+                  loadingResult.style.display =
+                    "none";
+
+
+                  videoResult.style.display =
+                    "block";
+
+
+                },
+                400
+              );
+
+
+              await loadUsage();
+
+
+              if (window.VoiceAI) {
+
+                VoiceAI.toast(
+                  "Voice transfer completed successfully."
+                );
+
+              }
+
+
+              if (window.lucide) {
+                lucide.createIcons();
+              }
+
+
+            } catch (error) {
+
+              clearInterval(
+                progressTimer
+              );
+
+
+              console.error(
+                "Voice transfer error:",
+                error
+              );
+
+
+              loadingResult.style.display =
+                "none";
+
+
+              emptyResult.style.display =
+                "flex";
+
+
+              if (window.VoiceAI) {
+
+                VoiceAI.toast(
+                  error.message ||
+                  "Unable to transfer voice."
+                );
+
+              }
+
+            } finally {
+
+              generateBtn.disabled =
+                false;
+
+
+              generateBtn.innerHTML = `
+                <i data-lucide="wand-sparkles"></i>
+                Transfer Voice
+              `;
+
+
+              if (window.lucide) {
+                lucide.createIcons();
+              }
+
+            }
+
+          }
+        );
+
+
+        /* =========================
+           NEW PROJECT
+        ========================== */
+
+        newProjectBtn.addEventListener(
+          "click",
+          () => {
+
+            videoResult.style.display =
+              "none";
+
+
+            emptyResult.style.display =
+              "flex";
+
+
+            videoPlayer.pause();
+
+
+            videoPlayer.removeAttribute(
+              "src"
+            );
+
+
+            videoPlayer.load();
+
+
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+
+          }
+        );
+
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>

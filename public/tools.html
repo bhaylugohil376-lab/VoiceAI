@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050b18">
+
+  <title>AI Tools — VoiceAI</title>
+  <meta
+    name="description"
+    content="Explore VoiceAI's AI voice, audio, video and creative tools."
+  />
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+<header class="tools-header">
+
+  <div class="tools-nav">
+
+    <a href="index.html" class="tools-brand">
+      <span class="tools-brand-mark">∿</span>
+      <span>VoiceAI</span>
+    </a>
+
+    <nav class="tools-main-nav">
+      <a href="index.html">Home</a>
+      <a href="tools.html" class="active">AI Tools</a>
+      <a href="voices.html">Voices</a>
+      <a href="studio.html">Studio</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+
+    <div class="tools-nav-actions">
+      <a href="login.html" class="tools-login">Login</a>
+      <a href="signup.html" class="tools-get-started">
+        Get Started
+      </a>
+    </div>
+
+  </div>
+
+</header>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+<main class="tools-page">
+
+  <!-- HERO -->
+  <section class="tools-hero">
+
+    <div class="tools-hero-content">
+
+      <div class="tools-badge">
+        <i data-lucide="sparkles"></i>
+        AI CREATIVE STUDIO
+      </div>
+
+      <h1>
+        Powerful AI tools.
+        <span>One workspace.</span>
+      </h1>
+
+      <p>
+        Create voices, generate speech, edit audio, produce music,
+        create images and build AI-powered experiences from one place.
+      </p>
+
+      <div class="tools-search">
+
+        <i data-lucide="search"></i>
+
+        <input
+          type="search"
+          id="toolSearch"
+          placeholder="Search AI tools..."
+          autocomplete="off"
+        />
+
+        <kbd>⌘ K</kbd>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       TOOL AREA
+  ========================= -->
+  <section class="tools-section">
+
+    <div class="tools-container">
+
+      <!-- FILTER -->
+      <div class="tools-toolbar">
+
+        <div class="category-tabs">
+
+          <button class="category-btn active" data-category="all">
+            All Tools
+          </button>
+
+          <button class="category-btn" data-category="voice">
+            Voice
+          </button>
+
+          <button class="category-btn" data-category="audio">
+            Audio
+          </button>
+
+          <button class="category-btn" data-category="video">
+            Video
+          </button>
+
+          <button class="category-btn" data-category="ai">
+            AI
+          </button>
+
+          <button class="category-btn" data-category="workspace">
+            Workspace
+          </button>
+
+        </div>
+
+        <div class="tools-count" id="toolsCount">
+          24 tools
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           TOOL GRID
+      ========================= -->
+      <div class="tools-grid" id="toolsGrid">
+
+
+        <!-- 01 -->
+        <a
+          href="tts.html"
+          class="ai-tool-card"
+          data-name="text to speech tts voice generator"
+          data-category="voice"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon blue">
+              <i data-lucide="audio-lines"></i>
+            </div>
+
+            <span class="tool-status popular">
+              Popular
+            </span>
+
+          </div>
+
+          <h3>Text to Speech</h3>
+
+          <p>
+            Turn written text into natural AI speech with expressive voices.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Voice</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 02 -->
+        <a
+          href="voices.html"
+          class="ai-tool-card"
+          data-name="voice library voices"
+          data-category="voice"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon purple">
+              <i data-lucide="mic-2"></i>
+            </div>
+
+            <span class="tool-status">
+              Library
+            </span>
+
+          </div>
+
+          <h3>Voice Library</h3>
+
+          <p>
+            Discover and preview professional AI voices for your projects.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Voice</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 03 -->
+        <a
+          href="clone.html"
+          class="ai-tool-card"
+          data-name="voice cloning clone voice"
+          data-category="voice"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon cyan">
+              <i data-lucide="copy"></i>
+            </div>
+
+            <span class="tool-status premium">
+              Pro
+            </span>
+
+          </div>
+
+          <h3>Voice Cloning</h3>
+
+          <p>
+            Create a voice model from an authorized voice recording.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Voice</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 04 -->
+        <a
+          href="voice-design.html"
+          class="ai-tool-card"
+          data-name="voice design create voice"
+          data-category="voice"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon pink">
+              <i data-lucide="wand-sparkles"></i>
+            </div>
+
+            <span class="tool-status new">
+              New
+            </span>
+
+          </div>
+
+          <h3>Voice Design</h3>
+
+          <p>
+            Design a unique AI voice using style, age, tone and character.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Voice</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 05 -->
+        <a
+          href="changer.html"
+          class="ai-tool-card"
+          data-name="voice changer change voice"
+          data-category="voice"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon orange">
+              <i data-lucide="refresh-cw"></i>
+            </div>
+
+          </div>
+
+          <h3>Voice Changer</h3>
+
+          <p>
+            Transform recorded speech into another supported voice style.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Voice</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 06 -->
+        <a
+          href="dialogue.html"
+          class="ai-tool-card"
+          data-name="text to dialogue dialogue multiple voices"
+          data-category="voice"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon green">
+              <i data-lucide="messages-square"></i>
+            </div>
+
+            <span class="tool-status">
+              Multi Voice
+            </span>
+
+          </div>
+
+          <h3>Text to Dialogue</h3>
+
+          <p>
+            Turn scripts into conversations using multiple AI voices.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Voice</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 07 -->
+        <a
+          href="stt.html"
+          class="ai-tool-card"
+          data-name="speech to text transcription stt"
+          data-category="audio"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon yellow">
+              <i data-lucide="file-audio-2"></i>
+            </div>
+
+          </div>
+
+          <h3>Speech to Text</h3>
+
+          <p>
+            Convert audio recordings into accurate searchable text.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Audio</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 08 -->
+        <a
+          href="voice-isolator.html"
+          class="ai-tool-card"
+          data-name="voice isolator noise removal audio"
+          data-category="audio"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon teal">
+              <i data-lucide="audio-waveform"></i>
+            </div>
+
+            <span class="tool-status">
+              Audio
+            </span>
+
+          </div>
+
+          <h3>Voice Isolator</h3>
+
+          <p>
+            Separate speech from background noise and unwanted sound.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Audio</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 09 -->
+        <a
+          href="studio.html"
+          class="ai-tool-card"
+          data-name="studio editor audio editor timeline"
+          data-category="workspace"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon indigo">
+              <i data-lucide="sliders-horizontal"></i>
+            </div>
+
+            <span class="tool-status popular">
+              Popular
+            </span>
+
+          </div>
+
+          <h3>Studio Editor</h3>
+
+          <p>
+            Edit voice projects with timeline-based creative controls.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Studio</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 10 -->
+        <a
+          href="music.html"
+          class="ai-tool-card"
+          data-name="ai music music generator song"
+          data-category="ai"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon violet">
+              <i data-lucide="music-2"></i>
+            </div>
+
+            <span class="tool-status new">
+              AI
+            </span>
+
+          </div>
+
+          <h3>AI Music</h3>
+
+          <p>
+            Create original music concepts for videos and creative projects.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Music</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 11 -->
+        <a
+          href="sound-effects.html"
+          class="ai-tool-card"
+          data-name="sound effects sfx audio generator"
+          data-category="audio"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon red">
+              <i data-lucide="audio-waveform"></i>
+            </div>
+
+            <span class="tool-status new">
+              New
+            </span>
+
+          </div>
+
+          <h3>Sound Effects</h3>
+
+          <p>
+            Generate creative sound effects from natural-language prompts.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Audio</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 12 -->
+        <a
+          href="dubbing.html"
+          class="ai-tool-card"
+          data-name="dubbing translate voice languages"
+          data-category="video"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon blue">
+              <i data-lucide="languages"></i>
+            </div>
+
+            <span class="tool-status premium">
+              Pro
+            </span>
+
+          </div>
+
+          <h3>AI Dubbing</h3>
+
+          <p>
+            Prepare multilingual voice versions of supported content.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Video</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 13 -->
+        <a
+          href="captions.html"
+          class="ai-tool-card"
+          data-name="captions subtitles subtitle generator"
+          data-category="video"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon cyan">
+              <i data-lucide="captions"></i>
+            </div>
+
+          </div>
+
+          <h3>Captions</h3>
+
+          <p>
+            Generate caption-ready text from supported audio and video.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Video</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 14 -->
+        <a
+          href="video-voice-transfer.html"
+          class="ai-tool-card"
+          data-name="video voice transfer video dubbing"
+          data-category="video"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon orange">
+              <i data-lucide="video"></i>
+            </div>
+
+            <span class="tool-status premium">
+              Pro
+            </span>
+
+          </div>
+
+          <h3>Video Voice Transfer</h3>
+
+          <p>
+            Process supported video content with AI voice transformation.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Video</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 15 -->
+        <a
+          href="agents.html"
+          class="ai-tool-card"
+          data-name="ai agents conversational voice agent"
+          data-category="ai"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon green">
+              <i data-lucide="bot"></i>
+            </div>
+
+            <span class="tool-status new">
+              AI
+            </span>
+
+          </div>
+
+          <h3>AI Agents</h3>
+
+          <p>
+            Build conversational AI experiences with voice-enabled agents.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>AI</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 16 -->
+        <a
+          href="assistant.html"
+          class="ai-tool-card"
+          data-name="gemini assistant ai assistant chat"
+          data-category="ai"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon blue">
+              <i data-lucide="message-circle-ai"></i>
+            </div>
+
+            <span class="tool-status">
+              Gemini
+            </span>
+
+          </div>
+
+          <h3>AI Assistant</h3>
+
+          <p>
+            Use your AI assistant for ideas, writing, planning and analysis.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>AI</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 17 -->
+        <a
+          href="image.html"
+          class="ai-tool-card"
+          data-name="gemini image generator ai image generation"
+          data-category="ai"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon pink">
+              <i data-lucide="image"></i>
+            </div>
+
+            <span class="tool-status new">
+              Gemini
+            </span>
+
+          </div>
+
+          <h3>AI Image Generator</h3>
+
+          <p>
+            Create images from natural-language creative prompts.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>AI</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 18 -->
+        <a
+          href="projects.html"
+          class="ai-tool-card"
+          data-name="projects generations workspace files"
+          data-category="workspace"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon indigo">
+              <i data-lucide="folder-kanban"></i>
+            </div>
+
+          </div>
+
+          <h3>Projects</h3>
+
+          <p>
+            Manage your generated content and creative projects in one place.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Workspace</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 19 -->
+        <a
+          href="usage.html"
+          class="ai-tool-card"
+          data-name="usage dashboard limits credits analytics"
+          data-category="workspace"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon yellow">
+              <i data-lucide="gauge"></i>
+            </div>
+
+          </div>
+
+          <h3>Usage Dashboard</h3>
+
+          <p>
+            Track AI usage and your independent tool limits.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Workspace</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 20 -->
+        <a
+          href="favorites.html"
+          class="ai-tool-card"
+          data-name="favorite voices favorites saved voices"
+          data-category="workspace"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon red">
+              <i data-lucide="heart"></i>
+            </div>
+
+          </div>
+
+          <h3>Favorite Voices</h3>
+
+          <p>
+            Save your favorite voices and quickly reuse them in projects.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Workspace</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 21 -->
+        <a
+          href="profile.html"
+          class="ai-tool-card"
+          data-name="profile account settings user"
+          data-category="workspace"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon teal">
+              <i data-lucide="user-round"></i>
+            </div>
+
+          </div>
+
+          <h3>Profile</h3>
+
+          <p>
+            Manage your account, plan, security and personal information.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Account</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 22 -->
+        <a
+          href="pricing.html"
+          class="ai-tool-card featured-tool"
+          data-name="pricing premium subscription plan"
+          data-category="workspace"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon premium-icon">
+              <i data-lucide="crown"></i>
+            </div>
+
+            <span class="tool-status premium">
+              Premium
+            </span>
+
+          </div>
+
+          <h3>Premium</h3>
+
+          <p>
+            Unlock higher access and remove VoiceAI's Free-plan restriction.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>$20 / month</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 23 -->
+        <a
+          href="studio.html"
+          class="ai-tool-card"
+          data-name="creative studio production workspace"
+          data-category="workspace"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon purple">
+              <i data-lucide="layout-dashboard"></i>
+            </div>
+
+            <span class="tool-status">
+              Workspace
+            </span>
+
+          </div>
+
+          <h3>Creative Workspace</h3>
+
+          <p>
+            Bring voice, audio and creative production into one workspace.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>Studio</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+        <!-- 24 -->
+        <a
+          href="index.html"
+          class="ai-tool-card featured-tool"
+          data-name="voiceai home dashboard ai studio"
+          data-category="ai"
+        >
+
+          <div class="tool-card-top">
+
+            <div class="tool-icon cyan">
+              <i data-lucide="sparkles"></i>
+            </div>
+
+            <span class="tool-status popular">
+              Core
+            </span>
+
+          </div>
+
+          <h3>VoiceAI Studio</h3>
+
+          <p>
+            Start from the main AI workspace and access your creative tools.
+          </p>
+
+          <div class="tool-card-bottom">
+            <span>AI Studio</span>
+            <i data-lucide="arrow-up-right"></i>
+          </div>
+
+        </a>
+
+
+      </div>
+
+
+      <!-- NO RESULT -->
+      <div class="tools-empty" id="toolsEmpty">
+
+        <div class="empty-icon">
+          <i data-lucide="search-x"></i>
+        </div>
+
+        <h3>No tools found</h3>
+
+        <p>
+          Try another search or choose a different category.
+        </p>
+
+        <button id="resetTools">
+          Show all tools
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- CTA -->
+  <section class="tools-cta">
+
+    <div class="tools-cta-inner">
+
+      <div>
+
+        <span class="tools-cta-label">
+          READY TO CREATE?
+        </span>
+
+        <h2>
+          Build your next project with AI.
+        </h2>
+
+        <p>
+          Start free and explore the VoiceAI creative workspace.
+        </p>
+
+      </div>
+
+      <a href="signup.html" class="tools-cta-button">
+        Start Creating
+        <i data-lucide="arrow-right"></i>
+      </a>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+<footer class="tools-footer">
+
+  <div class="tools-footer-inner">
+
+    <div class="tools-footer-brand">
+
+      <a href="index.html" class="tools-brand">
+        <span class="tools-brand-mark">∿</span>
+        <span>VoiceAI</span>
+      </a>
+
+      <p>
+        AI voice and creative tools for modern creators,
+        businesses and teams.
+      </p>
+
+    </div>
+
+    <div class="tools-footer-links">
+
+      <a href="about.html">About</a>
+      <a href="faq.html">FAQ</a>
+      <a href="contact.html">Contact</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+
+    </div>
+
+  </div>
+
+  <div class="tools-footer-bottom">
+    <span>© 2026 VoiceAI. All rights reserved.</span>
+    <span>AI Voice Studio</span>
+  </div>
+
+</footer>
+
+
+<!-- =========================
+     PAGE CSS
+========================= -->
+<style>
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: #050d1a;
+    color: #eaf4ff;
+    font-family:
+      Inter,
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+  }
+
+  a {
+    color: inherit;
+  }
+
+
+  /* =========================
+     HEADER
+  ========================= */
+
+  .tools-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(148, 163, 184, .10);
+    background: rgba(5, 13, 26, .88);
+    backdrop-filter: blur(18px);
+  }
+
+  .tools-nav {
+    max-width: 1180px;
+    min-height: 70px;
+    margin: auto;
+    padding: 0 22px;
+
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .tools-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    color: #f5faff;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -.03em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .tools-brand-mark {
+    width: 30px;
+    height: 30px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 9px;
+
+    color: #22d3ee;
+
+    background:
+      linear-gradient(
+        135deg,
+        rgba(34, 211, 238, .16),
+        rgba(96, 165, 250, .12)
+      );
+
+    border: 1px solid rgba(34, 211, 238, .20);
+  }
+
+  .tools-main-nav {
+    flex: 1;
+
+    display: flex;
+    justify-content: center;
+    gap: 26px;
+  }
+
+  .tools-main-nav a {
+    position: relative;
+
+    color: #8397b0;
+    font-size: 12px;
+    font-weight: 650;
+
+    text-decoration: none;
+
+    transition: .2s ease;
+  }
+
+  .tools-main-nav a:hover,
+  .tools-main-nav a.active {
+    color: #eef8ff;
+  }
+
+  .tools-main-nav a.active::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -25px;
+
+    height: 2px;
+
+    border-radius: 5px;
+
+    background: #22d3ee;
+    box-shadow: 0 0 14px rgba(34, 211, 238, .7);
+  }
+
+  .tools-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .tools-login,
+  .tools-get-started {
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 750;
+  }
+
+  .tools-login {
+    color: #9bb0c9;
+  }
+
+  .tools-get-started {
+    padding: 10px 15px;
+
+    border-radius: 9px;
+
+    color: #04101c;
+
+    background: linear-gradient(
+      135deg,
+      #67e8f9,
+      #60a5fa
+    );
+
+    box-shadow:
+      0 7px 25px rgba(34, 211, 238, .14);
+  }
+
+
+  /* =========================
+     HERO
+  ========================= */
+
+  .tools-hero {
+    position: relative;
+    overflow: hidden;
+
+    padding: 90px 22px 76px;
+
+    border-bottom: 1px solid rgba(148, 163, 184, .09);
+
+    background:
+      radial-gradient(
+        circle at 50% -20%,
+        rgba(34, 211, 238, .15),
+        transparent 42%
+      ),
+      radial-gradient(
+        circle at 85% 35%,
+        rgba(96, 165, 250, .08),
+        transparent 32%
+      );
+  }
+
+  .tools-hero-content {
+    max-width: 760px;
+    margin: auto;
+    text-align: center;
+  }
+
+  .tools-badge {
+    width: fit-content;
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    border: 1px solid rgba(34, 211, 238, .18);
+    border-radius: 999px;
+
+    color: #5ee8f5;
+
+    background: rgba(34, 211, 238, .055);
+
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: .13em;
+  }
+
+  .tools-badge svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .tools-hero h1 {
+    margin: 0;
+
+    color: #f3f9ff;
+
+    font-size: clamp(40px, 6vw, 66px);
+    line-height: 1.02;
+
+    letter-spacing: -.055em;
+  }
+
+  .tools-hero h1 span {
+    display: block;
+
+    color: transparent;
+
+    background:
+      linear-gradient(
+        90deg,
+        #67e8f9,
+        #60a5fa
+      );
+
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
+
+  .tools-hero p {
+    max-width: 650px;
+    margin: 20px auto 28px;
+
+    color: #8297b1;
+
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  .tools-search {
+    max-width: 590px;
+    height: 54px;
+
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 0 15px;
+
+    border: 1px solid rgba(148, 163, 184, .16);
+    border-radius: 14px;
+
+    background: rgba(10, 24, 45, .82);
+
+    box-shadow:
+      0 18px 50px rgba(0, 0, 0, .25);
+
+    transition: .2s ease;
+  }
+
+  .tools-search:focus-within {
+    border-color: rgba(34, 211, 238, .48);
+    box-shadow:
+      0 0 0 4px rgba(34, 211, 238, .055),
+      0 18px 50px rgba(0, 0, 0, .28);
+  }
+
+  .tools-search > svg {
+    width: 18px;
+    color: #5f7896;
+  }
+
+  .tools-search input {
+    flex: 1;
+
+    min-width: 0;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    color: #e8f4ff;
+
+    font-size: 13px;
+  }
+
+  .tools-search input::placeholder {
+    color: #5f7590;
+  }
+
+  .tools-search kbd {
+    padding: 5px 7px;
+
+    border: 1px solid rgba(148, 163, 184, .15);
+    border-radius: 6px;
+
+    color: #7086a0;
+
+    background: #071325;
+
+    font-size: 9px;
+  }
+
+
+  /* =========================
+     TOOL SECTION
+  ========================= */
+
+  .tools-section {
+    padding: 55px 22px 90px;
+  }
+
+  .tools-container {
+    max-width: 1180px;
+    margin: auto;
+  }
+
+  .tools-toolbar {
+    margin-bottom: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .category-tabs {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+
+  .category-btn {
+    border: 1px solid rgba(148, 163, 184, .12);
+
+    border-radius: 9px;
+
+    padding: 8px 12px;
+
+    color: #7186a0;
+
+    background: #09172a;
+
+    cursor: pointer;
+
+    font-size: 11px;
+    font-weight: 750;
+
+    transition: .2s ease;
+  }
+
+  .category-btn:hover {
+    color: #d9edff;
+    border-color: rgba(96, 165, 250, .25);
+  }
+
+  .category-btn.active {
+    color: #04121d;
+
+    border-color: transparent;
+
+    background:
+      linear-gradient(
+        135deg,
+        #67e8f9,
+        #60a5fa
+      );
+
+    box-shadow:
+      0 7px 22px rgba(34, 211, 238, .10);
+  }
+
+  .tools-count {
+    color: #607692;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+
+  /* =========================
+     GRID
+  ========================= */
+
+  .tools-grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+
+    gap: 15px;
+  }
+
+  .ai-tool-card {
+    position: relative;
+
+    min-height: 230px;
+
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    text-decoration: none;
+
+    border: 1px solid rgba(148, 163, 184, .105);
+    border-radius: 17px;
+
+    background:
+      linear-gradient(
+        145deg,
+        rgba(12, 29, 53, .92),
+        rgba(7, 18, 34, .94)
+      );
+
+    box-shadow:
+      0 12px 35px rgba(0, 0, 0, .16);
+
+    overflow: hidden;
+
+    transition:
+      transform .22s ease,
+      border-color .22s ease,
+      box-shadow .22s ease;
+  }
+
+  .ai-tool-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 150px;
+    height: 150px;
+
+    right: -80px;
+    top: -80px;
+
+    border-radius: 50%;
+
+    background:
+      radial-gradient(
+        circle,
+        rgba(34, 211, 238, .12),
+        transparent 70%
+      );
+
+    pointer-events: none;
+  }
+
+  .ai-tool-card:hover {
+    transform: translateY(-5px);
+
+    border-color:
+      rgba(34, 211, 238, .28);
+
+    box-shadow:
+      0 20px 50px rgba(0, 0, 0, .30),
+      0 0 25px rgba(34, 211, 238, .035);
+  }
+
+  .featured-tool {
+    border-color:
+      rgba(96, 165, 250, .19);
+  }
+
+  .tool-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+  }
+
+  .tool-icon {
+    width: 43px;
+    height: 43px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 12px;
+
+    border: 1px solid rgba(255, 255, 255, .07);
+  }
+
+  .tool-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .tool-icon.blue {
+    color: #60a5fa;
+    background: rgba(96, 165, 250, .10);
+  }
+
+  .tool-icon.cyan {
+    color: #22d3ee;
+    background: rgba(34, 211, 238, .10);
+  }
+
+  .tool-icon.purple {
+    color: #a78bfa;
+    background: rgba(167, 139, 250, .10);
+  }
+
+  .tool-icon.pink {
+    color: #f472b6;
+    background: rgba(244, 114, 182, .10);
+  }
+
+  .tool-icon.orange {
+    color: #fb923c;
+    background: rgba(251, 146, 60, .10);
+  }
+
+  .tool-icon.green {
+    color: #34d399;
+    background: rgba(52, 211, 153, .10);
+  }
+
+  .tool-icon.yellow {
+    color: #facc15;
+    background: rgba(250, 204, 21, .09);
+  }
+
+  .tool-icon.teal {
+    color: #2dd4bf;
+    background: rgba(45, 212, 191, .09);
+  }
+
+  .tool-icon.indigo {
+    color: #818cf8;
+    background: rgba(129, 140, 248, .10);
+  }
+
+  .tool-icon.violet {
+    color: #c084fc;
+    background: rgba(192, 132, 252, .10);
+  }
+
+  .tool-icon.red {
+    color: #fb7185;
+    background: rgba(251, 113, 133, .09);
+  }
+
+  .premium-icon {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, .10);
+  }
+
+  .tool-status {
+    padding: 5px 8px;
+
+    border-radius: 999px;
+
+    color: #7087a1;
+
+    background: rgba(148, 163, 184, .06);
+
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .04em;
+  }
+
+  .tool-status.popular {
+    color: #67e8f9;
+    background: rgba(34, 211, 238, .07);
+  }
+
+  .tool-status.new {
+    color: #86efac;
+    background: rgba(52, 211, 153, .07);
+  }
+
+  .tool-status.premium {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, .07);
+  }
+
+  .ai-tool-card h3 {
+    margin: 0 0 9px;
+
+    color: #edf6ff;
+
+    font-size: 16px;
+    letter-spacing: -.02em;
+  }
+
+  .ai-tool-card p {
+    margin: 0;
+
+    color: #778da8;
+
+    font-size: 11px;
+    line-height: 1.7;
+  }
+
+  .tool-card-bottom {
+    margin-top: auto;
+    padding-top: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    color: #526b87;
+
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  .tool-card-bottom svg {
+    width: 15px;
+
+    color: #68819d;
+
+    transition: .2s ease;
+  }
+
+  .ai-tool-card:hover .tool-card-bottom svg {
+    color: #22d3ee;
+    transform: translate(2px, -2px);
+  }
+
+
+  /* =========================
+     EMPTY
+  ========================= */
+
+  .tools-empty {
+    display: none;
+
+    padding: 70px 20px;
+
+    text-align: center;
+  }
+
+  .tools-empty.show {
+    display: block;
+  }
+
+  .empty-icon {
+    width: 55px;
+    height: 55px;
+
+    margin: auto;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 15px;
+
+    color: #647c98;
+
+    background: #0b1b32;
+    border: 1px solid rgba(148, 163, 184, .10);
+  }
+
+  .empty-icon svg {
+    width: 23px;
+  }
+
+  .tools-empty h3 {
+    margin: 16px 0 7px;
+
+    color: #dcecff;
+    font-size: 17px;
+  }
+
+  .tools-empty p {
+    margin: 0 0 18px;
+
+    color: #7187a1;
+    font-size: 12px;
+  }
+
+  #resetTools {
+    border: 0;
+    border-radius: 9px;
+
+    padding: 10px 15px;
+
+    color: #06111f;
+
+    background: #67e8f9;
+
+    cursor: pointer;
+
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+
+  /* =========================
+     CTA
+  ========================= */
+
+  .tools-cta {
+    padding: 0 22px 90px;
+  }
+
+  .tools-cta-inner {
+    max-width: 1136px;
+
+    margin: auto;
+
+    padding: 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+
+    border: 1px solid rgba(34, 211, 238, .14);
+    border-radius: 21px;
+
+    background:
+      radial-gradient(
+        circle at 85% 50%,
+        rgba(34, 211, 238, .10),
+        transparent 35%
+      ),
+      #09192e;
+  }
+
+  .tools-cta-label {
+    color: #22d3ee;
+
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: .13em;
+  }
+
+  .tools-cta h2 {
+    margin: 7px 0;
+
+    color: #edf7ff;
+
+    font-size: 26px;
+    letter-spacing: -.035em;
+  }
+
+  .tools-cta p {
+    margin: 0;
+
+    color: #7188a4;
+
+    font-size: 12px;
+  }
+
+  .tools-cta-button {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 12px 17px;
+
+    border-radius: 10px;
+
+    color: #04111e;
+
+    background:
+      linear-gradient(
+        135deg,
+        #67e8f9,
+        #60a5fa
+      );
+
+    text-decoration: none;
+
+    font-size: 11px;
+    font-weight: 850;
+
+    box-shadow:
+      0 12px 30px rgba(34, 211, 238, .13);
+  }
+
+  .tools-cta-button svg {
+    width: 15px;
+  }
+
+
+  /* =========================
+     FOOTER
+  ========================= */
+
+  .tools-footer {
+    border-top: 1px solid rgba(148, 163, 184, .09);
+  }
+
+  .tools-footer-inner {
+    max-width: 1180px;
+
+    margin: auto;
+
+    padding: 45px 22px 30px;
+  }
+
+  .tools-footer-brand p {
+    max-width: 360px;
+
+    color: #687e99;
+
+    font-size: 11px;
+    line-height: 1.7;
+  }
+
+  .tools-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+
+    margin-top: 22px;
+  }
+
+  .tools-footer-links a {
+    color: #7389a4;
+
+    font-size: 11px;
+    text-decoration: none;
+  }
+
+  .tools-footer-links a:hover {
+    color: #22d3ee;
+  }
+
+  .tools-footer-bottom {
+    max-width: 1180px;
+
+    margin: auto;
+
+    padding: 18px 22px 25px;
+
+    display: flex;
+    justify-content: space-between;
+
+    border-top: 1px solid rgba(148, 163, 184, .08);
+
+    color: #536a85;
+
+    font-size: 10px;
+  }
+
+
+  /* =========================
+     RESPONSIVE
+  ========================= */
+
+  @media (max-width: 1050px) {
+
+    .tools-grid {
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+    }
+
+    .tools-main-nav {
+      gap: 17px;
+    }
+
+  }
+
+
+  @media (max-width: 800px) {
+
+    .tools-nav {
+      gap: 15px;
+    }
+
+    .tools-main-nav {
+      display: none;
+    }
+
+    .tools-nav-actions {
+      margin-left: auto;
+    }
+
+    .tools-grid {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+
+  }
+
+
+  @media (max-width: 560px) {
+
+    .tools-nav {
+      min-height: 62px;
+      padding: 0 15px;
+    }
+
+    .tools-login {
+      display: none;
+    }
+
+    .tools-get-started {
+      padding: 9px 11px;
+    }
+
+    .tools-hero {
+      padding: 65px 16px 55px;
+    }
+
+    .tools-hero h1 {
+      font-size: 39px;
+    }
+
+    .tools-hero p {
+      font-size: 12px;
+    }
+
+    .tools-search {
+      height: 50px;
+    }
+
+    .tools-search kbd {
+      display: none;
+    }
+
+    .tools-section {
+      padding: 40px 15px 65px;
+    }
+
+    .tools-toolbar {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .tools-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-tool-card {
+      min-height: 205px;
+    }
+
+    .tools-cta {
+      padding: 0 15px 65px;
+    }
+
+    .tools-cta-inner {
+      padding: 25px 20px;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .tools-cta h2 {
+      font-size: 23px;
+    }
+
+    .tools-cta-button {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .tools-footer-inner {
+      padding: 35px 15px 25px;
+    }
+
+    .tools-footer-bottom {
+      padding-left: 15px;
+      padding-right: 15px;
+
+      flex-direction: column;
+      gap: 7px;
+    }
+
+  }
+
+</style>
+
+
+<!-- =========================
+     PAGE JAVASCRIPT
+========================= -->
+<script>
+
+  document.addEventListener("DOMContentLoaded", () => {
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+
+    const searchInput =
+      document.getElementById("toolSearch");
+
+    const cards =
+      Array.from(
+        document.querySelectorAll(".ai-tool-card")
+      );
+
+    const categoryButtons =
+      Array.from(
+        document.querySelectorAll(".category-btn")
+      );
+
+    const count =
+      document.getElementById("toolsCount");
+
+    const empty =
+      document.getElementById("toolsEmpty");
+
+    const reset =
+      document.getElementById("resetTools");
+
+
+    let selectedCategory = "all";
+
+
+    function filterTools() {
+
+      const query =
+        searchInput.value
+          .trim()
+          .toLowerCase();
+
+
+      let visible = 0;
+
+
+      cards.forEach((card) => {
+
+        const name =
+          (
+            card.dataset.name || ""
+          ).toLowerCase();
+
+        const category =
+          (
+            card.dataset.category || ""
+          ).toLowerCase();
+
+
+        const searchMatch =
+          !query ||
+          name.includes(query);
+
+        const categoryMatch =
+          selectedCategory === "all" ||
+          category === selectedCategory;
+
+
+        const show =
+          searchMatch &&
+          categoryMatch;
+
+
+        card.style.display =
+          show ? "" : "none";
+
+
+        if (show) {
+          visible++;
+        }
+
+      });
+
+
+      count.textContent =
+        `${visible} tool${visible === 1 ? "" : "s"}`;
+
+
+      if (visible === 0) {
+        empty.classList.add("show");
+      } else {
+        empty.classList.remove("show");
+      }
+
+    }
+
+
+    categoryButtons.forEach((button) => {
+
+      button.addEventListener("click", () => {
+
+        categoryButtons.forEach((item) => {
+          item.classList.remove("active");
+        });
+
+        button.classList.add("active");
+
+        selectedCategory =
+          button.dataset.category || "all";
+
+        filterTools();
+
+      });
+
+    });
+
+
+    searchInput.addEventListener(
+      "input",
+      filterTools
+    );
+
+
+    reset.addEventListener("click", () => {
+
+      searchInput.value = "";
+
+      selectedCategory = "all";
+
+      categoryButtons.forEach((button) => {
+
+        button.classList.toggle(
+          "active",
+          button.dataset.category === "all"
+        );
+
+      });
+
+      filterTools();
+
+    });
+
+
+    /*
+      Keyboard shortcut:
+      Cmd/Ctrl + K
+    */
+
+    document.addEventListener("keydown", (event) => {
+
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key.toLowerCase() === "k"
+      ) {
+
+        event.preventDefault();
+
+        searchInput.focus();
+
+      }
+
+    });
+
+
+    filterTools();
+
+
+    /*
+      Refresh Lucide icons after
+      dynamic page initialization.
+    */
+
+    setTimeout(() => {
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+    }, 100);
+
+  });
+
+</script>
+
+
+</body>
+</html>

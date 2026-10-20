@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050b18">
+
+  <title>Projects — VoiceAI</title>
+
+  <meta
+    name="description"
+    content="Manage your VoiceAI projects, generations and saved creative work."
+  >
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="./style.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+  <!-- ================= HEADER ================= -->
+
+  <header class="site-header">
+    <div class="container nav-container">
+
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <i data-lucide="audio-lines"></i>
+        </span>
+
+        <span>VoiceAI</span>
+      </a>
+
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="tools.html">AI Tools</a>
+        <a href="voices.html">Voices</a>
+        <a href="studio.html">Studio</a>
+        <a href="pricing.html">Pricing</a>
+      </nav>
+
+
+      <div class="nav-actions">
+
+        <a href="login.html" class="nav-login">
+          Login
+        </a>
+
+        <a href="signup.html" class="btn btn-primary">
+          Get Started
+          <i data-lucide="arrow-right"></i>
+        </a>
+
+      </div>
+
+    </div>
+  </header>
+
+
+  <!-- ================= MAIN ================= -->
+
+  <main>
+
+    <!-- HERO -->
+
+    <section class="page-hero">
+
+      <div class="container">
+
+        <div class="eyebrow">
+          <i data-lucide="folder-kanban"></i>
+          YOUR WORKSPACE
+        </div>
+
+        <h1>
+          Your projects,
+          <span>all in one place.</span>
+        </h1>
+
+        <p>
+          Manage generated audio, images, voices, videos and creative
+          projects from your VoiceAI workspace.
+        </p>
+
+
+        <div
+          style="
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            margin-top:24px;
+          "
+        >
+
+          <a
+            href="tts.html"
+            class="btn btn-primary"
+          >
+            <i data-lucide="plus"></i>
+            New Generation
+          </a>
+
+          <a
+            href="studio.html"
+            class="btn"
+            style="
+              border:1px solid rgba(96,165,250,.18);
+              background:rgba(59,130,246,.06);
+              color:#b9d6ff;
+            "
+          >
+            <i data-lucide="panels-top-left"></i>
+            Open Studio
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <section class="tools-section">
+
+      <div class="container">
+
+        <!-- STATS -->
+
+        <div
+          class="project-stats"
+          style="
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:14px;
+            margin-bottom:24px;
+          "
+        >
+
+          <div
+            style="
+              padding:18px;
+              border-radius:16px;
+              background:rgba(10,25,48,.78);
+              border:1px solid rgba(96,165,250,.14);
+            "
+          >
+
+            <div
+              style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+              "
+            >
+
+              <span
+                style="
+                  color:#7186a4;
+                  font-size:11px;
+                  font-weight:600;
+                "
+              >
+                TOTAL PROJECTS
+              </span>
+
+              <i
+                data-lucide="folder"
+                style="
+                  width:17px;
+                  color:#67e8f9;
+                "
+              ></i>
+
+            </div>
+
+            <strong
+              id="totalProjects"
+              style="
+                display:block;
+                margin-top:8px;
+                color:#eaf4ff;
+                font-size:25px;
+              "
+            >
+              —
+            </strong>
+
+          </div>
+
+
+          <div
+            style="
+              padding:18px;
+              border-radius:16px;
+              background:rgba(10,25,48,.78);
+              border:1px solid rgba(96,165,250,.14);
+            "
+          >
+
+            <div
+              style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+              "
+            >
+
+              <span
+                style="
+                  color:#7186a4;
+                  font-size:11px;
+                  font-weight:600;
+                "
+              >
+                AUDIO
+              </span>
+
+              <i
+                data-lucide="audio-waveform"
+                style="
+                  width:17px;
+                  color:#67e8f9;
+                "
+              ></i>
+
+            </div>
+
+            <strong
+              id="totalAudio"
+              style="
+                display:block;
+                margin-top:8px;
+                color:#eaf4ff;
+                font-size:25px;
+              "
+            >
+              —
+            </strong>
+
+          </div>
+
+
+          <div
+            style="
+              padding:18px;
+              border-radius:16px;
+              background:rgba(10,25,48,.78);
+              border:1px solid rgba(96,165,250,.14);
+            "
+          >
+
+            <div
+              style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+              "
+            >
+
+              <span
+                style="
+                  color:#7186a4;
+                  font-size:11px;
+                  font-weight:600;
+                "
+              >
+                IMAGES
+              </span>
+
+              <i
+                data-lucide="image"
+                style="
+                  width:17px;
+                  color:#67e8f9;
+                "
+              ></i>
+
+            </div>
+
+            <strong
+              id="totalImages"
+              style="
+                display:block;
+                margin-top:8px;
+                color:#eaf4ff;
+                font-size:25px;
+              "
+            >
+              —
+            </strong>
+
+          </div>
+
+
+          <div
+            style="
+              padding:18px;
+              border-radius:16px;
+              background:rgba(10,25,48,.78);
+              border:1px solid rgba(96,165,250,.14);
+            "
+          >
+
+            <div
+              style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+              "
+            >
+
+              <span
+                style="
+                  color:#7186a4;
+                  font-size:11px;
+                  font-weight:600;
+                "
+              >
+                VIDEO
+              </span>
+
+              <i
+                data-lucide="video"
+                style="
+                  width:17px;
+                  color:#67e8f9;
+                "
+              ></i>
+
+            </div>
+
+            <strong
+              id="totalVideo"
+              style="
+                display:block;
+                margin-top:8px;
+                color:#eaf4ff;
+                font-size:25px;
+              "
+            >
+              —
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- TOOLBAR -->
+
+        <div
+          style="
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:14px;
+            flex-wrap:wrap;
+            margin-bottom:18px;
+          "
+        >
+
+          <div>
+
+            <span class="section-kicker">
+              LIBRARY
+            </span>
+
+            <h2 style="margin:5px 0 0;">
+              Recent Projects
+            </h2>
+
+          </div>
+
+
+          <div
+            style="
+              display:flex;
+              align-items:center;
+              gap:9px;
+              flex-wrap:wrap;
+            "
+          >
+
+            <!-- SEARCH -->
+
+            <div
+              style="
+                position:relative;
+              "
+            >
+
+              <i
+                data-lucide="search"
+                style="
+                  position:absolute;
+                  left:11px;
+                  top:50%;
+                  transform:translateY(-50%);
+                  width:15px;
+                  color:#607692;
+                "
+              ></i>
+
+              <input
+                id="projectSearch"
+                type="search"
+                placeholder="Search projects..."
+                style="
+                  width:210px;
+                  padding:10px 12px 10px 34px;
+                  border-radius:10px;
+                  border:1px solid rgba(96,165,250,.16);
+                  background:#08162d;
+                  color:#eaf4ff;
+                  outline:none;
+                  font-family:inherit;
+                  font-size:11px;
+                  box-sizing:border-box;
+                "
+              >
+
+            </div>
+
+
+            <!-- FILTER -->
+
+            <select
+              id="projectFilter"
+              style="
+                padding:10px 12px;
+                border-radius:10px;
+                border:1px solid rgba(96,165,250,.16);
+                background:#08162d;
+                color:#eaf4ff;
+                outline:none;
+                font-family:inherit;
+                font-size:11px;
+              "
+            >
+
+              <option value="all">
+                All types
+              </option>
+
+              <option value="tts">
+                Text to Speech
+              </option>
+
+              <option value="image">
+                Images
+              </option>
+
+              <option value="voice">
+                Voice
+              </option>
+
+              <option value="video">
+                Video
+              </option>
+
+              <option value="music">
+                Music
+              </option>
+
+              <option value="studio">
+                Studio
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- PROJECT GRID -->
+
+        <div
+          id="projectGrid"
+          style="
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:16px;
+          "
+        >
+
+          <!-- Empty state initially -->
+
+          <div
+            id="projectEmpty"
+            style="
+              grid-column:1/-1;
+              padding:55px 20px;
+              text-align:center;
+              border:1px dashed rgba(96,165,250,.16);
+              border-radius:18px;
+              color:#7186a4;
+            "
+          >
+
+            <i
+              data-lucide="folder-open"
+              style="
+                width:42px;
+                height:42px;
+                margin-bottom:14px;
+              "
+            ></i>
+
+            <h3
+              style="
+                margin:0 0 7px;
+                color:#b9c9dc;
+              "
+            >
+              No projects yet
+            </h3>
+
+            <p
+              style="
+                margin:0 auto 18px;
+                max-width:420px;
+                font-size:12px;
+                line-height:1.6;
+              "
+            >
+              Your generated content and saved projects will
+              appear here.
+            </p>
+
+            <a
+              href="tts.html"
+              class="btn btn-primary"
+            >
+              <i data-lucide="plus"></i>
+              Create your first project
+            </a>
+
+          </div>
+
+        </div>
+
+
+        <!-- PAGINATION -->
+
+        <div
+          id="projectPagination"
+          hidden
+          style="
+            display:flex;
+            justify-content:center;
+            gap:8px;
+            margin-top:24px;
+          "
+        >
+
+          <button
+            id="prevPage"
+            type="button"
+            class="btn"
+            style="
+              border:1px solid rgba(96,165,250,.15);
+              background:rgba(59,130,246,.05);
+              color:#9fc7ff;
+            "
+          >
+            <i data-lucide="chevron-left"></i>
+            Previous
+          </button>
+
+          <span
+            id="pageNumber"
+            style="
+              display:flex;
+              align-items:center;
+              padding:0 12px;
+              color:#7186a4;
+              font-size:11px;
+            "
+          >
+            Page 1
+          </span>
+
+          <button
+            id="nextPage"
+            type="button"
+            class="btn"
+            style="
+              border:1px solid rgba(96,165,250,.15);
+              background:rgba(59,130,246,.05);
+              color:#9fc7ff;
+            "
+          >
+            Next
+            <i data-lucide="chevron-right"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= QUICK ACTIONS ================= -->
+
+    <section class="tools-section">
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div>
+            <span class="section-kicker">
+              QUICK START
+            </span>
+
+            <h2>
+              Create something new
+            </h2>
+          </div>
+
+        </div>
+
+
+        <div
+          style="
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:14px;
+          "
+          class="quick-actions"
+        >
+
+          <a
+            href="tts.html"
+            class="tool-card"
+          >
+
+            <div class="tool-icon">
+              <i data-lucide="volume-2"></i>
+            </div>
+
+            <div class="tool-card-content">
+
+              <h3>
+                Text to Speech
+              </h3>
+
+              <p>
+                Create an AI voiceover.
+              </p>
+
+              <span class="tool-link">
+                Create
+                <i data-lucide="arrow-up-right"></i>
+              </span>
+
+            </div>
+
+          </a>
+
+
+          <a
+            href="image.html"
+            class="tool-card"
+          >
+
+            <div class="tool-icon">
+              <i data-lucide="image"></i>
+            </div>
+
+            <div class="tool-card-content">
+
+              <h3>
+                AI Image
+              </h3>
+
+              <p>
+                Generate an image with Gemini.
+              </p>
+
+              <span class="tool-link">
+                Create
+                <i data-lucide="arrow-up-right"></i>
+              </span>
+
+            </div>
+
+          </a>
+
+
+          <a
+            href="music.html"
+            class="tool-card"
+          >
+
+            <div class="tool-icon">
+              <i data-lucide="music-2"></i>
+            </div>
+
+            <div class="tool-card-content">
+
+              <h3>
+                AI Music
+              </h3>
+
+              <p>
+                Create music for your project.
+              </p>
+
+              <span class="tool-link">
+                Create
+                <i data-lucide="arrow-up-right"></i>
+              </span>
+
+            </div>
+
+          </a>
+
+
+          <a
+            href="studio.html"
+            class="tool-card"
+          >
+
+            <div class="tool-icon">
+              <i data-lucide="panels-top-left"></i>
+            </div>
+
+            <div class="tool-card-content">
+
+              <h3>
+                Studio
+              </h3>
+
+              <p>
+                Edit your creative project.
+              </p>
+
+              <span class="tool-link">
+                Open
+                <i data-lucide="arrow-up-right"></i>
+              </span>
+
+            </div>
+
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= CTA ================= -->
+
+    <section class="cta-section">
+
+      <div class="container">
+
+        <div class="cta-card">
+
+          <div>
+
+            <span class="section-kicker">
+              VOICEAI WORKSPACE
+            </span>
+
+            <h2>
+              Keep every creation organized.
+            </h2>
+
+            <p>
+              Generate, edit and manage your content from one workspace.
+            </p>
+
+          </div>
+
+          <a
+            href="tools.html"
+            class="btn btn-primary"
+          >
+            Explore AI Tools
+            <i data-lucide="arrow-right"></i>
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ================= FOOTER ================= -->
+
+  <footer class="site-footer">
+
+    <div class="container">
+
+      <div class="footer-main">
+
+        <div class="footer-brand">
+
+          <a href="index.html" class="brand">
+
+            <span class="brand-mark">
+              <i data-lucide="audio-lines"></i>
+            </span>
+
+            <span>VoiceAI</span>
+
+          </a>
+
+          <p>
+            AI-powered voice and creative tools for modern content creators.
+          </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+          <div>
+            <h4>Product</h4>
+
+            <a href="tools.html">AI Tools</a>
+            <a href="voices.html">Voices</a>
+            <a href="studio.html">Studio</a>
+            <a href="pricing.html">Pricing</a>
+          </div>
+
+
+          <div>
+            <h4>Company</h4>
+
+            <a href="about.html">About</a>
+            <a href="faq.html">FAQ</a>
+            <a href="contact.html">Contact</a>
+          </div>
+
+
+          <div>
+            <h4>Account</h4>
+
+            <a href="login.html">Login</a>
+            <a href="signup.html">Sign Up</a>
+            <a href="profile.html">Profile</a>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="footer-bottom">
+
+        <span>
+          © 2026 VoiceAI. All rights reserved.
+        </span>
+
+        <div>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- ================= SCRIPTS ================= -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./script.js"></script>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      const projectGrid =
+        document.getElementById("projectGrid");
+
+      const emptyState =
+        document.getElementById("projectEmpty");
+
+      const searchInput =
+        document.getElementById("projectSearch");
+
+      const filterSelect =
+        document.getElementById("projectFilter");
+
+      const totalProjects =
+        document.getElementById("totalProjects");
+
+      const totalAudio =
+        document.getElementById("totalAudio");
+
+      const totalImages =
+        document.getElementById("totalImages");
+
+      const totalVideo =
+        document.getElementById("totalVideo");
+
+
+      let projects = [];
+
+      let filteredProjects = [];
+
+      let currentPage = 1;
+
+      const pageSize = 9;
+
+
+      /* ================= AUTH ================= */
+
+      async function getSession() {
+
+        if (
+          window.supabaseClient &&
+          window.supabaseClient.auth
+        ) {
+
+          return await window.supabaseClient
+            .auth
+            .getSession();
+
+        }
+
+        return {
+          data: {
+            session: null
+          }
+        };
+
+      }
+
+
+      /* ================= LOAD PROJECTS ================= */
+
+      async function loadProjects() {
+
+        try {
+
+          const sessionResult =
+            await getSession();
+
+          const session =
+            sessionResult?.data?.session;
+
+
+          if (!session?.access_token) {
+
+            showLoginState();
+
+            return;
+
+          }
+
+
+          /*
+           * Main projects table.
+           *
+           * Expected columns can include:
+           * id
+           * user_id
+           * title
+           * type
+           * status
+           * output_url
+           * thumbnail_url
+           * created_at
+           */
+
+          if (!window.supabaseClient) {
+
+            throw new Error(
+              "Supabase is not initialized."
+            );
+
+          }
+
+
+          const { data, error } =
+            await window.supabaseClient
+              .from("projects")
+              .select("*")
+              .eq(
+                "user_id",
+                session.user.id
+              )
+              .order(
+                "created_at",
+                {
+                  ascending:false
+                }
+              );
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          projects =
+            Array.isArray(data)
+              ? data
+              : [];
+
+
+          filteredProjects =
+            [...projects];
+
+
+          updateStats();
+
+          renderProjects();
+
+        } catch (error) {
+
+          console.error(
+            "Projects loading error:",
+            error
+          );
+
+
+          if (window.VoiceAI) {
+
+            VoiceAI.toast(
+              "Unable to load projects."
+            );
+
+          }
+
+          renderProjects();
+
+        }
+
+      }
+
+
+      /* ================= LOGIN STATE ================= */
+
+      function showLoginState() {
+
+        projectGrid.innerHTML = `
+
+          <div
+            style="
+              grid-column:1/-1;
+              padding:55px 20px;
+              text-align:center;
+              border:1px dashed rgba(96,165,250,.16);
+              border-radius:18px;
+              color:#7186a4;
+            "
+          >
+
+            <div
+              style="
+                width:52px;
+                height:52px;
+                display:grid;
+                place-items:center;
+                margin:0 auto 15px;
+                border-radius:15px;
+                background:rgba(59,130,246,.08);
+                color:#67e8f9;
+              "
+            >
+              <i
+                data-lucide="lock"
+                style="
+                  width:24px;
+                  height:24px;
+                "
+              ></i>
+            </div>
+
+            <h3
+              style="
+                margin:0 0 7px;
+                color:#b9c9dc;
+              "
+            >
+              Login required
+            </h3>
+
+            <p
+              style="
+                margin:0 auto 18px;
+                max-width:420px;
+                font-size:12px;
+                line-height:1.6;
+              "
+            >
+              Sign in to view your VoiceAI projects.
+            </p>
+
+            <a
+              href="login.html?redirect=projects.html"
+              class="btn btn-primary"
+            >
+              <i data-lucide="log-in"></i>
+              Login
+            </a>
+
+          </div>
+
+        `;
+
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+      }
+
+
+      /* ================= STATS ================= */
+
+      function updateStats() {
+
+        const audioCount =
+          projects.filter((project) =>
+            [
+              "tts",
+              "audio",
+              "voice",
+              "music",
+              "sound-effects",
+              "dubbing",
+              "stt"
+            ].includes(
+              String(project.type || "")
+                .toLowerCase()
+            )
+          ).length;
+
+
+        const imageCount =
+          projects.filter((project) =>
+            String(project.type || "")
+              .toLowerCase()
+              .includes("image")
+          ).length;
+
+
+        const videoCount =
+          projects.filter((project) =>
+            String(project.type || "")
+              .toLowerCase()
+              .includes("video")
+          ).length;
+
+
+        totalProjects.textContent =
+          projects.length;
+
+        totalAudio.textContent =
+          audioCount;
+
+        totalImages.textContent =
+          imageCount;
+
+        totalVideo.textContent =
+          videoCount;
+
+      }
+
+
+      /* ================= FILTER ================= */
+
+      function applyFilters() {
+
+        const query =
+          searchInput.value
+            .trim()
+            .toLowerCase();
+
+
+        const type =
+          filterSelect.value;
+
+
+        filteredProjects =
+          projects.filter((project) => {
+
+            const title =
+              String(
+                project.title ||
+                project.name ||
+                ""
+              ).toLowerCase();
+
+
+            const projectType =
+              String(
+                project.type ||
+                ""
+              ).toLowerCase();
+
+
+            const searchMatch =
+              !query ||
+              title.includes(query) ||
+              projectType.includes(query);
+
+
+            const typeMatch =
+              type === "all" ||
+              projectType.includes(type);
+
+
+            return (
+              searchMatch &&
+              typeMatch
+            );
+
+          });
+
+
+        currentPage = 1;
+
+        renderProjects();
+
+      }
+
+
+      searchInput?.addEventListener(
+        "input",
+        applyFilters
+      );
+
+
+      filterSelect?.addEventListener(
+        "change",
+        applyFilters
+      );
+
+
+      /* ================= RENDER ================= */
+
+      function renderProjects() {
+
+        if (!filteredProjects.length) {
+
+          projectGrid.innerHTML = "";
+
+          projectGrid.appendChild(
+            emptyState
+          );
+
+          emptyState.hidden = false;
+
+          document
+            .getElementById(
+              "projectPagination"
+            )
+            .hidden = true;
+
+          if (window.lucide) {
+            lucide.createIcons();
+          }
+
+          return;
+
+        }
+
+
+        emptyState.hidden = true;
+
+
+        const start =
+          (currentPage - 1) *
+          pageSize;
+
+
+        const end =
+          start + pageSize;
+
+
+        const pageProjects =
+          filteredProjects.slice(
+            start,
+            end
+          );
+
+
+        projectGrid.innerHTML =
+          pageProjects
+            .map(
+              createProjectCard
+            )
+            .join("");
+
+
+        updatePagination();
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+      }
+
+
+      /* ================= CARD ================= */
+
+      function createProjectCard(
+        project
+      ) {
+
+        const title =
+          escapeHTML(
+            project.title ||
+            project.name ||
+            "Untitled Project"
+          );
+
+
+        const type =
+          String(
+            project.type ||
+            "project"
+          ).toLowerCase();
+
+
+        const status =
+          String(
+            project.status ||
+            "completed"
+          );
+
+
+        const outputUrl =
+          project.output_url ||
+          project.url ||
+          project.file_url ||
+          "";
+
+
+        const thumbnail =
+          project.thumbnail_url ||
+          project.thumbnail ||
+          "";
+
+
+        const icon =
+          getProjectIcon(type);
+
+
+        const formattedDate =
+          project.created_at
+            ? formatDate(
+                project.created_at
+              )
+            : "Recently";
+
+
+        return `
+
+          <article
+            class="project-card"
+            data-project-id="${escapeAttr(
+              project.id || ""
+            )}"
+            style="
+              overflow:hidden;
+              border-radius:17px;
+              border:1px solid rgba(96,165,250,.14);
+              background:rgba(10,25,48,.78);
+              box-shadow:0 15px 45px rgba(0,0,0,.16);
+            "
+          >
+
+            <div
+              style="
+                height:145px;
+                display:grid;
+                place-items:center;
+                background:
+                  linear-gradient(
+                    135deg,
+                    rgba(34,211,238,.08),
+                    rgba(59,130,246,.03)
+                  );
+                border-bottom:1px solid rgba(96,165,250,.10);
+                overflow:hidden;
+              "
+            >
+
+              ${
+                thumbnail
+                  ? `
+                    <img
+                      src="${escapeAttr(thumbnail)}"
+                      alt=""
+                      style="
+                        width:100%;
+                        height:100%;
+                        object-fit:cover;
+                      "
+                      loading="lazy"
+                    >
+                  `
+                  : `
+                    <div
+                      style="
+                        width:52px;
+                        height:52px;
+                        display:grid;
+                        place-items:center;
+                        border-radius:15px;
+                        background:rgba(59,130,246,.09);
+                        color:#67e8f9;
+                      "
+                    >
+                      <i
+                        data-lucide="${icon}"
+                        style="
+                          width:25px;
+                          height:25px;
+                        "
+                      ></i>
+                    </div>
+                  `
+              }
+
+            </div>
+
+
+            <div
+              style="
+                padding:17px;
+              "
+            >
+
+              <div
+                style="
+                  display:flex;
+                  align-items:center;
+                  justify-content:space-between;
+                  gap:10px;
+                "
+              >
+
+                <span
+                  style="
+                    display:inline-flex;
+                    align-items:center;
+                    gap:5px;
+                    color:#7ea4d2;
+                    font-size:10px;
+                    font-weight:700;
+                    text-transform:uppercase;
+                    letter-spacing:.05em;
+                  "
+                >
+                  <i
+                    data-lucide="${icon}"
+                    style="
+                      width:12px;
+                      height:12px;
+                    "
+                  ></i>
+
+                  ${escapeHTML(type)}
+                </span>
+
+
+                <span
+                  style="
+                    color:${
+                      status === "completed"
+                        ? "#6ee7b7"
+                        : "#fbbf24"
+                    };
+                    font-size:10px;
+                    font-weight:700;
+                  "
+                >
+                  ${escapeHTML(status)}
+                </span>
+
+              </div>
+
+
+              <h3
+                style="
+                  margin:9px 0 5px;
+                  color:#eaf4ff;
+                  font-size:15px;
+                "
+              >
+                ${title}
+              </h3>
+
+
+              <p
+                style="
+                  margin:0;
+                  color:#647b99;
+                  font-size:10px;
+                "
+              >
+                ${formattedDate}
+              </p>
+
+
+              <div
+                style="
+                  display:flex;
+                  gap:7px;
+                  margin-top:15px;
+                "
+              >
+
+                ${
+                  outputUrl
+                    ? `
+                      <a
+                        href="${escapeAttr(outputUrl)}"
+                        target="_blank"
+                        rel="noopener"
+                        class="btn"
+                        style="
+                          flex:1;
+                          justify-content:center;
+                          padding:9px;
+                          border:1px solid rgba(96,165,250,.15);
+                          background:rgba(59,130,246,.06);
+                          color:#9fc7ff;
+                          font-size:10px;
+                        "
+                      >
+                        <i data-lucide="play"></i>
+                        Open
+                      </a>
+                    `
+                    : `
+                      <button
+                        type="button"
+                        class="btn project-open-btn"
+                        data-id="${escapeAttr(
+                          project.id || ""
+                        )}"
+                        style="
+                          flex:1;
+                          justify-content:center;
+                          padding:9px;
+                          border:1px solid rgba(96,165,250,.15);
+                          background:rgba(59,130,246,.06);
+                          color:#9fc7ff;
+                          font-size:10px;
+                        "
+                      >
+                        <i data-lucide="eye"></i>
+                        View
+                      </button>
+                    `
+                }
+
+
+                <button
+                  type="button"
+                  class="btn project-delete-btn"
+                  data-id="${escapeAttr(
+                    project.id || ""
+                  )}"
+                  title="Delete project"
+                  style="
+                    padding:9px;
+                    border:1px solid rgba(248,113,113,.12);
+                    background:rgba(248,113,113,.04);
+                    color:#fca5a5;
+                  "
+                >
+                  <i data-lucide="trash-2"></i>
+                </button>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        `;
+
+      }
+
+
+      /* ================= ICON ================= */
+
+      function getProjectIcon(type) {
+
+        if (type.includes("image")) {
+          return "image";
+        }
+
+        if (
+          type.includes("video") ||
+          type.includes("dubbing")
+        ) {
+          return "video";
+        }
+
+        if (
+          type.includes("music")
+        ) {
+          return "music-2";
+        }
+
+        if (
+          type.includes("voice") ||
+          type.includes("tts") ||
+          type.includes("audio")
+        ) {
+          return "audio-waveform";
+        }
+
+        if (
+          type.includes("studio")
+        ) {
+          return "panels-top-left";
+        }
+
+        return "folder";
+
+      }
+
+
+      /* ================= DELETE ================= */
+
+      document.addEventListener(
+        "click",
+        async (event) => {
+
+          const button =
+            event.target.closest(
+              ".project-delete-btn"
+            );
+
+
+          if (!button) return;
+
+
+          const id =
+            button.dataset.id;
+
+
+          if (!id) return;
+
+
+          const confirmed =
+            window.confirm(
+              "Delete this project?"
+            );
+
+
+          if (!confirmed) return;
+
+
+          try {
+
+            const sessionResult =
+              await getSession();
+
+            const session =
+              sessionResult?.data?.session;
+
+
+            if (!session?.access_token) {
+
+              window.location.href =
+                "login.html?redirect=projects.html";
+
+              return;
+
+            }
+
+
+            const { error } =
+              await window.supabaseClient
+                .from("projects")
+                .delete()
+                .eq("id", id)
+                .eq(
+                  "user_id",
+                  session.user.id
+                );
+
+
+            if (error) {
+              throw error;
+            }
+
+
+            projects =
+              projects.filter(
+                (project) =>
+                  String(project.id) !==
+                  String(id)
+              );
+
+
+            filteredProjects =
+              [...projects];
+
+
+            updateStats();
+
+            renderProjects();
+
+
+            if (window.VoiceAI) {
+              VoiceAI.toast(
+                "Project deleted."
+              );
+            }
+
+          } catch (error) {
+
+            console.error(
+              "Project delete error:",
+              error
+            );
+
+
+            if (window.VoiceAI) {
+              VoiceAI.toast(
+                "Unable to delete project."
+              );
+            }
+
+          }
+
+        }
+      );
+
+
+      /* ================= VIEW ================= */
+
+      document.addEventListener(
+        "click",
+        (event) => {
+
+          const button =
+            event.target.closest(
+              ".project-open-btn"
+            );
+
+
+          if (!button) return;
+
+
+          const id =
+            button.dataset.id;
+
+
+          const project =
+            projects.find(
+              (item) =>
+                String(item.id) ===
+                String(id)
+            );
+
+
+          if (!project) return;
+
+
+          if (
+            project.output_url ||
+            project.url ||
+            project.file_url
+          ) {
+
+            window.open(
+              project.output_url ||
+              project.url ||
+              project.file_url,
+              "_blank",
+              "noopener"
+            );
+
+            return;
+
+          }
+
+
+          if (window.VoiceAI) {
+
+            VoiceAI.toast(
+              "This project does not have an output file yet."
+            );
+
+          }
+
+        }
+      );
+
+
+      /* ================= PAGINATION ================= */
+
+      function updatePagination() {
+
+        const pagination =
+          document.getElementById(
+            "projectPagination"
+          );
+
+        const totalPages =
+          Math.ceil(
+            filteredProjects.length /
+            pageSize
+          );
+
+
+        if (totalPages <= 1) {
+
+          pagination.hidden = true;
+
+          return;
+
+        }
+
+
+        pagination.hidden = false;
+
+
+        document.getElementById(
+          "pageNumber"
+        ).textContent =
+          `Page ${currentPage} of ${totalPages}`;
+
+
+        document.getElementById(
+          "prevPage"
+        ).disabled =
+          currentPage <= 1;
+
+
+        document.getElementById(
+          "nextPage"
+        ).disabled =
+          currentPage >= totalPages;
+
+      }
+
+
+      document
+        .getElementById("prevPage")
+        ?.addEventListener(
+          "click",
+          () => {
+
+            if (currentPage <= 1) return;
+
+            currentPage--;
+
+            renderProjects();
+
+            window.scrollTo({
+              top:350,
+              behavior:"smooth"
+            });
+
+          }
+        );
+
+
+      document
+        .getElementById("nextPage")
+        ?.addEventListener(
+          "click",
+          () => {
+
+            const totalPages =
+              Math.ceil(
+                filteredProjects.length /
+                pageSize
+              );
+
+
+            if (
+              currentPage >= totalPages
+            ) return;
+
+
+            currentPage++;
+
+            renderProjects();
+
+            window.scrollTo({
+              top:350,
+              behavior:"smooth"
+            });
+
+          }
+        );
+
+
+      /* ================= HELPERS ================= */
+
+      function formatDate(date) {
+
+        try {
+
+          return new Intl.DateTimeFormat(
+            "en-IN",
+            {
+              day:"numeric",
+              month:"short",
+              year:"numeric"
+            }
+          ).format(
+            new Date(date)
+          );
+
+        } catch {
+
+          return "Recently";
+
+        }
+
+      }
+
+
+      function escapeHTML(value) {
+
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+
+      }
+
+
+      function escapeAttr(value) {
+        return escapeHTML(value);
+      }
+
+
+      /* ================= INIT ================= */
+
+      loadProjects();
+
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+    });
+  </script>
+
+
+  <!-- ================= RESPONSIVE ================= -->
+
+  <style>
+
+    .project-card {
+      transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+    }
+
+
+    .project-card:hover {
+      transform:translateY(-3px);
+      border-color:rgba(96,165,250,.28) !important;
+      box-shadow:0 20px 55px rgba(0,0,0,.25) !important;
+    }
+
+
+    @media (max-width: 950px) {
+
+      .project-stats {
+        grid-template-columns:repeat(2,1fr) !important;
+      }
+
+      #projectGrid {
+        grid-template-columns:repeat(2,1fr) !important;
+      }
+
+      .quick-actions {
+        grid-template-columns:repeat(2,1fr) !important;
+      }
+
+    }
+
+
+    @media (max-width: 650px) {
+
+      .nav-links {
+        display:none;
+      }
+
+      .nav-login {
+        display:none;
+      }
+
+      .nav-actions .btn {
+        padding:9px 12px;
+        font-size:11px;
+      }
+
+      .project-stats {
+        grid-template-columns:1fr 1fr !important;
+      }
+
+      #projectGrid {
+        grid-template-columns:1fr !important;
+      }
+
+      .quick-actions {
+        grid-template-columns:1fr !important;
+      }
+
+      #projectSearch {
+        width:100% !important;
+      }
+
+    }
+
+  </style>
+
+</body>
+</html>

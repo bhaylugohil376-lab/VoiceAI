@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Text to Dialogue — VoiceAI</title>
+  <meta
+    name="description"
+    content="Create natural multi-speaker AI conversations with VoiceAI."
+  >
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="./style.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container nav-container">
+
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <i data-lucide="audio-lines"></i>
+        </span>
+        <span>VoiceAI</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="tools.html" class="active">AI Tools</a>
+        <a href="voices.html">Voices</a>
+        <a href="studio.html">Studio</a>
+        <a href="pricing.html">Pricing</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="login.html" class="nav-login">Login</a>
+
+        <a href="signup.html" class="btn btn-primary">
+          Get Started
+          <i data-lucide="arrow-right"></i>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- HERO -->
+    <section class="page-hero">
+      <div class="container">
+
+        <div class="eyebrow">
+          <i data-lucide="messages-square"></i>
+          TEXT TO DIALOGUE
+        </div>
+
+        <h1>
+          Turn scripts into
+          <span>natural conversations.</span>
+        </h1>
+
+        <p>
+          Create multi-speaker conversations with different AI voices,
+          expressive delivery and professional audio output.
+        </p>
+
+      </div>
+    </section>
+
+
+    <!-- WORKSPACE -->
+    <section class="tools-section">
+
+      <div class="container">
+
+        <div
+          style="
+            display:grid;
+            grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);
+            gap:24px;
+            align-items:start;
+          "
+          class="dialogue-layout"
+        >
+
+          <!-- LEFT -->
+          <div
+            style="
+              background:rgba(10,25,48,.78);
+              border:1px solid rgba(96,165,250,.16);
+              border-radius:20px;
+              padding:24px;
+              box-shadow:0 20px 60px rgba(0,0,0,.22);
+            "
+          >
+
+            <div
+              style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:15px;
+                margin-bottom:20px;
+                flex-wrap:wrap;
+              "
+            >
+              <div>
+                <span class="section-kicker">SCRIPT</span>
+                <h2 style="margin:5px 0 0;">
+                  Conversation
+                </h2>
+              </div>
+
+              <span
+                id="usageBadge"
+                style="
+                  display:inline-flex;
+                  align-items:center;
+                  gap:7px;
+                  padding:8px 12px;
+                  border-radius:999px;
+                  background:rgba(59,130,246,.10);
+                  border:1px solid rgba(96,165,250,.18);
+                  color:#9fc7ff;
+                  font-size:11px;
+                  font-weight:700;
+                "
+              >
+                <i data-lucide="zap" style="width:14px;height:14px;"></i>
+                Free: 5 uses / 24h
+              </span>
+            </div>
+
+
+            <!-- Speaker 1 -->
+            <div
+              style="
+                border:1px solid rgba(96,165,250,.13);
+                border-radius:16px;
+                padding:18px;
+                margin-bottom:14px;
+                background:rgba(3,12,28,.38);
+              "
+            >
+
+              <div
+                style="
+                  display:flex;
+                  justify-content:space-between;
+                  align-items:center;
+                  margin-bottom:12px;
+                  gap:10px;
+                "
+              >
+
+                <strong
+                  style="
+                    display:flex;
+                    align-items:center;
+                    gap:8px;
+                    color:#eaf4ff;
+                  "
+                >
+                  <span
+                    style="
+                      width:30px;
+                      height:30px;
+                      border-radius:9px;
+                      display:grid;
+                      place-items:center;
+                      background:rgba(34,211,238,.10);
+                      color:#67e8f9;
+                    "
+                  >
+                    <i data-lucide="user"></i>
+                  </span>
+
+                  Speaker 1
+                </strong>
+
+                <button
+                  type="button"
+                  class="btn"
+                  id="removeSpeaker1"
+                  style="
+                    padding:7px 9px;
+                    border:1px solid rgba(255,255,255,.08);
+                    background:rgba(255,255,255,.03);
+                    color:#8ea4c1;
+                  "
+                  title="Remove speaker"
+                >
+                  <i data-lucide="trash-2"></i>
+                </button>
+
+              </div>
+
+
+              <div
+                style="
+                  display:grid;
+                  grid-template-columns:190px 1fr;
+                  gap:12px;
+                "
+                class="speaker-row"
+              >
+
+                <select
+                  id="speaker1Voice"
+                  style="
+                    width:100%;
+                    padding:12px;
+                    border-radius:11px;
+                    border:1px solid rgba(96,165,250,.18);
+                    background:#08162d;
+                    color:#eaf4ff;
+                    outline:none;
+                  "
+                >
+                  <option value="">Select voice</option>
+                  <option value="Rachel">Rachel — Female</option>
+                  <option value="Jessica">Jessica — Female</option>
+                  <option value="Juniper">Juniper — Female</option>
+                  <option value="David">David — Male</option>
+                  <option value="Bryan">Bryan — Male</option>
+                  <option value="Hale">Hale — Male</option>
+                </select>
+
+                <textarea
+                  id="speaker1Text"
+                  rows="4"
+                  maxlength="3000"
+                  placeholder="Write Speaker 1's dialogue..."
+                  style="
+                    width:100%;
+                    resize:vertical;
+                    padding:13px;
+                    border-radius:11px;
+                    border:1px solid rgba(96,165,250,.18);
+                    background:#08162d;
+                    color:#eaf4ff;
+                    outline:none;
+                    font-family:inherit;
+                  "
+                ></textarea>
+
+              </div>
+
+            </div>
+
+
+            <!-- Speaker 2 -->
+            <div
+              style="
+                border:1px solid rgba(96,165,250,.13);
+                border-radius:16px;
+                padding:18px;
+                margin-bottom:14px;
+                background:rgba(3,12,28,.38);
+              "
+            >
+
+              <div
+                style="
+                  display:flex;
+                  justify-content:space-between;
+                  align-items:center;
+                  margin-bottom:12px;
+                  gap:10px;
+                "
+              >
+
+                <strong
+                  style="
+                    display:flex;
+                    align-items:center;
+                    gap:8px;
+                    color:#eaf4ff;
+                  "
+                >
+                  <span
+                    style="
+                      width:30px;
+                      height:30px;
+                      border-radius:9px;
+                      display:grid;
+                      place-items:center;
+                      background:rgba(96,165,250,.10);
+                      color:#93c5fd;
+                    "
+                  >
+                    <i data-lucide="user-round"></i>
+                  </span>
+
+                  Speaker 2
+                </strong>
+
+                <button
+                  type="button"
+                  class="btn"
+                  id="removeSpeaker2"
+                  style="
+                    padding:7px 9px;
+                    border:1px solid rgba(255,255,255,.08);
+                    background:rgba(255,255,255,.03);
+                    color:#8ea4c1;
+                  "
+                  title="Remove speaker"
+                >
+                  <i data-lucide="trash-2"></i>
+                </button>
+
+              </div>
+
+
+              <div
+                style="
+                  display:grid;
+                  grid-template-columns:190px 1fr;
+                  gap:12px;
+                "
+                class="speaker-row"
+              >
+
+                <select
+                  id="speaker2Voice"
+                  style="
+                    width:100%;
+                    padding:12px;
+                    border-radius:11px;
+                    border:1px solid rgba(96,165,250,.18);
+                    background:#08162d;
+                    color:#eaf4ff;
+                    outline:none;
+                  "
+                >
+                  <option value="">Select voice</option>
+                  <option value="Rachel">Rachel — Female</option>
+                  <option value="Jessica">Jessica — Female</option>
+                  <option value="Juniper">Juniper — Female</option>
+                  <option value="David">David — Male</option>
+                  <option value="Bryan">Bryan — Male</option>
+                  <option value="Hale">Hale — Male</option>
+                </select>
+
+                <textarea
+                  id="speaker2Text"
+                  rows="4"
+                  maxlength="3000"
+                  placeholder="Write Speaker 2's dialogue..."
+                  style="
+                    width:100%;
+                    resize:vertical;
+                    padding:13px;
+                    border-radius:11px;
+                    border:1px solid rgba(96,165,250,.18);
+                    background:#08162d;
+                    color:#eaf4ff;
+                    outline:none;
+                    font-family:inherit;
+                  "
+                ></textarea>
+
+              </div>
+
+            </div>
+
+
+            <!-- Add Speaker -->
+            <button
+              type="button"
+              id="addSpeakerBtn"
+              class="btn"
+              style="
+                width:100%;
+                justify-content:center;
+                border:1px dashed rgba(96,165,250,.28);
+                background:rgba(59,130,246,.05);
+                color:#9fc7ff;
+                padding:12px;
+                margin-bottom:20px;
+              "
+            >
+              <i data-lucide="plus"></i>
+              Add Speaker
+            </button>
+
+
+            <!-- Settings -->
+            <div
+              style="
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:12px;
+                margin-bottom:20px;
+              "
+              class="dialogue-settings"
+            >
+
+              <label
+                style="
+                  display:flex;
+                  flex-direction:column;
+                  gap:7px;
+                  color:#91a6c2;
+                  font-size:12px;
+                  font-weight:600;
+                "
+              >
+                Output format
+
+                <select
+                  id="outputFormat"
+                  style="
+                    padding:12px;
+                    border-radius:11px;
+                    border:1px solid rgba(96,165,250,.18);
+                    background:#08162d;
+                    color:#eaf4ff;
+                    outline:none;
+                  "
+                >
+                  <option value="mp3">MP3</option>
+                  <option value="wav">WAV</option>
+                </select>
+              </label>
+
+
+              <label
+                style="
+                  display:flex;
+                  flex-direction:column;
+                  gap:7px;
+                  color:#91a6c2;
+                  font-size:12px;
+                  font-weight:600;
+                "
+              >
+                Dialogue style
+
+                <select
+                  id="dialogueStyle"
+                  style="
+                    padding:12px;
+                    border-radius:11px;
+                    border:1px solid rgba(96,165,250,.18);
+                    background:#08162d;
+                    color:#eaf4ff;
+                    outline:none;
+                  "
+                >
+                  <option value="natural">Natural</option>
+                  <option value="professional">Professional</option>
+                  <option value="podcast">Podcast</option>
+                  <option value="advertisement">Advertisement</option>
+                  <option value="cinematic">Cinematic</option>
+                </select>
+              </label>
+
+            </div>
+
+
+            <button
+              type="button"
+              id="generateDialogueBtn"
+              class="btn btn-primary"
+              style="
+                width:100%;
+                justify-content:center;
+                padding:14px;
+                font-size:14px;
+              "
+            >
+              <i data-lucide="sparkles"></i>
+              Generate Dialogue
+            </button>
+
+          </div>
+
+
+          <!-- RIGHT -->
+          <aside
+            style="
+              position:sticky;
+              top:90px;
+              background:rgba(10,25,48,.78);
+              border:1px solid rgba(96,165,250,.16);
+              border-radius:20px;
+              padding:22px;
+              box-shadow:0 20px 60px rgba(0,0,0,.22);
+            "
+            class="dialogue-output"
+          >
+
+            <div
+              style="
+                display:flex;
+                align-items:center;
+                gap:10px;
+                margin-bottom:18px;
+              "
+            >
+
+              <span
+                style="
+                  width:38px;
+                  height:38px;
+                  display:grid;
+                  place-items:center;
+                  border-radius:11px;
+                  background:rgba(34,211,238,.10);
+                  color:#67e8f9;
+                "
+              >
+                <i data-lucide="headphones"></i>
+              </span>
+
+              <div>
+                <span class="section-kicker">OUTPUT</span>
+                <h3 style="margin:3px 0 0;">
+                  Generated Audio
+                </h3>
+              </div>
+
+            </div>
+
+
+            <div
+              id="outputEmpty"
+              style="
+                padding:35px 15px;
+                text-align:center;
+                border:1px dashed rgba(96,165,250,.16);
+                border-radius:15px;
+                color:#7186a4;
+              "
+            >
+              <i
+                data-lucide="music"
+                style="width:34px;height:34px;margin-bottom:12px;"
+              ></i>
+
+              <p style="margin:0;font-size:13px;">
+                Your generated dialogue will appear here.
+              </p>
+            </div>
+
+
+            <div id="outputResult" hidden>
+
+              <audio
+                id="dialogueAudio"
+                controls
+                style="width:100%;"
+              ></audio>
+
+              <a
+                id="downloadDialogue"
+                class="btn"
+                href="#"
+                download="voiceai-dialogue.mp3"
+                style="
+                  width:100%;
+                  justify-content:center;
+                  margin-top:12px;
+                  border:1px solid rgba(96,165,250,.18);
+                  background:rgba(59,130,246,.07);
+                  color:#b9d6ff;
+                "
+              >
+                <i data-lucide="download"></i>
+                Download Audio
+              </a>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:18px;
+                padding:14px;
+                border-radius:13px;
+                background:rgba(59,130,246,.05);
+                border:1px solid rgba(96,165,250,.10);
+              "
+            >
+              <div
+                style="
+                  display:flex;
+                  align-items:center;
+                  gap:8px;
+                  color:#9fc7ff;
+                  font-size:11px;
+                  font-weight:700;
+                  margin-bottom:7px;
+                "
+              >
+                <i data-lucide="info" style="width:14px;"></i>
+                TIP
+              </div>
+
+              <p
+                style="
+                  margin:0;
+                  color:#7186a4;
+                  font-size:11px;
+                  line-height:1.6;
+                "
+              >
+                Give each speaker a clear voice and keep dialogue
+                natural for better results.
+              </p>
+            </div>
+
+          </aside>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- FEATURES -->
+    <section class="tools-section">
+
+      <div class="container">
+
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">BUILT FOR CREATORS</span>
+            <h2>Professional dialogue workflow</h2>
+          </div>
+        </div>
+
+
+        <div
+          style="
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:16px;
+          "
+          class="feature-grid"
+        >
+
+          <div class="tool-card">
+            <div class="tool-icon">
+              <i data-lucide="users"></i>
+            </div>
+
+            <div class="tool-card-content">
+              <h3>Multiple Speakers</h3>
+
+              <p>
+                Build conversations using different voices for each character.
+              </p>
+            </div>
+          </div>
+
+
+          <div class="tool-card">
+            <div class="tool-icon">
+              <i data-lucide="audio-waveform"></i>
+            </div>
+
+            <div class="tool-card-content">
+              <h3>Natural Delivery</h3>
+
+              <p>
+                Create smoother dialogue suitable for podcasts and videos.
+              </p>
+            </div>
+          </div>
+
+
+          <div class="tool-card">
+            <div class="tool-icon">
+              <i data-lucide="download"></i>
+            </div>
+
+            <div class="tool-card-content">
+              <h3>Ready to Export</h3>
+
+              <p>
+                Generate audio and download it for your production workflow.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- CTA -->
+    <section class="cta-section">
+
+      <div class="container">
+
+        <div class="cta-card">
+
+          <div>
+            <span class="section-kicker">VOICEAI</span>
+
+            <h2>
+              Create conversations that sound real.
+            </h2>
+
+            <p>
+              Start creating professional multi-speaker audio today.
+            </p>
+          </div>
+
+          <a href="signup.html" class="btn btn-primary">
+            Get Started
+            <i data-lucide="arrow-right"></i>
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+
+    <div class="container">
+
+      <div class="footer-main">
+
+        <div class="footer-brand">
+
+          <a href="index.html" class="brand">
+            <span class="brand-mark">
+              <i data-lucide="audio-lines"></i>
+            </span>
+            <span>VoiceAI</span>
+          </a>
+
+          <p>
+            AI-powered voice and creative tools for modern content creators.
+          </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+          <div>
+            <h4>Product</h4>
+            <a href="tools.html">AI Tools</a>
+            <a href="voices.html">Voices</a>
+            <a href="studio.html">Studio</a>
+            <a href="pricing.html">Pricing</a>
+          </div>
+
+          <div>
+            <h4>Company</h4>
+            <a href="about.html">About</a>
+            <a href="faq.html">FAQ</a>
+            <a href="contact.html">Contact</a>
+          </div>
+
+          <div>
+            <h4>Account</h4>
+            <a href="login.html">Login</a>
+            <a href="signup.html">Sign Up</a>
+            <a href="profile.html">Profile</a>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="footer-bottom">
+
+        <span>
+          © 2026 VoiceAI. All rights reserved.
+        </span>
+
+        <div>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./script.js"></script>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      const generateBtn =
+        document.getElementById("generateDialogueBtn");
+
+      const speaker1Text =
+        document.getElementById("speaker1Text");
+
+      const speaker2Text =
+        document.getElementById("speaker2Text");
+
+      const speaker1Voice =
+        document.getElementById("speaker1Voice");
+
+      const speaker2Voice =
+        document.getElementById("speaker2Voice");
+
+      const outputEmpty =
+        document.getElementById("outputEmpty");
+
+      const outputResult =
+        document.getElementById("outputResult");
+
+      const audio =
+        document.getElementById("dialogueAudio");
+
+      const download =
+        document.getElementById("downloadDialogue");
+
+      const addSpeakerBtn =
+        document.getElementById("addSpeakerBtn");
+
+      const removeSpeaker1 =
+        document.getElementById("removeSpeaker1");
+
+      const removeSpeaker2 =
+        document.getElementById("removeSpeaker2");
+
+
+      let extraSpeakerAdded = false;
+
+
+      function getAccessToken() {
+
+        if (
+          window.supabaseClient &&
+          window.supabaseClient.auth
+        ) {
+          return window.supabaseClient
+            .auth
+            .getSession();
+        }
+
+        return Promise.resolve({
+          data: { session: null }
+        });
+      }
+
+
+      async function generateDialogue() {
+
+        const text1 =
+          speaker1Text.value.trim();
+
+        const text2 =
+          speaker2Text.value.trim();
+
+        if (!text1) {
+          speaker1Text.focus();
+
+          if (window.VoiceAI) {
+            VoiceAI.toast(
+              "Please enter Speaker 1 dialogue."
+            );
+          }
+
+          return;
+        }
+
+
+        if (!text2) {
+          speaker2Text.focus();
+
+          if (window.VoiceAI) {
+            VoiceAI.toast(
+              "Please enter Speaker 2 dialogue."
+            );
+          }
+
+          return;
+        }
+
+
+        if (!speaker1Voice.value) {
+
+          if (window.VoiceAI) {
+            VoiceAI.toast(
+              "Select a voice for Speaker 1."
+            );
+          }
+
+          speaker1Voice.focus();
+          return;
+        }
+
+
+        if (!speaker2Voice.value) {
+
+          if (window.VoiceAI) {
+            VoiceAI.toast(
+              "Select a voice for Speaker 2."
+            );
+          }
+
+          speaker2Voice.focus();
+          return;
+        }
+
+
+        const originalText =
+          generateBtn.innerHTML;
+
+        generateBtn.disabled = true;
+
+        generateBtn.innerHTML = `
+          <i data-lucide="loader-circle"></i>
+          Generating...
+        `;
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+
+        try {
+
+          const sessionResult =
+            await getAccessToken();
+
+          const session =
+            sessionResult?.data?.session;
+
+
+          if (!session?.access_token) {
+
+            if (window.VoiceAI) {
+              VoiceAI.toast(
+                "Please login before generating audio."
+              );
+            }
+
+            setTimeout(() => {
+              window.location.href =
+                "login.html?redirect=dialogue.html";
+            }, 500);
+
+            return;
+          }
+
+
+          const speakers = [
+            {
+              voice: speaker1Voice.value,
+              text: text1
+            },
+            {
+              voice: speaker2Voice.value,
+              text: text2
+            }
+          ];
+
+
+          if (extraSpeakerAdded) {
+
+            const extraText =
+              document.getElementById(
+                "speaker3Text"
+              );
+
+            const extraVoice =
+              document.getElementById(
+                "speaker3Voice"
+              );
+
+            if (
+              extraText &&
+              extraVoice &&
+              extraText.value.trim() &&
+              extraVoice.value
+            ) {
+              speakers.push({
+                voice: extraVoice.value,
+                text: extraText.value.trim()
+              });
+            }
+          }
+
+
+          const response =
+            await fetch("./api/generate", {
+
+              method: "POST",
+
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization":
+                  `Bearer ${session.access_token}`
+              },
+
+              body: JSON.stringify({
+                type: "dialogue",
+                speakers,
+                format:
+                  document.getElementById(
+                    "outputFormat"
+                  ).value,
+
+                style:
+                  document.getElementById(
+                    "dialogueStyle"
+                  ).value
+              })
+
+            });
+
+
+          const data =
+            await response.json();
+
+
+          if (!response.ok) {
+            throw new Error(
+              data?.error ||
+              "Dialogue generation failed."
+            );
+          }
+
+
+          const audioUrl =
+            data.audioUrl ||
+            data.url ||
+            data.audio_url;
+
+
+          if (!audioUrl) {
+            throw new Error(
+              "The server did not return an audio file."
+            );
+          }
+
+
+          audio.src = audioUrl;
+
+          download.href = audioUrl;
+
+          outputEmpty.hidden = true;
+          outputResult.hidden = false;
+
+
+          if (window.VoiceAI) {
+            VoiceAI.toast(
+              "Dialogue generated successfully."
+            );
+          }
+
+        } catch (error) {
+
+          console.error(
+            "Dialogue generation error:",
+            error
+          );
+
+          if (window.VoiceAI) {
+            VoiceAI.toast(
+              error.message ||
+              "Unable to generate dialogue."
+            );
+          }
+
+        } finally {
+
+          generateBtn.disabled = false;
+
+          generateBtn.innerHTML =
+            originalText;
+
+          if (window.lucide) {
+            lucide.createIcons();
+          }
+
+        }
+
+      }
+
+
+      generateBtn?.addEventListener(
+        "click",
+        generateDialogue
+      );
+
+
+      function addThirdSpeaker() {
+
+        if (extraSpeakerAdded) return;
+
+        extraSpeakerAdded = true;
+
+        const container =
+          document.createElement("div");
+
+        container.id = "speaker3Wrapper";
+
+        container.style.cssText = `
+          border:1px solid rgba(96,165,250,.13);
+          border-radius:16px;
+          padding:18px;
+          margin-bottom:14px;
+          background:rgba(3,12,28,.38);
+        `;
+
+
+        container.innerHTML = `
+
+          <div
+            style="
+              display:flex;
+              justify-content:space-between;
+              align-items:center;
+              margin-bottom:12px;
+            "
+          >
+
+            <strong
+              style="
+                display:flex;
+                align-items:center;
+                gap:8px;
+                color:#eaf4ff;
+              "
+            >
+
+              <span
+                style="
+                  width:30px;
+                  height:30px;
+                  border-radius:9px;
+                  display:grid;
+                  place-items:center;
+                  background:rgba(167,139,250,.10);
+                  color:#c4b5fd;
+                "
+              >
+                <i data-lucide="user-plus"></i>
+              </span>
+
+              Speaker 3
+
+            </strong>
+
+            <button
+              type="button"
+              id="removeSpeaker3"
+              class="btn"
+              style="
+                padding:7px 9px;
+                border:1px solid rgba(255,255,255,.08);
+                background:rgba(255,255,255,.03);
+                color:#8ea4c1;
+              "
+            >
+              <i data-lucide="trash-2"></i>
+            </button>
+
+          </div>
+
+
+          <div
+            style="
+              display:grid;
+              grid-template-columns:190px 1fr;
+              gap:12px;
+            "
+            class="speaker-row"
+          >
+
+            <select
+              id="speaker3Voice"
+              style="
+                width:100%;
+                padding:12px;
+                border-radius:11px;
+                border:1px solid rgba(96,165,250,.18);
+                background:#08162d;
+                color:#eaf4ff;
+                outline:none;
+              "
+            >
+
+              <option value="">
+                Select voice
+              </option>
+
+              <option value="Rachel">
+                Rachel — Female
+              </option>
+
+              <option value="Jessica">
+                Jessica — Female
+              </option>
+
+              <option value="Juniper">
+                Juniper — Female
+              </option>
+
+              <option value="David">
+                David — Male
+              </option>
+
+              <option value="Bryan">
+                Bryan — Male
+              </option>
+
+              <option value="Hale">
+                Hale — Male
+              </option>
+
+            </select>
+
+
+            <textarea
+              id="speaker3Text"
+              rows="4"
+              maxlength="3000"
+              placeholder="Write Speaker 3's dialogue..."
+              style="
+                width:100%;
+                resize:vertical;
+                padding:13px;
+                border-radius:11px;
+                border:1px solid rgba(96,165,250,.18);
+                background:#08162d;
+                color:#eaf4ff;
+                outline:none;
+                font-family:inherit;
+              "
+            ></textarea>
+
+          </div>
+        `;
+
+
+        speaker2Text
+          .closest("div[style*='border:1px']")
+          ?.after(container);
+
+
+        const removeSpeaker3 =
+          document.getElementById(
+            "removeSpeaker3"
+          );
+
+
+        removeSpeaker3?.addEventListener(
+          "click",
+          () => {
+
+            container.remove();
+
+            extraSpeakerAdded = false;
+
+          }
+        );
+
+
+        addSpeakerBtn.textContent =
+          "Third speaker added";
+
+        addSpeakerBtn.disabled = true;
+
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+      }
+
+
+      addSpeakerBtn?.addEventListener(
+        "click",
+        addThirdSpeaker
+      );
+
+
+      removeSpeaker1?.addEventListener(
+        "click",
+        () => {
+
+          speaker1Text.value = "";
+          speaker1Voice.value = "";
+
+          if (window.VoiceAI) {
+            VoiceAI.toast(
+              "Speaker 1 content cleared."
+            );
+          }
+
+        }
+      );
+
+
+      removeSpeaker2?.addEventListener(
+        "click",
+        () => {
+
+          speaker2Text.value = "";
+          speaker2Voice.value = "";
+
+          if (window.VoiceAI) {
+            VoiceAI.toast(
+              "Speaker 2 content cleared."
+            );
+
+          }
+
+        }
+      );
+
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+    });
+  </script>
+
+
+  <!-- RESPONSIVE -->
+  <style>
+    @media (max-width: 900px) {
+
+      .dialogue-layout {
+        grid-template-columns:1fr !important;
+      }
+
+      .dialogue-output {
+        position:static !important;
+      }
+
+      .feature-grid {
+        grid-template-columns:1fr !important;
+      }
+
+    }
+
+
+    @media (max-width: 650px) {
+
+      .nav-links {
+        display:none;
+      }
+
+      .nav-login {
+        display:none;
+      }
+
+      .nav-actions .btn {
+        padding:9px 12px;
+        font-size:11px;
+      }
+
+      .speaker-row {
+        grid-template-columns:1fr !important;
+      }
+
+      .dialogue-settings {
+        grid-template-columns:1fr !important;
+      }
+
+      .page-hero {
+        padding-top:50px;
+        padding-bottom:35px;
+      }
+
+    }
+  </style>
+
+</body>
+</html>

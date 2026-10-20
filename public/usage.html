@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Usage — VoiceAI</title>
+  <meta
+    name="description"
+    content="Track your VoiceAI usage and 24-hour AI limits."
+  >
+
+  <link rel="stylesheet" href="./style.css">
+
+  <style>
+    .usage-page {
+      min-height: 100vh;
+      padding: 110px 24px 60px;
+    }
+
+    .usage-shell {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .usage-header {
+      margin-bottom: 28px;
+    }
+
+    .usage-header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(30px, 5vw, 46px);
+    }
+
+    .usage-header p {
+      margin: 0;
+      color: #8ea4c1;
+      max-width: 680px;
+      line-height: 1.6;
+    }
+
+    .usage-plan {
+      margin-bottom: 22px;
+      padding: 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(24, 200, 255, .2);
+      background:
+        radial-gradient(
+          circle at 90% 20%,
+          rgba(24, 200, 255, .12),
+          transparent 35%
+        ),
+        #091a31;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .usage-plan-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .usage-plan-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: rgba(24, 174, 245, .12);
+      color: #39d5ff;
+    }
+
+    .usage-plan h2 {
+      margin: 0 0 4px;
+      font-size: 19px;
+      color: #f4f8ff;
+    }
+
+    .usage-plan p {
+      margin: 0;
+      color: #7f96b2;
+      font-size: 12px;
+    }
+
+    .plan-badge {
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: rgba(24, 200, 255, .12);
+      border: 1px solid rgba(24, 200, 255, .2);
+      color: #52d9ff;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .usage-overview {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 28px;
+    }
+
+    .usage-card {
+      padding: 20px;
+      border-radius: 17px;
+      background: #091a31;
+      border: 1px solid rgba(96, 165, 250, .14);
+    }
+
+    .usage-label {
+      color: #7d94b0;
+      font-size: 12px;
+      margin-bottom: 9px;
+    }
+
+    .usage-number {
+      color: #f5f9ff;
+      font-size: 29px;
+      font-weight: 800;
+    }
+
+    .usage-sub {
+      margin-top: 5px;
+      color: #607895;
+      font-size: 11px;
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      color: #f1f6ff;
+      font-size: 19px;
+    }
+
+    .usage-tools {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .tool-usage-card {
+      padding: 19px;
+      border-radius: 17px;
+      background: #091a31;
+      border: 1px solid rgba(96, 165, 250, .14);
+    }
+
+    .tool-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .tool-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #eaf4ff;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .tool-icon {
+      width: 35px;
+      height: 35px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: rgba(24, 174, 245, .1);
+      color: #43d5ff;
+    }
+
+    .tool-count {
+      color: #8ca4bf;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .usage-progress {
+      width: 100%;
+      height: 7px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #102641;
+    }
+
+    .usage-progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #087eff, #18c8ff);
+      transition: width .35s ease;
+    }
+
+    .tool-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      color: #617a97;
+      font-size: 10px;
+    }
+
+    .usage-note {
+      margin-top: 26px;
+      padding: 17px 19px;
+      border-radius: 15px;
+      background: rgba(24, 174, 245, .06);
+      border: 1px solid rgba(24, 174, 245, .14);
+      color: #8199b5;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .usage-note strong {
+      color: #d9edff;
+    }
+
+    .usage-loading {
+      padding: 45px;
+      text-align: center;
+      color: #8098b5;
+    }
+
+    @media (max-width: 900px) {
+      .usage-overview {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .usage-tools {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .usage-page {
+        padding: 90px 14px 45px;
+      }
+
+      .usage-plan {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .usage-overview,
+      .usage-tools {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="site-header">
+    <div class="container nav-container">
+
+      <a href="./index.html" class="logo">
+        <span class="logo-mark">∿</span>
+        <span>VoiceAI</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="./index.html">Home</a>
+        <a href="./tools.html">AI Tools</a>
+        <a href="./voices.html">Voices</a>
+        <a href="./studio.html">Studio</a>
+        <a href="./pricing.html">Pricing</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="./login.html" class="nav-login">Login</a>
+        <a href="./pricing.html" class="nav-cta">Get Started</a>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="usage-page">
+    <div class="usage-shell">
+
+      <!-- HEADER -->
+      <section class="usage-header">
+        <h1>Usage & Limits</h1>
+        <p>
+          Track your VoiceAI activity and see how many AI generations
+          are available for each tool.
+        </p>
+      </section>
+
+      <!-- PLAN -->
+      <section class="usage-plan">
+
+        <div class="usage-plan-info">
+
+          <div class="usage-plan-icon">
+            <i data-lucide="gauge"></i>
+          </div>
+
+          <div>
+            <h2 id="planTitle">Free Plan</h2>
+            <p id="planDescription">
+              Each AI tool has an independent 5-use limit per 24 hours.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="plan-badge" id="planBadge">
+          FREE
+        </div>
+
+      </section>
+
+      <!-- OVERVIEW -->
+      <section class="usage-overview">
+
+        <div class="usage-card">
+          <div class="usage-label">Total AI Uses</div>
+          <div class="usage-number" id="totalUses">0</div>
+          <div class="usage-sub">Recent 24 hours</div>
+        </div>
+
+        <div class="usage-card">
+          <div class="usage-label">Active Tools</div>
+          <div class="usage-number" id="activeTools">0</div>
+          <div class="usage-sub">Tools used recently</div>
+        </div>
+
+        <div class="usage-card">
+          <div class="usage-label">Plan</div>
+          <div class="usage-number" id="overviewPlan">Free</div>
+          <div class="usage-sub" id="overviewPlanSub">
+            5 uses per tool
+          </div>
+        </div>
+
+      </section>
+
+      <h2 class="section-title">AI Tool Usage</h2>
+
+      <div id="usageLoading" class="usage-loading">
+        Loading your usage...
+      </div>
+
+      <section id="usageTools" class="usage-tools"></section>
+
+      <div class="usage-note">
+        <strong>How limits work:</strong>
+        Free accounts receive an independent limit for each AI tool.
+        For example, using Text to Speech does not reduce your Voice
+        Cloning allowance. Limits are measured over a rolling 24-hour
+        period.
+        <br><br>
+        Premium accounts do not have the internal 5-use restriction,
+        although external AI provider limits or fair-use restrictions
+        may still apply.
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+  <script src="./script.js"></script>
+
+  <script>
+    "use strict";
+
+    document.addEventListener("DOMContentLoaded", async () => {
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      const usageTools =
+        document.getElementById("usageTools");
+
+      const loading =
+        document.getElementById("usageLoading");
+
+      const tools = [
+        {
+          action: "tts",
+          name: "Text to Speech",
+          icon: "audio-lines"
+        },
+        {
+          action: "voice_clone",
+          name: "Voice Cloning",
+          icon: "mic-2"
+        },
+        {
+          action: "voice_design",
+          name: "Voice Design",
+          icon: "sparkles"
+        },
+        {
+          action: "voice_changer",
+          name: "Voice Changer",
+          icon: "repeat-2"
+        },
+        {
+          action: "dialogue",
+          name: "Text to Dialogue",
+          icon: "messages-square"
+        },
+        {
+          action: "stt",
+          name: "Speech to Text",
+          icon: "file-audio"
+        },
+        {
+          action: "voice_isolator",
+          name: "Voice Isolator",
+          icon: "audio-waveform"
+        },
+        {
+          action: "music",
+          name: "AI Music",
+          icon: "music-2"
+        },
+        {
+          action: "sound_effects",
+          name: "Sound Effects",
+          icon: "volume-2"
+        },
+        {
+          action: "dubbing",
+          name: "Dubbing",
+          icon: "languages"
+        },
+        {
+          action: "captions",
+          name: "Captions",
+          icon: "closed-caption"
+        },
+        {
+          action: "video_voice_transfer",
+          name: "Video Voice Transfer",
+          icon: "video"
+        },
+        {
+          action: "agents",
+          name: "AI Agents",
+          icon: "bot"
+        },
+        {
+          action: "assistant",
+          name: "Gemini Assistant",
+          icon: "message-circle"
+        },
+        {
+          action: "image",
+          name: "Gemini Image",
+          icon: "image"
+        }
+      ];
+
+      async function loadUsage() {
+
+        if (!window.supabaseClient) {
+          loading.textContent =
+            "Supabase is not configured.";
+          return;
+        }
+
+        try {
+
+          const {
+            data: { user },
+            error: authError
+          } =
+            await window.supabaseClient.auth.getUser();
+
+          if (authError || !user) {
+
+            loading.innerHTML = `
+              <p>Please login to view your usage.</p>
+              <br>
+              <a
+                href="./login.html"
+                class="project-btn primary"
+              >
+                Login
+              </a>
+            `;
+
+            return;
+          }
+
+          const response =
+            await fetch("./api/usage", {
+              method: "GET",
+              headers: {
+                Authorization:
+                  "Bearer " + (
+                    await window.supabaseClient.auth
+                      .getSession()
+                  ).data.session?.access_token
+              }
+            });
+
+          const result =
+            await response.json();
+
+          if (!response.ok) {
+            throw new Error(
+              result.error ||
+              "Unable to load usage."
+            );
+          }
+
+          renderUsage(result);
+
+        } catch (error) {
+
+          console.error(error);
+
+          // Do not present fabricated zero usage or a guessed plan as real data.
+          document.getElementById("planTitle").textContent = "Usage unavailable";
+          document.getElementById("planBadge").textContent = "ERROR";
+          document.getElementById("overviewPlan").textContent = "Unavailable";
+          document.getElementById("overviewPlanSub").textContent = "Usage data could not be verified.";
+          document.getElementById("planDescription").textContent =
+            "We could not load your current plan and usage. Check your connection and try again.";
+          if (window.VoiceAI) {
+            VoiceAI.toast("Usage data could not be loaded. Your limits have not been changed.");
+          }
+        }
+      }
+
+      function renderUsage(data) {
+
+        const plan =
+          String(data.plan || "free").toLowerCase();
+
+        const premium =
+          plan === "premium" ||
+          plan === "pro" ||
+          plan === "paid";
+
+        document.getElementById("planTitle")
+          .textContent =
+            premium
+              ? "Premium Plan"
+              : "Free Plan";
+
+        document.getElementById("planBadge")
+          .textContent =
+            premium
+              ? "PREMIUM"
+              : "FREE";
+
+        document.getElementById("overviewPlan")
+          .textContent =
+            premium
+              ? "Premium"
+              : "Free";
+
+        document.getElementById("overviewPlanSub")
+          .textContent =
+            premium
+              ? "Unlimited internal usage"
+              : "5 uses per tool";
+
+        document.getElementById("planDescription")
+          .textContent =
+            premium
+              ? "Unlimited internal VoiceAI usage. Provider limits may still apply."
+              : "Each AI tool has an independent 5-use limit per 24 hours.";
+
+        const usage =
+          data.usage || {};
+
+        let total =
+          0;
+
+        let active =
+          0;
+
+        usageTools.innerHTML = "";
+
+        tools.forEach(tool => {
+
+          const item =
+            usage[tool.action] || {};
+
+          const used =
+            Number(
+              item.used ??
+              item.count ??
+              0
+            );
+
+          const limit =
+            premium
+              ? null
+              : 5;
+
+          if (used > 0) {
+            active++;
+          }
+
+          total += used;
+
+          let percentage;
+
+          if (premium) {
+            percentage = 100;
+          } else {
+            percentage =
+              Math.min(
+                100,
+                (used / 5) * 100
+              );
+          }
+
+          const countText =
+            premium
+              ? `${used} uses`
+              : `${used} / 5`;
+
+          const remainingText =
+            premium
+              ? "No internal limit"
+              : `${Math.max(0, 5 - used)} remaining`;
+
+          const card =
+            document.createElement("article");
+
+          card.className =
+            "tool-usage-card";
+
+          card.innerHTML = `
+            <div class="tool-top">
+
+              <div class="tool-name">
+
+                <span class="tool-icon">
+                  <i
+                    data-lucide="${tool.icon}">
+                  </i>
+                </span>
+
+                ${escapeHTML(tool.name)}
+
+              </div>
+
+              <span class="tool-count">
+                ${escapeHTML(countText)}
+              </span>
+
+            </div>
+
+            <div class="usage-progress">
+
+              <div
+                class="usage-progress-bar"
+                style="width:${percentage}%">
+              </div>
+
+            </div>
+
+            <div class="tool-footer">
+
+              <span>
+                ${escapeHTML(remainingText)}
+              </span>
+
+              <span>
+                24h window
+              </span>
+
+            </div>
+          `;
+
+          usageTools.appendChild(card);
+        });
+
+        document.getElementById("totalUses")
+          .textContent = total;
+
+        document.getElementById("activeTools")
+          .textContent = active;
+
+        loading.style.display = "none";
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+      }
+
+      function escapeHTML(value) {
+
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      await loadUsage();
+
+    });
+  </script>
+
+</body>
+</html>

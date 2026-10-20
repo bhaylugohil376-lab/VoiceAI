@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Voice Cloning — VoiceAI</title>
+
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .clone-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 50px 20px 80px;
+    }
+
+    .clone-header {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .clone-header h1 {
+      margin: 15px 0 10px;
+    }
+
+    .clone-header p {
+      max-width: 680px;
+      margin: auto;
+      color: #8da2bd;
+      line-height: 1.7;
+    }
+
+    .clone-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      gap: 22px;
+    }
+
+    .clone-panel,
+    .clone-side-card {
+      background: linear-gradient(
+        145deg,
+        rgba(15, 31, 57, .97),
+        rgba(8, 19, 38, .97)
+      );
+      border: 1px solid rgba(110, 150, 200, .15);
+      border-radius: 18px;
+    }
+
+    .clone-panel {
+      padding: 26px;
+    }
+
+    .clone-side {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .clone-side-card {
+      padding: 20px;
+    }
+
+    .clone-side-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(34, 211, 238, .1);
+      color: #35d5ed;
+      margin-bottom: 14px;
+    }
+
+    .clone-side-card h3 {
+      margin: 0 0 8px;
+      color: #eef7ff;
+      font-size: 15px;
+    }
+
+    .clone-side-card p {
+      margin: 0;
+      color: #8196b0;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .clone-title {
+      margin-bottom: 24px;
+    }
+
+    .clone-title h2 {
+      margin: 0 0 7px;
+    }
+
+    .clone-title p {
+      margin: 0;
+      color: #8196b0;
+      font-size: 13px;
+    }
+
+    .clone-form-group {
+      margin-bottom: 20px;
+    }
+
+    .clone-form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #dcecff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .clone-input,
+    .clone-textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid rgba(120, 150, 190, .18);
+      background: #0a172d;
+      color: #eef7ff;
+      border-radius: 11px;
+      padding: 13px 14px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .clone-input:focus,
+    .clone-textarea:focus {
+      border-color: rgba(34, 211, 238, .55);
+    }
+
+    .clone-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .upload-box {
+      border: 1px dashed rgba(80, 180, 220, .35);
+      border-radius: 16px;
+      background: rgba(8, 25, 45, .65);
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .upload-box:hover {
+      border-color: rgba(34, 211, 238, .7);
+      background: rgba(10, 35, 57, .8);
+    }
+
+    .upload-icon {
+      width: 55px;
+      height: 55px;
+      margin: 0 auto 13px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: rgba(34, 211, 238, .1);
+      color: #35d5ed;
+    }
+
+    .upload-box strong {
+      display: block;
+      color: #eaf4ff;
+      margin-bottom: 6px;
+    }
+
+    .upload-box span {
+      display: block;
+      color: #758ba6;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .file-name {
+      margin-top: 12px;
+      color: #59d9ed;
+      font-size: 12px;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .consent-box {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin: 20px 0;
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, .025);
+      border: 1px solid rgba(120, 150, 190, .1);
+    }
+
+    .consent-box input {
+      margin-top: 3px;
+      accent-color: #17b9d6;
+    }
+
+    .consent-box label {
+      color: #93a6bd;
+      font-size: 11px;
+      line-height: 1.6;
+      cursor: pointer;
+    }
+
+    .clone-submit {
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      color: white;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #1677c8, #13b8d5);
+    }
+
+    .clone-submit:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .clone-error,
+    .clone-success {
+      margin-top: 15px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .clone-error {
+      color: #ffb5b5;
+      background: rgba(239, 68, 68, .08);
+      border: 1px solid rgba(239, 68, 68, .2);
+    }
+
+    .clone-success {
+      color: #9ef0d0;
+      background: rgba(16, 185, 129, .08);
+      border: 1px solid rgba(16, 185, 129, .2);
+    }
+
+    @media (max-width: 800px) {
+      .clone-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .clone-page {
+        padding: 30px 15px 60px;
+      }
+
+      .clone-panel {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-inner">
+
+      <a href="index.html" class="logo">
+        <span class="logo-mark">
+          <i data-lucide="audio-lines"></i>
+        </span>
+        <span>VoiceAI</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="tools.html">AI Tools</a>
+        <a href="voices.html">Voices</a>
+        <a href="studio.html">Studio</a>
+        <a href="pricing.html">Pricing</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="login.html" class="secondary-btn">
+          Login
+        </a>
+
+        <a href="pricing.html" class="primary-btn">
+          Get Premium
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+
+  <main class="clone-page">
+
+    <!-- HEADER -->
+    <section class="clone-header">
+
+      <div class="hero-badge">
+        <i data-lucide="copy"></i>
+        Voice Cloning
+      </div>
+
+      <h1>
+        Create your
+        <span>AI voice clone.</span>
+      </h1>
+
+      <p>
+        Upload an authorized voice recording and create a reusable
+        AI voice for your projects, narration and content.
+      </p>
+
+    </section>
+
+
+    <section class="clone-layout">
+
+      <!-- MAIN FORM -->
+      <div class="clone-panel">
+
+        <div class="clone-title">
+
+          <h2>
+            Create a voice clone
+          </h2>
+
+          <p>
+            Use a clear recording for the best result.
+          </p>
+
+        </div>
+
+
+        <!-- NAME -->
+        <div class="clone-form-group">
+
+          <label for="cloneName">
+            Voice name
+          </label>
+
+          <input
+            id="cloneName"
+            class="clone-input"
+            type="text"
+            maxlength="80"
+            placeholder="e.g. My Professional Voice"
+          />
+
+        </div>
+
+
+        <!-- DESCRIPTION -->
+        <div class="clone-form-group">
+
+          <label for="cloneDescription">
+            Description
+          </label>
+
+          <textarea
+            id="cloneDescription"
+            class="clone-textarea"
+            maxlength="500"
+            placeholder="Describe this voice..."
+          ></textarea>
+
+        </div>
+
+
+        <!-- AUDIO -->
+        <div class="clone-form-group">
+
+          <label>
+            Voice recording
+          </label>
+
+          <input
+            id="cloneFile"
+            type="file"
+            accept="audio/*"
+            hidden
+          />
+
+          <label
+            for="cloneFile"
+            class="upload-box"
+          >
+
+            <div class="upload-icon">
+              <i data-lucide="upload-cloud"></i>
+            </div>
+
+            <strong>
+              Upload voice recording
+            </strong>
+
+            <span>
+              MP3, WAV, M4A or other supported audio format
+            </span>
+
+            <span>
+              Use only audio that you own or have permission to clone.
+            </span>
+
+            <div
+              id="fileName"
+              class="file-name"
+            ></div>
+
+          </label>
+
+        </div>
+
+
+        <!-- CONSENT -->
+        <div class="consent-box">
+
+          <input
+            id="cloneConsent"
+            type="checkbox"
+          />
+
+          <label for="cloneConsent">
+            I confirm that I own this voice recording or have
+            explicit permission from the speaker to create an AI
+            voice clone from it.
+          </label>
+
+        </div>
+
+
+        <!-- SUBMIT -->
+        <button
+          id="cloneBtn"
+          class="clone-submit"
+          type="button"
+        >
+          <i data-lucide="sparkles"></i>
+          Create Voice Clone
+        </button>
+
+
+        <!-- MESSAGES -->
+        <div
+          id="cloneError"
+          class="clone-error"
+          hidden
+        ></div>
+
+        <div
+          id="cloneSuccess"
+          class="clone-success"
+          hidden
+        ></div>
+
+      </div>
+
+
+      <!-- SIDEBAR -->
+      <aside class="clone-side">
+
+        <div class="clone-side-card">
+
+          <div class="clone-side-icon">
+            <i data-lucide="mic"></i>
+          </div>
+
+          <h3>
+            Better recording
+          </h3>
+
+          <p>
+            Use clear speech with minimal background noise
+            for better voice quality.
+          </p>
+
+        </div>
+
+
+        <div class="clone-side-card">
+
+          <div class="clone-side-icon">
+            <i data-lucide="shield-check"></i>
+          </div>
+
+          <h3>
+            Permission required
+          </h3>
+
+          <p>
+            Only clone voices you own or have permission to use.
+            Never upload unauthorized recordings.
+          </p>
+
+        </div>
+
+
+        <div class="clone-side-card">
+
+          <div class="clone-side-icon">
+            <i data-lucide="gauge"></i>
+          </div>
+
+          <h3>
+            Free usage
+          </h3>
+
+          <p>
+            Free accounts use the independent Voice Cloning
+            5-use / 24-hour limit.
+          </p>
+
+        </div>
+
+      </aside>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="footer">
+
+    <div class="footer-inner">
+
+      <div>
+        <strong>VoiceAI</strong>
+        <span>AI Voice Studio</span>
+      </div>
+
+      <div>
+        © 2026 VoiceAI. All rights reserved.
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+
+
+  <script>
+    "use strict";
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+
+      const fileInput =
+        document.getElementById("cloneFile");
+
+      const fileName =
+        document.getElementById("fileName");
+
+      const cloneName =
+        document.getElementById("cloneName");
+
+      const cloneDescription =
+        document.getElementById("cloneDescription");
+
+      const consent =
+        document.getElementById("cloneConsent");
+
+      const cloneBtn =
+        document.getElementById("cloneBtn");
+
+      const errorBox =
+        document.getElementById("cloneError");
+
+      const successBox =
+        document.getElementById("cloneSuccess");
+
+
+      /* -----------------------------
+         FILE SELECTED
+      ----------------------------- */
+
+      fileInput.addEventListener(
+        "change",
+        () => {
+
+          const file =
+            fileInput.files?.[0];
+
+          if (!file) {
+
+            fileName.textContent = "";
+
+            return;
+          }
+
+          const sizeMB =
+            file.size / (1024 * 1024);
+
+          fileName.textContent =
+            `${file.name} • ${sizeMB.toFixed(2)} MB`;
+
+        }
+      );
+
+
+      function showError(message) {
+
+        errorBox.textContent =
+          message;
+
+        errorBox.hidden = false;
+
+        successBox.hidden = true;
+
+      }
+
+
+      function showSuccess(message) {
+
+        successBox.textContent =
+          message;
+
+        successBox.hidden = false;
+
+        errorBox.hidden = true;
+
+      }
+
+
+      /* -----------------------------
+         CREATE CLONE
+      ----------------------------- */
+
+      cloneBtn.addEventListener(
+        "click",
+        async () => {
+
+          errorBox.hidden = true;
+          successBox.hidden = true;
+
+
+          const name =
+            cloneName.value.trim();
+
+          const description =
+            cloneDescription.value.trim();
+
+          const file =
+            fileInput.files?.[0];
+
+
+          if (!name) {
+
+            showError(
+              "Please enter a voice name."
+            );
+
+            cloneName.focus();
+
+            return;
+          }
+
+
+          if (!file) {
+
+            showError(
+              "Please upload a voice recording."
+            );
+
+            return;
+          }
+
+
+          if (!consent.checked) {
+
+            showError(
+              "Please confirm that you have permission to clone this voice."
+            );
+
+            return;
+          }
+
+
+          const maxSize =
+            25 * 1024 * 1024;
+
+          if (file.size > maxSize) {
+
+            showError(
+              "Audio file is too large. Maximum size is 25 MB."
+            );
+
+            return;
+          }
+
+
+          let accessToken = null;
+
+
+          try {
+
+            /* -----------------------------
+               SUPABASE SESSION
+            ----------------------------- */
+
+            if (window.supabaseClient) {
+
+              const {
+                data
+              } =
+                await window.supabaseClient
+                  .auth
+                  .getSession();
+
+              accessToken =
+                data?.session?.access_token || null;
+
+            }
+
+
+            if (!accessToken) {
+
+              window.location.href =
+                "login.html";
+
+              return;
+            }
+
+
+            /* -----------------------------
+               LOADING
+            ----------------------------- */
+
+            cloneBtn.disabled = true;
+
+            cloneBtn.innerHTML = `
+              <i data-lucide="loader-circle"></i>
+              Creating clone...
+            `;
+
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+
+
+            /* -----------------------------
+               FORM DATA
+            ----------------------------- */
+
+            const formData =
+              new FormData();
+
+            formData.append(
+              "name",
+              name
+            );
+
+            formData.append(
+              "description",
+              description
+            );
+
+            formData.append(
+              "audio",
+              file
+            );
+
+            formData.append(
+              "consent",
+              "true"
+            );
+
+
+            /* -----------------------------
+               API
+            ----------------------------- */
+
+            const response =
+              await fetch(
+                "/api/voice-clone",
+                {
+                  method: "POST",
+
+                  headers: {
+                    "Authorization":
+                      `Bearer ${accessToken}`
+                  },
+
+                  body: formData
+                }
+              );
+
+
+            const data =
+              await response.json();
+
+
+            if (!response.ok) {
+
+              throw new Error(
+                data?.error ||
+                "Voice cloning failed."
+              );
+
+            }
+
+
+            showSuccess(
+              data?.message ||
+              "Voice clone created successfully."
+            );
+
+
+            /*
+             * Store returned voice ID
+             * for future TTS use.
+             */
+
+            if (data?.voice_id) {
+
+              sessionStorage.setItem(
+                "voiceai_cloned_voice_id",
+                data.voice_id
+              );
+
+            }
+
+
+          } catch (error) {
+
+            console.error(
+              "Voice Clone Error:",
+              error
+            );
+
+            showError(
+              error.message ||
+              "Something went wrong while creating the voice clone."
+            );
+
+          } finally {
+
+            cloneBtn.disabled = false;
+
+            cloneBtn.innerHTML = `
+              <i data-lucide="sparkles"></i>
+              Create Voice Clone
+            `;
+
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+
+          }
+
+        }
+      );
+
+    });
+  </script>
+
+</body>
+</html>
