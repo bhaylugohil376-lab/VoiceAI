@@ -47,8 +47,8 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // API files are ESM handlers (export default), not Express routers.
-// Dispatch /api/foo/bar to api/foo/bar.js so local development uses the
-// same handler contract as serverless deployments.
+// Dispatch /api/foo/bar to handlers/foo/bar.js so local development and the
+// single-function Vercel deployment use the same handler contract.
 app.all("/api/*", async (req, res, next) => {
   const requestedPath = (req.path || "").replace(/^\/api\/?/, "");
   const segments = requestedPath.split("/").filter(Boolean);
