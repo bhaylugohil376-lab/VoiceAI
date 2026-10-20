@@ -1,4 +1,4 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 import { spawnSync } from "node:child_process";
 
@@ -15,6 +15,39 @@ function walk(dir) {
 }
 walk(process.cwd());
 let failed = false;
+
+// Validate deployment configuration and required runtime files.
+for (const configPath of ["package.json", "vercel.json"]) {
+  try {
+    JSON.parse(readFileSync(configPath, "utf8"));
+  } catch (error) {
+    failed = true;
+    process.stderr.write("FAIL " + configPath + ": invalid JSON (" + error.message + ")\\n");
+  }
+}
+
+for (const requiredPath of [
+  "api/health.js",
+  "api/tts.js",
+  "api/voices.js",
+  "api/_lib/auth.js",
+  "api/_lib/supabase.js",
+  "supabase/usage_limits.sql",
+  ".env.example"
+]) {
+  if (!existsSync(requiredPath)) {
+    failed = true;
+    process.stderr.write("FAIL missing required project file: " + requiredPath + "\\n");
+  }
+}
+
+const envTemplate = readFileSync(".env.example", "utf8");
+for (const key of ["SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY", "GEMINI_API_KEY", "ELEVENLABS_API_KEY"]) {
+  if (!new RegExp("^" + key + "=", "m").test(envTemplate)) {
+    failed = true;
+    process.stderr.write("FAIL .env.example is missing " + key + "\\n");
+  }
+}
 for (const file of files.sort()) {
   const result = spawnSync(process.execPath, ["--check", file], { encoding: "utf8" });
   if (result.status !== 0) {
