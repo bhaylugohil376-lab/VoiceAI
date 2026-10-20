@@ -159,6 +159,16 @@ export default async function handler(req, res) {
     form.append("preserveTiming", field(fields, "preserveTiming", "true"));
     form.append("enhanceAudio", field(fields, "enhanceAudio", "false"));
 
+    const usage = await checkAndUseAI(user, "video_voice_transfer");
+
+    if (!usage?.allowed) {
+      return sendError(
+        res,
+        usage?.status || 429,
+        usage?.error || "Usage limit reached."
+      );
+    }
+
     let providerResponse;
 
     try {
@@ -253,16 +263,6 @@ export default async function handler(req, res) {
     }
 
     await cleanup(uploaded);
-
-    const usage = await checkAndUseAI(user, "video_voice_transfer");
-
-    if (!usage?.allowed) {
-      return sendError(
-        res,
-        usage?.status || 429,
-        usage?.error || "Usage limit reached."
-      );
-    }
 
     return sendSuccess(res, {
       ...output,
