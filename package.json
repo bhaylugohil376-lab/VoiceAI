@@ -7,10 +7,11 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "check": "node scripts/check.js",
-    "test": "npm run check",
+    "test": "npm run check && npm run check:integrations",
     "check:api": "node scripts/check.js",
     "build": "npm run check",
-    "check:config": "node scripts/check.js"
+    "check:config": "node scripts/check.js",
+    "check:integrations": "node scripts/check-integrations.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
