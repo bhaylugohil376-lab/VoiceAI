@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VoiceAI — Text to Speech</title>
+  <meta name="description" content="Convert text into speech with available VoiceAI voices.">
+  <meta name="theme-color" content="#050b18">
   <link rel="stylesheet" href="./style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -322,7 +324,7 @@
 
       audioPlayer.src = audioUrl;
       downloadLink.href = audioUrl;
-      downloadLink.download = "voiceai-speech.mp3";
+      downloadLink.download = `voiceai-speech.${formatSelect.value.startsWith("pcm") ? "wav" : "mp3"}`;
 
       const voice = voices.get(voiceId);
       $("selectedVoiceInfo").textContent =
