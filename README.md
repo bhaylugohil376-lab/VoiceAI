@@ -35,3 +35,7 @@ The Voices page is designed for a large real voice library. It loads voices from
 To sync up to 10,000 real ElevenLabs voices into Supabase, configure ELEVENLABS_API_KEY and VOICE_SYNC_SECRET, run supabase/voices_library.sql, then POST to /api/voices/sync with:
 {"max_voices":10000}
 Use the Authorization: Bearer <VOICE_SYNC_SECRET> header. The sync endpoint follows ElevenLabs v2 voice pagination using has_more and next_page_token. It never invents placeholder voices. Provider availability and account permissions determine how many real voices can actually be synced.
+
+
+API verification scope
+`npm test` runs repository syntax/required-file checks plus static media-provider contract checks. These checks do not make live paid API calls and do not prove provider credentials are valid. Music and Sound Effects expect provider endpoints to return JSON with `audio_url`/`url` or `job_id`/`id`; asynchronous jobs need provider-specific polling. Dubbing still requires an adapter that matches the selected provider's documented upload and response contract. Configure real keys only in deployment environment variables; never commit secrets.
