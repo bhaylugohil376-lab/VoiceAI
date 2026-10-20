@@ -522,21 +522,15 @@
 
           console.error(error);
 
-          /*
-           * Fallback:
-           * Still show all independent tools with zero usage.
-           * This keeps the page usable while backend usage
-           * configuration is being completed.
-           */
-          renderUsage({
-            plan: "free",
-            usage: {}
-          });
-
+          // Do not present fabricated zero usage or a guessed plan as real data.
+          document.getElementById("planTitle").textContent = "Usage unavailable";
+          document.getElementById("planBadge").textContent = "ERROR";
+          document.getElementById("overviewPlan").textContent = "Unavailable";
+          document.getElementById("overviewPlanSub").textContent = "Usage data could not be verified.";
+          document.getElementById("planDescription").textContent =
+            "We could not load your current plan and usage. Check your connection and try again.";
           if (window.VoiceAI) {
-            VoiceAI.toast(
-              "Usage data could not be loaded."
-            );
+            VoiceAI.toast("Usage data could not be loaded. Your limits have not been changed.");
           }
         }
       }
