@@ -47,8 +47,9 @@ export default async function handler(req, res) {
       );
     }
 
-    const response = await fetch(
-      `${baseUrl}/models/${encodeURIComponent(model)}:generateContent`,
+    let actualModel = model;
+    let response = await fetch(
+      `${baseUrl}/models/${encodeURIComponent(actualModel)}:generateContent`,
       {
         method: "POST",
         headers: {
@@ -69,6 +70,23 @@ export default async function handler(req, res) {
         })
       }
     );
+
+    // Recover if a configured Gemini model is no longer available.
+    if (!response.ok && response.status === 404 && actualModel !== "gemini-2.5-flash") {
+      actualModel = "gemini-2.5-flash";
+      response = await fetch(
+        `${baseUrl}/models/${encodeURIComponent(actualModel)}:generateContent`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: message }] }],
+            generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+          }),
+          signal: AbortSignal.timeout(60000)
+        }
+      );
+    }
 
     if (!response.ok) {
       const details = await response.text();
@@ -100,7 +118,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       reply,
-      model,
+      model: actualModel,
       remaining: usage.remaining
     });
   } catch (error) {
