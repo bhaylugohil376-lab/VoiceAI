@@ -25,6 +25,7 @@ create index if not exists voices_library_name_idx
 alter table public.voices_library enable row level security;
 
 -- Public users can browse voice metadata only.
+revoke all on public.voices_library from public, anon, authenticated;
 grant select on public.voices_library to anon, authenticated;
 revoke insert, update, delete on public.voices_library
   from anon, authenticated;
@@ -35,7 +36,7 @@ grant all on public.voices_library to service_role;
 create or replace function public.set_voices_library_updated_at()
 returns trigger
 language plpgsql
-set search_path = public
+set search_path = pg_catalog, public
 as $$
 begin
   new.updated_at = now();
