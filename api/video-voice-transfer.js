@@ -80,6 +80,16 @@ export default async function handler(req, res) {
     const user = await requireUser(req, res);
     if (!user) return;
 
+    const usage = await checkAndUseAI(user, "video_voice_transfer");
+
+    if (!usage?.allowed) {
+      return sendError(
+        res,
+        usage?.status || 429,
+        usage?.error || "Usage limit reached."
+      );
+    }
+
     const providerUrl = process.env.VIDEO_VOICE_TRANSFER_API_URL;
     const providerKey = process.env.VIDEO_VOICE_TRANSFER_API_KEY;
 
@@ -253,16 +263,6 @@ export default async function handler(req, res) {
     }
 
     await cleanup(uploaded);
-
-    const usage = await checkAndUseAI(user, "video_voice_transfer");
-
-    if (!usage?.allowed) {
-      return sendError(
-        res,
-        usage?.status || 429,
-        usage?.error || "Usage limit reached."
-      );
-    }
 
     return sendSuccess(res, {
       ...output,
