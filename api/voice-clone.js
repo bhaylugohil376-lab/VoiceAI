@@ -113,7 +113,8 @@ export default async function handler(req, res) {
         headers: {
           "xi-api-key": apiKey
         },
-        body: providerForm
+        body: providerForm,
+        signal: AbortSignal.timeout(60000)
       }
     );
 
