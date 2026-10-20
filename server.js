@@ -89,9 +89,12 @@ app.all("/api/*", async (req, res, next) => {
   }
 });
 
-// Static frontend
-app.use(express.static(PUBLIC_DIR, { extensions: ["html"] }));
-app.use(express.static(ROOT, { extensions: ["html"] }));
+// Vercel serves files in /public through its CDN; Express static middleware
+// is for local development only. Never expose the repository root, which may
+// contain server code, configuration, or other non-public files.
+if (!process.env.VERCEL) {
+  app.use(express.static(PUBLIC_DIR, { extensions: ["html"] }));
+}
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, "index.html"), (error) => {
