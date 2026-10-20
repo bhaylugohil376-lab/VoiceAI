@@ -113,7 +113,7 @@ export default async function handler(req, res) {
         // Only activate Premium for a paid checkout.
         if (
           session.mode !== "subscription" ||
-          session.payment_status !== "paid"
+          !["paid", "no_payment_required"].includes(session.payment_status)
         ) {
           break;
         }

@@ -66,7 +66,8 @@ export default async function handler(req, res) {
             temperature: 0.7,
             maxOutputTokens: 2048
           }
-        })
+        }),
+        signal: AbortSignal.timeout(55000)
       }
     );
 
@@ -104,7 +105,12 @@ export default async function handler(req, res) {
       remaining: usage.remaining
     });
   } catch (error) {
-    console.error("Assistant API error:", error.message);
-    return sendError(res, 500, "Unexpected assistant error.");
+    console.error("Assistant API error:", error?.message || error);
+
+    if (error?.name === "TimeoutError" || error?.name === "AbortError") {
+      return sendError(res, 504, "Gemini timed out. Please try again.");
+    }
+
+    return sendError(res, 502, "Assistant request failed. Please try again.");
   }
 }

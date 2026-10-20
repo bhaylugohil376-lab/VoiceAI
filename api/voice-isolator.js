@@ -161,7 +161,7 @@ export default async function handler(req, res) {
           Accept: "audio/*, application/octet-stream, application/json"
         },
         body: providerForm,
-        signal: AbortSignal.timeout(120000)
+        signal: AbortSignal.timeout(55000)
       });
     } catch (error) {
       console.error(
