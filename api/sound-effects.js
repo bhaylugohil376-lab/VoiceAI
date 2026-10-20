@@ -1,185 +1,96 @@
-
 import { requireUser } from "./_lib/auth.js";
 import { checkAndUseAI } from "./_lib/usage.js";
-import {
-  requireMethod,
-  parseJsonBody,
-  sendError
-} from "./_lib/response.js";
+import { requireMethod, parseJsonBody, sendError } from "./_lib/response.js";
 
 const MAX_PROMPT_LENGTH = 1500;
+const ELEVENLABS_SOUND_URL = "https://api.elevenlabs.io/v1/sound-generation";
 
 export default async function handler(req, res) {
   if (!requireMethod(req, res, ["POST"])) return;
-
-  let timeout;
 
   try {
     const user = await requireUser(req, res);
     if (!user) return;
 
     const body = parseJsonBody(req);
+    if (!body) return sendError(res, 400, "Send a valid JSON request.");
 
-    if (!body) {
-      return sendError(res, 400, "Send a valid JSON request.");
-    }
-
-    const prompt =
-      typeof body.prompt === "string" ? body.prompt.trim() : "";
-
+    const prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
     const duration = Number(body.duration ?? 5);
 
     if (!prompt || prompt.length > MAX_PROMPT_LENGTH) {
-      return sendError(
-        res,
-        400,
-        "Prompt is required and must be 1–1500 characters."
-      );
+      return sendError(res, 400, "Prompt is required and must be 1–1500 characters.");
+    }
+    if (!Number.isFinite(duration) || duration < 1 || duration > 22) {
+      return sendError(res, 400, "Sound effects duration must be between 1 and 22 seconds.");
     }
 
-    if (!Number.isFinite(duration) || duration < 1 || duration > 30) {
-      return sendError(
-        res,
-        400,
-        "Duration must be between 1 and 30 seconds."
-      );
-    }
-
-    const providerUrl = process.env.SOUND_EFFECTS_API_URL;
-    const providerKey = process.env.SOUND_EFFECTS_API_KEY;
-
-    if (!providerUrl || !providerKey) {
-      return sendError(
-        res,
-        503,
-        "Sound Effects provider is not configured."
-      );
-    }
-
-    let parsedUrl;
-
-    try {
-      parsedUrl = new URL(providerUrl);
-    } catch {
-      return sendError(res, 500, "Sound Effects provider URL is invalid.");
-    }
-
-    if (
-      parsedUrl.protocol !== "https:" &&
-      process.env.NODE_ENV === "production"
-    ) {
-      return sendError(
-        res,
-        500,
-        "Production provider URL must use HTTPS."
-      );
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+    if (!apiKey) {
+      return sendError(res, 503, "Sound Effects is not configured. Add ELEVENLABS_API_KEY to the Vercel project environment.");
     }
 
     const usage = await checkAndUseAI(user, "sound_effects");
-
     if (!usage.allowed) {
-      return sendError(
-        res,
-        usage.status || 429,
-        usage.error || "Sound Effects usage limit reached."
-      );
+      return sendError(res, usage.status || 429, usage.error || "Sound Effects usage limit reached.");
     }
 
     const controller = new AbortController();
-
-    timeout = setTimeout(() => controller.abort(), 90000);
-
+    const timeout = setTimeout(() => controller.abort(), 55000);
     let providerResponse;
 
     try {
-      providerResponse = await fetch(providerUrl, {
+      providerResponse = await fetch(`${ELEVENLABS_SOUND_URL}?output_format=mp3_44100_128`, {
         method: "POST",
         headers: {
+          "xi-api-key": apiKey,
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${providerKey}`
+          "Accept": "audio/mpeg"
         },
         body: JSON.stringify({
-          prompt,
-          duration
+          text: prompt,
+          duration_seconds: duration,
+          prompt_influence: 0.3
         }),
         signal: controller.signal
       });
     } finally {
       clearTimeout(timeout);
-      timeout = undefined;
     }
 
     if (!providerResponse.ok) {
-      console.error(
-        "Sound Effects provider HTTP status:",
-        providerResponse.status
-      );
-
-      return sendError(
-        res,
-        502,
-        "Sound Effects provider failed. Check its API status and configuration."
-      );
+      const providerMessage = await providerResponse.text().catch(() => "");
+      console.error("ElevenLabs sound generation returned HTTP", providerResponse.status, providerMessage.slice(0, 500));
+      return sendError(res, 502, "ElevenLabs could not generate the sound effect. Check API key permissions, plan limits, and available credits.");
     }
 
-    const contentType =
-      providerResponse.headers.get("content-type") || "";
-
-    if (!contentType.includes("application/json")) {
-      return sendError(
-        res,
-        502,
-        "Provider returned a non-JSON response. A provider-specific adapter is required."
-      );
+    const contentType = providerResponse.headers.get("content-type") || "";
+    if (!contentType.includes("audio/") && !contentType.includes("application/octet-stream")) {
+      console.error("Unexpected ElevenLabs sound response content type:", contentType);
+      return sendError(res, 502, "Sound Effects provider returned an unsupported audio format.");
     }
 
-    const result = await providerResponse.json();
+    const audioBuffer = Buffer.from(await providerResponse.arrayBuffer());
+    if (!audioBuffer.length) return sendError(res, 502, "Sound Effects provider returned an empty audio file.");
 
-    const audioUrl =
-      typeof result.audio_url === "string"
-        ? result.audio_url
-        : typeof result.url === "string"
-          ? result.url
-          : null;
-
-    const jobId =
-      typeof result.job_id === "string"
-        ? result.job_id
-        : typeof result.id === "string"
-          ? result.id
-          : null;
-
-    const status =
-      typeof result.status === "string"
-        ? result.status
-        : null;
-
-    if (!audioUrl && !jobId) {
-      return sendError(
-        res,
-        502,
-        "Provider response did not include an audio URL or job ID."
-      );
-    }
+    const base64 = audioBuffer.toString("base64");
+    const mimeType = contentType.split(";")[0] || "audio/mpeg";
 
     return res.status(200).json({
       success: true,
-      status: status || (audioUrl ? "completed" : "processing"),
-      audio_url: audioUrl,
-      job_id: jobId,
+      status: "completed",
+      audio_url: `data:${mimeType};base64,${base64}`,
+      audio_base64: base64,
+      mime_type: mimeType,
       prompt,
       duration,
       remaining: usage.remaining
     });
   } catch (error) {
     if (error.name === "AbortError") {
-      return sendError(res, 504, "Sound Effects provider timed out.");
+      return sendError(res, 504, "Sound effect generation timed out. Try a shorter effect.");
     }
-
     console.error("Sound Effects API error:", error.message);
-
     return sendError(res, 500, "Sound Effects generation failed.");
-  } finally {
-    if (timeout) clearTimeout(timeout);
   }
 }
