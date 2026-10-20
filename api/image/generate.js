@@ -12,7 +12,8 @@ export default async function handler(req, res) {
     if (!user) return;
 
     const apiKey = process.env.GEMINI_API_KEY;
-    const model = process.env.GEMINI_IMAGE_MODEL || process.env.GEMINI_MODEL;
+    const model = process.env.GEMINI_IMAGE_MODEL || "gemini-2.5-flash-image";
+    const fallbackModel = "gemini-2.5-flash-image";
     const baseUrl = (
       process.env.GEMINI_API_URL ||
       "https://generativelanguage.googleapis.com/v1beta"
@@ -48,8 +49,9 @@ export default async function handler(req, res) {
       );
     }
 
-    const providerResponse = await fetch(
-      `${baseUrl}/models/${encodeURIComponent(model)}:generateContent`,
+    let actualModel = model;
+    let providerResponse = await fetch(
+      `${baseUrl}/models/${encodeURIComponent(actualModel)}:generateContent`,
       {
         method: "POST",
         headers: {
@@ -68,6 +70,25 @@ export default async function handler(req, res) {
         signal: AbortSignal.timeout(60000)
       }
     );
+
+    if (!providerResponse.ok && providerResponse.status === 404 && actualModel !== fallbackModel) {
+      actualModel = fallbackModel;
+      providerResponse = await fetch(
+        `${baseUrl}/models/${encodeURIComponent(actualModel)}:generateContent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": apiKey
+          },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            generationConfig: { responseModalities: ["IMAGE"] }
+          }),
+          signal: AbortSignal.timeout(60000)
+        }
+      );
+    }
 
     if (!providerResponse.ok) {
       const details = await providerResponse.text();
@@ -121,7 +142,7 @@ export default async function handler(req, res) {
       .insert({
         user_id: user.id,
         prompt,
-        model,
+        model: actualModel,
         status: "completed"
       });
 
@@ -133,7 +154,7 @@ export default async function handler(req, res) {
       success: true,
       image: `data:${mimeType};base64,${imageBuffer.toString("base64")}`,
       mime_type: mimeType,
-      model,
+      model: actualModel,
       remaining: usage.remaining
     });
   } catch (error) {
