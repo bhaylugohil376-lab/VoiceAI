@@ -286,7 +286,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       const bytes = new Uint8Array(binary.length);
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
       const blob = new Blob([bytes], { type: data.content_type || "audio/mpeg" });
-      return { url: URL.createObjectURL(blob), objectUrl: URL.createObjectURL(blob) };
+      const objectUrl = URL.createObjectURL(blob);
+      return { url: objectUrl, objectUrl };
     }
 
     throw new Error("The music API returned no audio_url or audio_base64. Check the provider adapter response.");
@@ -391,10 +392,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           Authorization: `Bearer ${session.access_token}`
         },
         body: JSON.stringify({
-          prompt: promptInput.value.trim(),
-          style: selectedStyle,
-          audio_url: currentAudioUrl,
-          duration: Number(duration.value)
+          title: promptInput.value.trim().slice(0, 150) || ("VoiceAI " + selectedStyle + " track"),
+          audioUrl: currentAudioUrl,
+          duration: Number(duration.value),
+          provider: "configured-music-provider"
         })
       });
 
