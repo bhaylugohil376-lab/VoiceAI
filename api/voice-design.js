@@ -24,7 +24,9 @@ export default async function handler(req, res) {
 
     const description = typeof body.description === "string"
       ? body.description.trim()
-      : "";
+      : typeof body.prompt === "string"
+        ? body.prompt.trim()
+        : "";
 
     const previewText = typeof body.preview_text === "string"
       ? body.preview_text.trim()
@@ -104,6 +106,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       previews,
+      message: "Voice description processed. Preview the generated voice samples below; save a voice from a preview to use it for synthesis.",
       remaining: usage.remaining
     });
   } catch (error) {
