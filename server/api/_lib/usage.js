@@ -7,6 +7,7 @@ const WINDOW_HOURS = 24;
 const ALLOWED_ACTIONS = new Set([
   "tts",
   "assistant",
+  "dialogue",
   "image",
   "stt",
   "dubbing",
