@@ -3,6 +3,7 @@ Production-oriented multi-page AI voice SaaS starter with separate HTML, CSS and
 Important production setup
 The source code does not contain private provider secrets. Add these in Vercel Project Settings → Environment Variables:
 SUPABASE_URL
+SUPABASE_ANON_KEY
 SUPABASE_SERVICE_ROLE_KEY
 ELEVENLABS_API_KEY
 GEMINI_API_KEY and GEMINI_IMAGE_MODEL (image generation)
@@ -17,7 +18,7 @@ SOUND_EFFECTS_API_URL / SOUND_EFFECTS_API_KEY (if SFX provider is enabled)
 See .env.example for names only. Never commit real secret values.
 Free accounts receive up to five uses for each AI tool in a rolling 24-hour window. Usage is enforced by the server-side Supabase RPC, and the usage page reads action counts from usage_logs.
 Supabase usage-limit migration
-Run supabase/usage_limits.sql in the Supabase SQL Editor before production use.
+Run `supabase/profiles.sql` first, then `supabase/usage_limits.sql` in the Supabase SQL Editor before production use. The first migration creates the profile table and a signup trigger that creates a Free profile for new accounts. The browser uses the publishable key in `supabase-config.js`; the backend needs `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` as Vercel environment variables. Never expose the service-role key in browser code or commit it.
 It changes Free usage to 5 uses per 24-hour window per AI section/action. TTS, Clone, STT, Image, Music, SFX, Agents, etc. have independent counters. Premium/Admin are unlimited at the application level.
 Deployment
 The included vercel.json intentionally does not declare a legacy/invalid Node runtime. Vercel detects the Node.js runtime for /api functions. 
