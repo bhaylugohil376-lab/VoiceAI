@@ -877,6 +877,76 @@
       }
 
 
+      let voiceCatalog = [];
+
+      function fillVoiceSelect(select) {
+        if (!select) return;
+        const previous = select.value;
+        select.replaceChildren(new Option("Select voice", ""));
+        voiceCatalog.forEach((voice) => {
+          const option = new Option(
+            voice.name + (voice.category ? " — " + voice.category : ""),
+            voice.voice_id
+          );
+          select.add(option);
+        });
+        if (voiceCatalog.some((voice) => voice.voice_id === previous)) {
+          select.value = previous;
+        }
+      }
+
+      async function loadDialogueVoices() {
+        const selects = [
+          speaker1Voice,
+          speaker2Voice,
+          document.getElementById("speaker3Voice")
+        ].filter(Boolean);
+
+        selects.forEach((select) => {
+          select.replaceChildren(new Option("Loading voices…", ""));
+          select.disabled = true;
+        });
+
+        try {
+          const sessionResult = await getAccessToken();
+          const session = sessionResult?.data?.session;
+          if (!session?.access_token) {
+            selects.forEach((select) => {
+              select.replaceChildren(new Option("Sign in to load voices", ""));
+              select.disabled = false;
+            });
+            return;
+          }
+
+          const response = await fetch("./api/voices", {
+            method: "GET",
+            headers: { Authorization: "Bearer " + session.access_token }
+          });
+          const payload = await response.json();
+          if (!response.ok) {
+            throw new Error(payload?.error || "Could not load voices.");
+          }
+
+          voiceCatalog = Array.isArray(payload.voices) ? payload.voices : [];
+          if (!voiceCatalog.length) throw new Error("No voices are available in your ElevenLabs account.");
+          selects.forEach((select) => {
+            fillVoiceSelect(select);
+            select.disabled = false;
+          });
+        } catch (error) {
+          selects.forEach((select) => {
+            select.replaceChildren(new Option("Voice list unavailable", ""));
+            select.disabled = false;
+          });
+          if (window.VoiceAI) {
+            VoiceAI.toast(error.message || "Could not load real voices.");
+          }
+          console.error("Dialogue voice loading error:", error);
+        }
+      }
+
+      loadDialogueVoices();
+
       async function generateDialogue() {
 
         const text1 =
