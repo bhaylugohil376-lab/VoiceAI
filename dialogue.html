@@ -896,11 +896,9 @@
       }
 
       async function loadDialogueVoices() {
-        const selects = [
-          speaker1Voice,
-          speaker2Voice,
-          document.getElementById("speaker3Voice")
-        ].filter(Boolean);
+        const getVoiceSelects = () =>
+          Array.from(document.querySelectorAll("#speaker1Voice, #speaker2Voice, #speaker3Voice")); 
+        const selects = getVoiceSelects();
 
         selects.forEach((select) => {
           select.replaceChildren(new Option("Loading voices…", ""));
@@ -929,7 +927,7 @@
 
           voiceCatalog = Array.isArray(payload.voices) ? payload.voices : [];
           if (!voiceCatalog.length) throw new Error("No voices are available in your ElevenLabs account.");
-          selects.forEach((select) => {
+          getVoiceSelects().forEach((select) => {
             fillVoiceSelect(select);
             select.disabled = false;
           });
@@ -1343,6 +1341,8 @@
           .closest("div[style*='border:1px']")
           ?.after(container);
 
+        const speaker3VoiceSelect = document.getElementById("speaker3Voice");
+        if (voiceCatalog.length) fillVoiceSelect(speaker3VoiceSelect);
 
         const removeSpeaker3 =
           document.getElementById(
