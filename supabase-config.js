@@ -11,8 +11,9 @@
     window.fetch = function (input, init) {
       const toBackend = (rawUrl) => {
         const url = new URL(rawUrl, window.location.href);
-        if (url.origin === window.location.origin && url.pathname.startsWith("/api/")) {
-          return "https://voice-ai-bhaylugohil376-1885s-projects.vercel.app" + url.pathname + url.search + url.hash;
+        const apiPathIndex = url.pathname.indexOf("/api/");
+        if (url.origin === window.location.origin && apiPathIndex >= 0) {
+          return "https://voice-ai-bhaylugohil376-1885s-projects.vercel.app" + url.pathname.slice(apiPathIndex) + url.search + url.hash;
         }
         return rawUrl;
       };
