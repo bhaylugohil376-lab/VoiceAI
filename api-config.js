@@ -1,10 +1,10 @@
 (function () {
   "use strict";
 
-  // GitHub Pages is static hosting; send /api requests to the Vercel backend.
+  // GitHub Pages is static hosting; send /api requests to the public Vercel domain.
   if (window.__VOICEAI_API_FETCH_PATCHED__) return;
 
-  const backend = "https://voice-ai-bhaylugohil376-1885s-projects.vercel.app";
+  const backend = "https://voice-ai-two-peach.vercel.app";
   const originalFetch = window.fetch.bind(window);
 
   function rewriteApiUrl(rawUrl) {
