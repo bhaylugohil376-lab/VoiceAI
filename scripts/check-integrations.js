@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 
-const tts = readFileSync("api/tts.js", "utf8");
+const tts = readFileSync("server/api/tts.js", "utf8");
 const env = readFileSync(".env.example", "utf8");
 const readme = readFileSync("README.md", "utf8");
 
