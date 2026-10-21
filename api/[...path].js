@@ -30,6 +30,7 @@ import handler28 from "../server/api/voice-clone.js";
 import handler29 from "../server/api/voice-design.js";
 import handler30 from "../server/api/voice-isolator.js";
 import handler31 from "../server/api/voices.js";
+import handler32 from "../server/api/voices-sync.js";
 
 export const config = {
   api: { bodyParser: false }
@@ -68,6 +69,7 @@ const handlers = {
   "voice-design": handler29,
   "voice-isolator": handler30,
   "voices": handler31,
+  "voices/sync": handler32,
 };
 
 async function readRawBody(req, limit) {
