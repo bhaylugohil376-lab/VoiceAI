@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 });
 const port = process.env.PORT || 3000;
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-const API_DIR = path.join(ROOT, "api");
+const API_DIR = path.join(ROOT, "server", "api");
 
 // Stripe requires the untouched request body for signature verification.
 // This route must be registered before JSON parsing.
@@ -28,7 +28,7 @@ app.post(
   express.raw({ type: "application/json", limit: "2mb" }),
   async (req, res) => {
     try {
-      const { default: handler } = await import("./api/stripe-webhook.js");
+      const { default: handler } = await import("./server/api/stripe-webhook.js");
       return await handler(req, res);
     } catch (error) {
       console.error("Stripe webhook error:", error);
@@ -45,10 +45,9 @@ app.post(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// API files are ESM handlers (export default), not Express routers.
-// Dispatch /api/foo/bar to api/foo/bar.js so local development uses the
-// same handler contract as serverless deployments.
-app.all("/api/*", async (req, res, next) => {
+// API handlers live outside /api so Vercel can deploy them behind one catch-all
+// serverless function while local Express keeps the same /api/* contract.
+app.all("/api/*", async (req, res) => {
   const requestedPath = (req.path || "").replace(/^\/api\/?/, "");
   const segments = requestedPath.split("/").filter(Boolean);
 
