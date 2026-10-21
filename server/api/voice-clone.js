@@ -149,9 +149,10 @@ export default async function handler(req, res) {
       .from("voice_clones")
       .insert({
         user_id: user.id,
-        voice_id: voiceId,
+        provider_voice_id: voiceId,
         name: voiceName,
-        status: "completed"
+        status: "ready",
+        consent_confirmed: true
       });
 
     if (saveError) {
