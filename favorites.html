@@ -541,7 +541,6 @@
               await window.supabaseClient
                 .from("favorite_voices")
                 .select(`
-                  id,
                   voice_id,
                   created_at,
                   voices (
@@ -592,7 +591,7 @@
                 .filter(item => item.voices)
                 .map(item => ({
                   favorite_id:
-                    item.id,
+                    item.voice_id,
                   ...item.voices
                 }));
 
@@ -931,7 +930,7 @@
               .from("favorite_voices")
               .delete()
               .eq(
-                "id",
+                "voice_id",
                 favoriteId
               );
 
