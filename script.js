@@ -5,6 +5,31 @@
 
 "use strict";
 
+  // GitHub Pages serves only static files, so route API calls to the Vercel backend.
+  // Keep this patch idempotent because some pages load both shared scripts.
+  if (!window.__VOICEAI_API_FETCH_PATCHED__) {
+    const originalFetch = window.fetch.bind(window);
+    window.fetch = function (input, init) {
+      const toBackend = (rawUrl) => {
+        const url = new URL(rawUrl, window.location.href);
+        if (url.origin === window.location.origin && url.pathname.startsWith("/api/")) {
+          return "https://voice-ai-bhaylugohil376-1885s-projects.vercel.app" + url.pathname + url.search + url.hash;
+        }
+        return rawUrl;
+      };
+      if (typeof input === "string" || input instanceof URL) {
+        return originalFetch(toBackend(String(input)), init);
+      }
+      if (input instanceof Request) {
+        const target = toBackend(input.url);
+        if (target !== input.url) return originalFetch(new Request(target, input), init);
+      }
+      return originalFetch(input, init);
+    };
+    window.__VOICEAI_API_FETCH_PATCHED__ = true;
+  }
+
+
 /* =========================================================
    DOM READY
 ========================================================= */
