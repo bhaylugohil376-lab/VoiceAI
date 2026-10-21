@@ -125,23 +125,15 @@ function initHeroGenerator() {
       return;
     }
 
-    if (!voice || !voice.value) {
-
-      showToast(
-        "Please select a voice."
-      );
-
-      return;
-    }
-
     /*
-     * Homepage preview.
-     * Real generation happens inside tts.html
-     * through the protected /api/tts endpoint.
+     * The homepage voice choices are display presets, not provider voice IDs.
+     * Pass only the script to the TTS page, where the real authenticated
+     * ElevenLabs voice list is loaded and the user selects a valid voice.
      */
 
     window.VoiceAI?.save("tts_text", text);
-    window.VoiceAI?.save("tts_voice", voice.value);
+    window.VoiceAI?.remove("tts_voice");
+    window.VoiceAI?.remove("selected_voice_name");
 
     window.location.href =
       "tts.html";
