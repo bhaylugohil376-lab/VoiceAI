@@ -421,98 +421,10 @@
         document.getElementById("styleFilter");
 
 
-      /*
-       * Demo/default voices.
-       *
-       * These are UI records only.
-       * Real provider voice IDs can be loaded
-       * from Supabase /api/voices later.
-       */
-
-      const defaultVoices = [
-
-        {
-          id: "bryan",
-          name: "Bryan",
-          gender: "male",
-          style: "advertising",
-          description:
-            "Polished, measured and engaging voice for ads and narration.",
-          tags: ["Ads", "Narration"],
-          preview: ""
-        },
-
-        {
-          id: "juniper",
-          name: "Juniper",
-          gender: "female",
-          style: "podcast",
-          description:
-            "Grounded and professional voice for podcasts and conversational AI.",
-          tags: ["Podcast", "AI"],
-          preview: ""
-        },
-
-        {
-          id: "hale",
-          name: "Hale",
-          gender: "male",
-          style: "advertising",
-          description:
-            "Smooth, confident and persuasive voice for advertisements.",
-          tags: ["Ads", "Premium"],
-          preview: ""
-        },
-
-        {
-          id: "jerry",
-          name: "Jerry B",
-          gender: "male",
-          style: "energetic",
-          description:
-            "Upbeat, energetic and happy voice for promotions and reels.",
-          tags: ["Reels", "Promo"],
-          preview: ""
-        },
-
-        {
-          id: "allison",
-          name: "Allison",
-          gender: "female",
-          style: "energetic",
-          description:
-            "Energetic, clear and bubbly voice for social content.",
-          tags: ["Social", "Commercial"],
-          preview: ""
-        },
-
-        {
-          id: "jessica-anne-bogart",
-          name: "Jessica Anne Bogart",
-          gender: "female",
-          style: "conversational",
-          description:
-            "Professional and natural voice for conversational content.",
-          tags: ["Professional", "AI"],
-          preview: ""
-        },
-
-        {
-          id: "david-castlemore",
-          name: "David Castlemore",
-          gender: "male",
-          style: "professional",
-          description:
-            "Professional newsreader style for documentary and narration.",
-          tags: ["News", "Documentary"],
-          preview: ""
-        }
-
-      ];
+      // Never show invented placeholder voices; only real provider voices are listed.
+      let voices = [];
 
 
-      let voices =
-        [...defaultVoices];
 
 
       /*
@@ -523,10 +435,25 @@
 
         try {
 
+          const sessionResult = await window.supabaseClient?.auth?.getSession();
+          const session = sessionResult?.data?.session;
+          if (!session?.access_token) {
+            voices = [];
+            renderVoices();
+            return;
+          }
+
           const response =
-            await fetch("/api/voices");
+            await fetch("./api/voices", {
+              method: "GET",
+              headers: {
+                Authorization: "Bearer " + session.access_token
+              }
+            });
 
           if (!response.ok) {
+            voices = [];
+            renderVoices();
             return;
           }
 
@@ -539,6 +466,8 @@
               : [];
 
           if (!providerVoices.length) {
+            voices = [];
+            renderVoices();
             return;
           }
 
