@@ -14,7 +14,7 @@
         const url = new URL(rawUrl, window.location.href);
         const apiPathIndex = url.pathname.indexOf("/api/");
         if (url.origin === window.location.origin && apiPathIndex >= 0) {
-          return "https://voice-ai-bhaylugohil376-1885s-projects.vercel.app" + url.pathname.slice(apiPathIndex) + url.search + url.hash;
+          return "https://voice-ai-two-peach.vercel.app" + url.pathname.slice(apiPathIndex) + url.search + url.hash;
         }
         return rawUrl;
       };
