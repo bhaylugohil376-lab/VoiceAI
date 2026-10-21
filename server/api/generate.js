@@ -151,7 +151,7 @@ async function generateText(req, res, user, body) {
 
   const baseUrl = (
     process.env.GEMINI_API_URL || "https://generativelanguage.googleapis.com/v1beta"
-  ).replace(/\\/+$/, "");
+  ).replace(/\/+$/, "");
   const usage = await checkAndUseAI(user, "assistant");
   if (!usage.allowed) {
     return sendError(res, usage.status || 429, usage.error || "Usage limit reached.");
