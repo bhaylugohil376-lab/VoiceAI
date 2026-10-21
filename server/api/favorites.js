@@ -7,19 +7,44 @@ import {
 } from "./_lib/response.js";
 import { supabaseAdmin } from "./_lib/supabase.js";
 
-export default async function handler(req, res) {
-  if (!requireMethod(req, res, ["GET", "POST", "DELETE"])) {
-    return;
+const VALID_ID = /^[A-Za-z0-9_-]{1,150}$/;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+async function resolveVoiceId(value) {
+  // Public clients may pass a provider ID or the internal Supabase UUID.
+  let query = supabaseAdmin
+    .from("voices")
+    .select("id, provider_voice_id")
+    .eq("provider_voice_id", value)
+    .maybeSingle();
+  const { data: providerVoice, error: providerError } = await query;
+  if (providerError) throw providerError;
+  if (providerVoice?.id) return providerVoice.id;
+
+  if (UUID.test(value)) {
+    const { data: internalVoice, error } = await supabaseAdmin
+      .from("voices")
+      .select("id")
+      .eq("id", value)
+      .maybeSingle();
+    if (error) throw error;
+    if (internalVoice?.id) return internalVoice.id;
   }
+  return null;
+}
+
+export default async function handler(req, res) {
+  if (!requireMethod(req, res, ["GET", "POST", "DELETE"])) return;
 
   try {
     const user = await requireUser(req, res);
     if (!user) return;
+    if (!supabaseAdmin) return sendError(res, 503, "Favorites database is not configured.");
 
     if (req.method === "GET") {
       const { data, error } = await supabaseAdmin
         .from("favorite_voices")
-        .select("*")
+        .select("voice_id, created_at, voices(id, provider_voice_id, name, gender, description, language, category, preview_url)")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
@@ -28,55 +53,51 @@ export default async function handler(req, res) {
         return sendError(res, 500, "Could not load favorite voices.");
       }
 
-      return sendSuccess(res, { favorites: data || [] });
+      return sendSuccess(res, {
+        favorites: (data || []).map(item => ({
+          voice_id: item.voice_id,
+          created_at: item.created_at,
+          voice: item.voices || null
+        }))
+      });
     }
 
     const body = parseJsonBody(req);
-
     if (!body || typeof body !== "object" || Array.isArray(body)) {
       return sendError(res, 400, "Invalid request body.");
     }
 
-    const voiceId =
-      typeof body.voice_id === "string" ? body.voice_id.trim() : "";
-
-    if (!/^[A-Za-z0-9_-]{1,150}$/.test(voiceId)) {
+    const requestedVoiceId = typeof body.voice_id === "string" ? body.voice_id.trim() : "";
+    if (!VALID_ID.test(requestedVoiceId)) {
       return sendError(res, 400, "A valid voice ID is required.");
     }
+
+    const internalVoiceId = await resolveVoiceId(requestedVoiceId);
+    if (!internalVoiceId) return sendError(res, 404, "This real voice is not in the synced voice catalogue yet.");
 
     if (req.method === "POST") {
       const { data, error } = await supabaseAdmin
         .from("favorite_voices")
         .upsert(
-          {
-            user_id: user.id,
-            voice_id: voiceId
-          },
+          { user_id: user.id, voice_id: internalVoiceId },
           { onConflict: "user_id,voice_id" }
         )
-        .select("*")
+        .select("user_id, voice_id, created_at")
         .single();
 
       if (error) {
         console.error("Favorite save error:", error.message);
-        return sendError(
-          res,
-          500,
-          "Could not add this voice to favorites."
-        );
+        return sendError(res, 500, "Could not add this voice to favorites.");
       }
 
-      return res.status(201).json({
-        success: true,
-        favorite: data
-      });
+      return res.status(201).json({ success: true, favorite: data });
     }
 
     const { data, error } = await supabaseAdmin
       .from("favorite_voices")
       .delete()
       .eq("user_id", user.id)
-      .eq("voice_id", voiceId)
+      .eq("voice_id", internalVoiceId)
       .select("voice_id");
 
     if (error) {
@@ -86,7 +107,7 @@ export default async function handler(req, res) {
 
     return sendSuccess(res, {
       removed: (data || []).length > 0,
-      voice_id: voiceId
+      voice_id: internalVoiceId
     });
   } catch (error) {
     console.error("Favorites API error:", error?.message || error);
