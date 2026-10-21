@@ -10,9 +10,7 @@ export default async function handler(req, res) {
     });
   }
 
-  // Liveness must not fail just because optional deployment secrets are absent.
-  // Report configuration separately so monitoring can distinguish a running
-  // function from a fully configured application without exposing secret values.
+  // Report only whether required configuration exists; never expose secret values.
   const configuration = {
     supabaseUrl: Boolean(process.env.SUPABASE_URL),
     supabaseAnonKey: Boolean(process.env.SUPABASE_ANON_KEY),
@@ -27,18 +25,27 @@ export default async function handler(req, res) {
     configuration.supabaseAnonKey &&
     configuration.supabaseServiceRoleKey;
 
+  // TTS is the core voice feature. Gemini and OpenAI are optional integrations.
+  const voiceAiReady = supabaseReady && configuration.elevenLabsApiKey;
+
   return res.status(200).json({
     success: true,
     status: "running",
-    readiness: supabaseReady ? "ready" : "degraded",
+    readiness: voiceAiReady ? "ready" : "degraded",
     timestamp: new Date().toISOString(),
     environment:
       process.env.VERCEL_ENV === "production"
         ? "production"
         : "non-production",
+    features: {
+      authenticationAndUsage: supabaseReady ? "configured" : "needs_configuration",
+      textToSpeech: configuration.elevenLabsApiKey ? "configured" : "needs_configuration",
+      geminiTextGeneration: configuration.geminiApiKey ? "configured" : "optional_not_configured",
+      openaiIntegration: configuration.openaiApiKey ? "configured" : "optional_not_configured"
+    },
     configuration,
-    message: supabaseReady
-      ? "VoiceAI API is running and Supabase server configuration is present."
-      : "VoiceAI API is running, but required Supabase server configuration is incomplete."
+    message: voiceAiReady
+      ? "VoiceAI core configuration is present. Provider generation still requires a live end-to-end test."
+      : "VoiceAI API is running, but Supabase server configuration and/or the ElevenLabs key is missing."
   });
 }
