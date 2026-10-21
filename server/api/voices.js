@@ -1,5 +1,6 @@
 
 import { requireAuth } from "./_lib/auth.js";
+import { getSupabaseAdmin } from "./_lib/supabase.js";
 import { sendError } from "./_lib/response.js";
 
 export default async function handler(req, res) {
@@ -83,6 +84,40 @@ export default async function handler(req, res) {
     const voices = Array.isArray(data.voices)
       ? data.voices
       : [];
+
+    // Keep the app's Supabase voice relations (favorites, projects) aligned
+    // with real provider IDs instead of UI-only placeholder names.
+    try {
+      const admin = getSupabaseAdmin();
+      const rows = voices
+        .filter(voice => typeof voice.voice_id === "string" && voice.voice_id && typeof voice.name === "string" && voice.name)
+        .map(voice => {
+          const labels = voice.labels && typeof voice.labels === "object" ? voice.labels : {};
+          const rawGender = String(labels.gender || "").toLowerCase();
+          const gender = ["male", "female", "neutral"].includes(rawGender) ? rawGender : null;
+          return {
+            provider: "elevenlabs",
+            provider_voice_id: voice.voice_id,
+            name: voice.name,
+            gender,
+            language: labels.language || null,
+            accent: labels.accent || null,
+            category: voice.category || null,
+            description: voice.description || null,
+            preview_url: voice.preview_url || null,
+            is_active: true,
+            metadata: labels
+          };
+        });
+      if (rows.length) {
+        const { error: syncError } = await admin
+          .from("voices")
+          .upsert(rows, { onConflict: "provider_voice_id" });
+        if (syncError) console.error("Voice metadata sync warning:", syncError.message);
+      }
+    } catch (syncError) {
+      console.warn("Supabase voice metadata sync skipped:", syncError?.message || syncError);
+    }
 
     return res.status(200).json({
       success: true,
