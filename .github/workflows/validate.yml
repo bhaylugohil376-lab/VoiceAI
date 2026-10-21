@@ -9,7 +9,7 @@ on:
       - feat/provider-api-integration
 
 jobs:
-  syntax:
+  validation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,5 +18,5 @@ jobs:
           node-version: 20
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-      - name: Validate JavaScript syntax
-        run: npm run check
+      - name: Run syntax, configuration, and integration contract checks
+        run: npm test
