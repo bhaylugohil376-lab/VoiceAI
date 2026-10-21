@@ -151,7 +151,7 @@ function initAgent() {
       return;
     }
 
-    window.VoiceAI?.save("agent_message", message);
+    window.VoiceAI?.save("agent_draft", message);
 
     window.location.href =
       "agents.html";
