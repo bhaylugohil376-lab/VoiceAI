@@ -1022,7 +1022,7 @@
             },
 
             emailRedirectTo:
-              `${window.location.origin}/login.html`
+              new URL("./login.html", window.location.href).href
           }
 
         });
