@@ -103,6 +103,24 @@ export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("X-Content-Type-Options", "nosniff");
 
+  // Allow the static GitHub Pages frontend to call this Vercel API.
+  const origin = req.headers?.origin;
+  const allowedOrigins = new Set([
+    "https://bhaylugohil376-lab.github.io",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
+  ]);
+  if (origin && allowedOrigins.has(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Requested-With");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Max-Age", "86400");
+  }
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+
   const pathname = new URL(req.url || "/", "https://voiceai.invalid").pathname;
   const route = pathname.replace(/^\/api\/?/, "").replace(/\/+$/, "");
   const selected = handlers[route];
