@@ -486,12 +486,14 @@
                 gender:
                   String(
                     voice.gender ||
+                    voice.labels?.gender ||
                     "unknown"
                   ).toLowerCase(),
 
                 style:
                   String(
                     voice.style ||
+                    voice.category ||
                     "professional"
                   ).toLowerCase(),
 
