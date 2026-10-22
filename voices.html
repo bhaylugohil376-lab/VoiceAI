@@ -423,6 +423,7 @@
 
       // Never show invented placeholder voices; only real provider voices are listed.
       let voices = [];
+      let voiceLoadError = "";
 
 
 
@@ -439,6 +440,7 @@
           const session = sessionResult?.data?.session;
           if (!session?.access_token) {
             voices = [];
+            voiceLoadError = "Please sign in to load your real ElevenLabs voices.";
             renderVoices();
             return;
           }
@@ -451,14 +453,14 @@
               }
             });
 
+          const data = await response.json().catch(() => ({}));
           if (!response.ok) {
             voices = [];
+            voiceLoadError = data?.error || `Voice service request failed (${response.status}).`;
             renderVoices();
             return;
           }
-
-          const data =
-            await response.json();
+          voiceLoadError = "";
 
           const providerVoices =
             Array.isArray(data.voices)
@@ -517,12 +519,10 @@
           renderVoices();
 
         } catch (error) {
-
-          console.warn(
-            "Provider voices unavailable. Using default library.",
-            error
-          );
-
+          voices = [];
+          voiceLoadError = error?.message || "Could not connect to the voice service. Please try again.";
+          renderVoices();
+          console.error("Provider voices unavailable:", error);
         }
 
       }
@@ -593,8 +593,8 @@
           voicesGrid.innerHTML = `
             <div class="empty-voices">
               <i data-lucide="search-x"></i>
-              <h3>No voices found</h3>
-              <p>Try another search or filter.</p>
+              <h3>${escapeHTML(voiceLoadError ? "Voices could not be loaded" : "No voices found")}</h3>
+              <p>${escapeHTML(voiceLoadError || "Try another search or filter.")}</p>
             </div>
           `;
 
