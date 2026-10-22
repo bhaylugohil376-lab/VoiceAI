@@ -446,27 +446,38 @@
             return;
           }
 
-          const response =
-            await fetch("./api/voices", {
+          // Fetch every provider page (bounded to avoid a runaway loop if a provider misbehaves).
+          const providerVoices = [];
+          let nextPageToken = null;
+          const seenTokens = new Set();
+
+          for (let page = 0; page < 10; page++) {
+            const params = new URLSearchParams({ page_size: "100" });
+            if (nextPageToken) params.set("next_page_token", nextPageToken);
+
+            const response = await fetch("./api/voices?" + params.toString(), {
               method: "GET",
               headers: {
                 Authorization: "Bearer " + session.access_token
               }
             });
 
-          const data = await response.json().catch(() => ({}));
-          if (!response.ok) {
-            voices = [];
-            voiceLoadError = data?.error || `Voice service request failed (${response.status}).`;
-            renderVoices();
-            return;
-          }
-          voiceLoadError = "";
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+              voices = [];
+              voiceLoadError = data?.error || `Voice service request failed (${response.status}).`;
+              renderVoices();
+              return;
+            }
 
-          const providerVoices =
-            Array.isArray(data.voices)
-              ? data.voices
-              : [];
+            if (Array.isArray(data.voices)) providerVoices.push(...data.voices);
+            const token = typeof data.next_page_token === "string" ? data.next_page_token : "";
+            if (!data.has_more || !token || seenTokens.has(token)) break;
+            seenTokens.add(token);
+            nextPageToken = token;
+          }
+
+          voiceLoadError = "";
 
           if (!providerVoices.length) {
             voices = [];
@@ -474,8 +485,15 @@
             return;
           }
 
+          // De-duplicate provider IDs before rendering.
+          const uniqueVoices = [...new Map(
+            providerVoices
+              .filter(voice => voice && (voice.voice_id || voice.id))
+              .map(voice => [voice.voice_id || voice.id, voice])
+          ).values()];
+
           voices =
-            providerVoices.map((voice) => {
+            uniqueVoices.map((voice) => {
 
               return {
                 id:
