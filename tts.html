@@ -31,7 +31,7 @@
 <body>
 <main class="wrap">
   <h1>VoiceAI Text to Speech</h1>
-  <p>Browse real ElevenLabs community voices. Speech generation still depends on your ElevenLabs plan and available credits.</p>
+  <p>Choose voices available to your ElevenLabs account. Community voices may appear in previews but may not be usable for speech generation; your plan and credits still apply.</p>
 
   <section class="card">
     <label for="textInput">Text to convert</label>
@@ -61,7 +61,7 @@
 
     <p id="voiceCount">0 voices loaded</p>
     <button id="loadMoreBtn" type="button" hidden>Load More Voices</button>
-    <button id="loadAllBtn" type="button" hidden>Load 1000+ Real Voices</button>
+    <button id="loadAllBtn" type="button" hidden>Load More Account Voices</button>
     <button id="refreshBtn" type="button">Refresh Voices</button>
     <button id="generateBtn" class="primary" type="button">
       Generate Speech
@@ -245,7 +245,7 @@
     setStatus(loadMore ? "Loading next voice page..." : "Loading real voices...");
 
     try {
-      const params = new URLSearchParams({ page_size: "100", source: "library" });
+      const params = new URLSearchParams({ page_size: "100", source: "account" });
       const searchTerm = voiceSearch.value.trim();
       if (searchTerm) params.set("search", searchTerm);
       if (loadMore && nextPageToken) {
@@ -273,7 +273,7 @@
       loadAllBtn.hidden = !nextPageToken;
 
       setStatus(
-        `${voices.size} real voices loaded.` +
+        `${voices.size} account voices loaded.` +
         (nextPageToken
           ? " More voices are available. Select Load More Voices."
           : " The provider reports no next page."),
@@ -384,7 +384,7 @@
       if (nextPageToken) {
         setStatus(`Loaded ${voices.size} voices. More pages may remain; use Load 1000+ Real Voices again.`, "success");
       } else {
-        setStatus(`Finished: ${voices.size} voices returned by your current ElevenLabs API access.`, "success");
+        setStatus(`Finished: ${voices.size} voices available to your ElevenLabs account.`, "success");
       }
     } finally {
       loadAllBtn.disabled = false;
