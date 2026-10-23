@@ -245,7 +245,7 @@
     setStatus(loadMore ? "Loading next voice page..." : "Loading real voices...");
 
     try {
-      const params = new URLSearchParams({ page_size: "100" });
+      const params = new URLSearchParams({ page_size: "100", source: "account" });
       const searchTerm = voiceSearch.value.trim();
       if (searchTerm) params.set("search", searchTerm);
       if (loadMore && nextPageToken) {
