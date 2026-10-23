@@ -100,6 +100,7 @@
 
   let voices = new Map();
   let nextPageToken = null;
+  let providerTotalCount = null;
   let loadingVoices = false;
   let generating = false;
   let audioUrl = null;
@@ -199,7 +200,9 @@
 
       if (query && !searchText.includes(query)) continue;
 
-      const option = new Option(`${name} — ID: ${id}`, id);
+      const category = String(voice.category || labels.category || "");
+      const tier = /professional|high_quality|premium/i.test(category) ? " ★ Premium" : "";
+      const option = new Option(`${name}${tier}${category ? ` · ${category}` : ""} — ID: ${id}`, id);
       voiceSelect.add(option);
     }
 
@@ -216,7 +219,7 @@
     }
 
     $("voiceCount").textContent =
-      `${voices.size} unique real voices loaded` +
+      `${voices.size} voices loaded` + (providerTotalCount != null ? ` / ${providerTotalCount} available from ElevenLabs` : "") +
       (query ? `; ${Math.max(0, voiceSelect.options.length - 1)} match search` : "");
   }
 
@@ -231,6 +234,7 @@
     if (!loadMore) {
       voices.clear();
       nextPageToken = null;
+      providerTotalCount = null;
       voiceSelect.replaceChildren(new Option("Loading real voices...", ""));
     }
 
@@ -256,6 +260,7 @@
       }
 
       nextPageToken = payload.next_page_token || null;
+      if (Number.isFinite(Number(payload.total_count))) providerTotalCount = Number(payload.total_count);
 
       renderVoices();
       loadMoreBtn.hidden = !nextPageToken;
