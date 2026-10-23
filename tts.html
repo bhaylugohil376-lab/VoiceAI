@@ -84,6 +84,7 @@
   "use strict";
 
   const $ = id => document.getElementById(id);
+  const SUPABASE_FUNCTIONS_URL = "https://axeqcbavupmpijhaaite.supabase.co/functions/v1";
 
   const textInput = $("textInput");
   const voiceSearch = $("voiceSearch");
@@ -241,7 +242,7 @@
         params.set("next_page_token", nextPageToken);
       }
 
-      const response = await authorizedFetch("/api/voices?" + params);
+      const response = await authorizedFetch(SUPABASE_FUNCTIONS_URL + "/voiceai-voices?" + params);
       const payload = await response.json();
 
       if (!payload.success || !Array.isArray(payload.voices)) {
@@ -301,7 +302,7 @@
     setStatus("Generating audio from ElevenLabs...");
 
     try {
-      const response = await authorizedFetch("/api/tts", {
+      const response = await authorizedFetch(SUPABASE_FUNCTIONS_URL + "/voiceai-tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
