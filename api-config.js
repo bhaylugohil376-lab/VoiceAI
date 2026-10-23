@@ -1,17 +1,24 @@
 (function () {
   "use strict";
 
-  // GitHub Pages is static hosting; send /api requests to the public Vercel domain.
+  // GitHub Pages is static hosting; route supported VoiceAI endpoints to Supabase Edge Functions.
   if (window.__VOICEAI_API_FETCH_PATCHED__) return;
 
-  const backend = "https://voice-ai-two-peach.vercel.app";
+  const supabaseFunctions = "https://axeqcbavupmpijhaaite.supabase.co/functions/v1";
   const originalFetch = window.fetch.bind(window);
 
   function rewriteApiUrl(rawUrl) {
     const url = new URL(rawUrl, window.location.href);
-    const apiPathIndex = url.pathname.indexOf("/api/");
-    if (url.origin === window.location.origin && apiPathIndex >= 0) {
-      return backend + url.pathname.slice(apiPathIndex) + url.search + url.hash;
+    if (url.origin !== window.location.origin) return rawUrl;
+
+    const path = url.pathname.replace(/\/$/, "");
+    const routes = {
+      "/api/voices": "/voiceai-voices",
+      "/api/tts": "/voiceai-tts",
+      "/api/health": "/voiceai-health"
+    };
+    if (routes[path]) {
+      return supabaseFunctions + routes[path] + url.search + url.hash;
     }
     return rawUrl;
   }
