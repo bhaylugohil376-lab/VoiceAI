@@ -39,9 +39,9 @@
       placeholder="Type or paste your text here..."></textarea>
     <small><span id="charCount">0</span>/5000 characters</small>
 
-    <label for="voiceSearch">Search loaded voices</label>
+    <label for="voiceSearch">AI Voice Search</label>
     <input id="voiceSearch" type="search"
-      placeholder="Search voice name or Voice ID...">
+      placeholder="Search ElevenLabs voices by name, style, language...">
 
     <div class="row">
       <div>
@@ -104,6 +104,7 @@
   let loadingVoices = false;
   let generating = false;
   let audioUrl = null;
+  let voiceSearchTimer = null;
 
   function setStatus(message, type = "") {
     status.textContent = message;
@@ -242,6 +243,8 @@
 
     try {
       const params = new URLSearchParams({ page_size: "100" });
+      const searchTerm = voiceSearch.value.trim();
+      if (searchTerm) params.set("search", searchTerm);
       if (loadMore && nextPageToken) {
         params.set("next_page_token", nextPageToken);
       }
@@ -353,7 +356,11 @@
     $("charCount").textContent = textInput.value.length;
   });
 
-  voiceSearch.addEventListener("input", renderVoices);
+  voiceSearch.addEventListener("input", () => {
+    renderVoices();
+    clearTimeout(voiceSearchTimer);
+    voiceSearchTimer = setTimeout(() => loadVoices(false), 450);
+  });
   loadMoreBtn.addEventListener("click", () => loadVoices(true));
   refreshBtn.addEventListener("click", () => loadVoices(false));
   generateBtn.addEventListener("click", generateSpeech);
