@@ -69,7 +69,13 @@
     <div id="status" role="status" aria-live="polite"></div>
   </section>
 
-  <section id="resultCard" class="card" hidden>
+
+    <section class="card">
+      <h2>Voice avatars</h2>
+      <p>Choose a voice by avatar. These free, locally generated initials avatars are placeholders, not photos of the voice actors.</p>
+      <div id="voiceCards" class="voice-grid" aria-live="polite"></div>
+    </section>
+\n  <section id="resultCard" class="card" hidden>
     <h2>Your generated audio</h2>
     <p id="selectedVoiceInfo"></p>
     <audio id="audioPlayer" controls></audio>
@@ -224,9 +230,65 @@
     $("voiceCount").textContent =
       `${voices.size} voices loaded` + (providerTotalCount != null ? ` / ${providerTotalCount} available from ElevenLabs` : "") +
       (query ? `; ${Math.max(0, voiceSelect.options.length - 1)} match search` : "");
+    renderVoiceCards(query);
   }
 
-  async function loadVoices(loadMore = false) {
+
+  function initials(name) {
+    return String(name || "Voice").trim().split(/\\s+/).slice(0, 2).map(part => Array.from(part)[0] || "").join("").toUpperCase() || "AI";
+  }
+
+  function renderVoiceCards(query = voiceSearch.value.trim().toLowerCase()) {
+    voiceCards.replaceChildren();
+    const filtered = [...voices.values()].filter(voice => {
+      const labels = voice.labels || {};
+      const haystack = `${voice.name || ""} ${voice.voice_id || ""} ${voice.description || ""} ${JSON.stringify(labels)}`.toLowerCase();
+      return !query || haystack.includes(query);
+    });
+
+    if (!filtered.length) {
+      const empty = document.createElement("p");
+      empty.className = "voice-empty";
+      empty.textContent = voices.size ? "No voices match this search." : "Load voices to see their avatars here.";
+      voiceCards.append(empty);
+      return;
+    }
+
+    const colors = [
+      "linear-gradient(135deg,#2563eb,#06b6d4)",
+      "linear-gradient(135deg,#7c3aed,#ec4899)",
+      "linear-gradient(135deg,#ea580c,#f59e0b)",
+      "linear-gradient(135deg,#059669,#14b8a6)",
+      "linear-gradient(135deg,#be123c,#8b5cf6)",
+      "linear-gradient(135deg,#1d4ed8,#9333ea)"
+    ];
+    filtered.forEach((voice, index) => {
+      const tile = document.createElement("button");
+      tile.type = "button";
+      tile.className = "voice-tile";
+      tile.setAttribute("aria-pressed", voiceSelect.value === voice.voice_id ? "true" : "false");
+      tile.title = "Select " + voice.name;
+      const avatar = document.createElement("span");
+      avatar.className = "voice-avatar";
+      avatar.style.background = colors[index % colors.length];
+      avatar.textContent = initials(voice.name);
+      const name = document.createElement("span");
+      name.className = "voice-name";
+      name.textContent = voice.name;
+      const meta = document.createElement("span");
+      meta.className = "voice-meta";
+      const labels = voice.labels || {};
+      meta.textContent = [voice.category || labels.category, labels.accent, labels.gender, labels.age].filter(Boolean).join(" · ") || "ElevenLabs voice";
+      tile.append(avatar, name, meta);
+      tile.addEventListener("click", () => {
+        voiceSelect.value = voice.voice_id;
+        renderVoiceCards();
+        setStatus("Selected voice: " + voice.name + ". Free API access depends on the provider plan.", "");
+      });
+      voiceCards.append(tile);
+    });
+  }
+\n  async function loadVoices(loadMore = false) {
     if (loadingVoices) return;
     if (loadMore && !nextPageToken) return;
 
@@ -390,7 +452,7 @@
       loadAllBtn.disabled = false;
     }
   });
-  refreshBtn.addEventListener("click", () => loadVoices(false));
+  voiceSelect.addEventListener("change", () => renderVoiceCards());\n  refreshBtn.addEventListener("click", () => loadVoices(false));
   generateBtn.addEventListener("click", generateSpeech);
 
   window.addEventListener("beforeunload", () => {
