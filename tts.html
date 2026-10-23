@@ -61,7 +61,7 @@
 
     <p id="voiceCount">0 voices loaded</p>
     <button id="loadMoreBtn" type="button" hidden>Load More Voices</button>
-    <button id="loadAllBtn" type="button" hidden>Load All Available Voices</button>
+    <button id="loadAllBtn" type="button" hidden>Load Up to 1000 Voices</button>
     <button id="refreshBtn" type="button">Refresh Voices</button>
     <button id="generateBtn" class="primary" type="button">
       Generate Speech
@@ -375,14 +375,14 @@
     // The cap prevents a runaway loop if a provider repeats a pagination token.
     const seenTokens = new Set();
     try {
-      while (nextPageToken && pagesLoaded < 50 && !seenTokens.has(nextPageToken)) {
+      while (nextPageToken && pagesLoaded < 10 && voices.size < 1000 && !seenTokens.has(nextPageToken)) {
         seenTokens.add(nextPageToken);
         await loadVoices(true);
         pagesLoaded++;
         setStatus(`Loaded ${voices.size} voices so far; checking next page...`);
       }
       if (nextPageToken) {
-        setStatus(`Loaded ${voices.size} voices. More pages may remain; use Load All Available Voices again.`, "success");
+        setStatus(`Loaded ${voices.size} voices. More pages may remain; use Load Up to 1000 Voices again.`, "success");
       } else {
         setStatus(`Finished: ${voices.size} voices returned by your current ElevenLabs API access.`, "success");
       }
