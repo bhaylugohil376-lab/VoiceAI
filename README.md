@@ -1,42 +1,32 @@
-VoiceAI — AI Voice Studio
-Production-oriented multi-page AI voice SaaS starter with separate HTML, CSS and JavaScript files, Vercel serverless APIs, Supabase authentication/database, ElevenLabs TTS/voice features and Stripe billing hooks.
-Important production setup
-The source code does not contain private provider secrets. Add these in Vercel Project Settings → Environment Variables:
-SUPABASE_URL
-SUPABASE_ANON_KEY
-SUPABASE_SERVICE_ROLE_KEY
-ELEVENLABS_API_KEY
-GEMINI_API_KEY and GEMINI_IMAGE_MODEL (image generation)
-STRIPE_SECRET_KEY
-STRIPE_WEBHOOK_SECRET
-STRIPE_PREMIUM_MONTHLY_PRICE_ID
-STRIPE_PREMIUM_YEARLY_PRICE_ID
-APP_URL
+# VoiceAI — AI Voice Studio
 
-MUSIC_API_URL / MUSIC_API_KEY (if Music provider is enabled)
-SOUND_EFFECTS_API_URL / SOUND_EFFECTS_API_KEY (if SFX provider is enabled)
-See .env.example for names only. Never commit real secret values.
-Free accounts receive up to five uses for each AI tool in a rolling 24-hour window. Usage is enforced by the server-side Supabase RPC, and the usage page reads action counts from usage_logs.
-Supabase usage-limit migration
-Run `supabase/profiles.sql` first, then `supabase/usage_limits.sql` in the Supabase SQL Editor before production use. The first migration creates the profile table and a signup trigger that creates a Free profile for new accounts. The browser uses the publishable key in `supabase-config.js`; the backend needs `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` as Vercel environment variables. Never expose the service-role key in browser code or commit it.
-It changes Free usage to 5 uses per 24-hour window per AI section/action. TTS, Clone, STT, Image, Music, SFX, Agents, etc. have independent counters. Premium/Admin are unlimited at the application level.
-Deployment
-The included vercel.json intentionally does not declare a legacy/invalid Node runtime. Vercel detects the Node.js runtime for /api functions. 
+Static multi-page VoiceAI frontend with Supabase authentication/database and Supabase Edge Functions for supported voice endpoints.
 
-Media-provider notes
-TTS, STT, voice cloning, dubbing and image generation are wired to their server APIs. Music and Sound Effects use configurable provider endpoints. Studio export and Video Voice Transfer create authenticated jobs/queues; a real production media worker/provider is required to render the final media file.
-Security
-Provider API keys stay server-side.
-Browser uses Supabase publishable key only.
-Authenticated APIs validate the Supabase bearer token.
-Agent deletion verifies ownership.
-AI usage enforcement is server-side through Supabase RPC.
-Large voice library
-The Voices page is designed for a large real voice library. It loads voices from Supabase in pages rather than loading thousands of records into the browser at once.
-To sync up to 10,000 real ElevenLabs voices into Supabase, configure ELEVENLABS_API_KEY and VOICE_SYNC_SECRET, run supabase/voices_library.sql, then POST to /api/voices/sync with:
-{"max_voices":10000}
-Use the Authorization: Bearer <VOICE_SYNC_SECRET> header. The sync endpoint follows ElevenLabs v2 voice pagination using has_more and next_page_token. It never invents placeholder voices. Provider availability and account permissions determine how many real voices can actually be synced.
+## Supabase setup
 
+The frontend routes these API paths to the Supabase project configured in `api-config.js`:
 
-API verification scope
-`npm test` runs repository syntax/required-file checks plus static media-provider contract checks. These checks do not make live paid API calls and do not prove provider credentials are valid. Music and Sound Effects expect provider endpoints to return JSON with `audio_url`/`url` or `job_id`/`id`; asynchronous jobs need provider-specific polling. Dubbing still requires an adapter that matches the selected provider's documented upload and response contract. Configure real keys only in deployment environment variables; never commit secrets.
+- `/api/health` → `voiceai-health`
+- `/api/voices` → `voiceai-voices`
+- `/api/tts` → `voiceai-tts`
+
+Set these secrets in Supabase Dashboard → Edge Functions → Secrets. Do not put private keys in browser code or commit them:
+
+- `ELEVENLABS_API_KEY`
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+
+The Edge Functions validate the Supabase access token before requesting voice data or generating audio. The browser must send the signed-in user's Supabase access token as a Bearer token.
+
+## Important migration status
+
+Only health, voices, and text-to-speech are currently routed to Supabase Edge Functions. Other existing endpoints under `server/api/` are still Node/Vercel-style handlers and have **not** all been migrated to Edge Functions yet. Do not remove the old backend files until each endpoint has a tested Supabase replacement.
+
+TTS production readiness also requires server-side usage-limit enforcement in the Edge Function. Test provider credentials, CORS, signed-in voice listing, and audio generation before treating the service as production-ready.
+
+## Security
+
+- Keep ElevenLabs and any service-role/secret keys server-side in Supabase Secrets.
+- Never expose a Supabase service-role key in browser JavaScript.
+- Never commit API secrets to GitHub.
+- Do not claim a provider is connected until a live authenticated request succeeds.
