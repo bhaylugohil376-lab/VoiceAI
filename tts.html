@@ -159,7 +159,7 @@
       let message = `Request failed (${response.status})`;
       try {
         const payload = await response.json();
-        message = payload.error || payload.message || message;
+        message = [payload.error || payload.message, payload.provider_message ? ("ElevenLabs details: " + payload.provider_message) : "", payload.provider_code ? ("Code: " + payload.provider_code) : ""].filter(Boolean).join(" — ") || message;
       } catch (_) {}
       throw new Error(message);
     }
