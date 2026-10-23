@@ -61,6 +61,7 @@
 
     <p id="voiceCount">0 voices loaded</p>
     <button id="loadMoreBtn" type="button" hidden>Load More Voices</button>
+    <button id="loadAllBtn" type="button" hidden>Load All Available Voices</button>
     <button id="refreshBtn" type="button">Refresh Voices</button>
     <button id="generateBtn" class="primary" type="button">
       Generate Speech
@@ -92,6 +93,7 @@
   const formatSelect = $("formatSelect");
   const status = $("status");
   const loadMoreBtn = $("loadMoreBtn");
+  const loadAllBtn = $("loadAllBtn");
   const refreshBtn = $("refreshBtn");
   const generateBtn = $("generateBtn");
   const resultCard = $("resultCard");
@@ -230,6 +232,7 @@
 
     loadingVoices = true;
     loadMoreBtn.disabled = true;
+    loadAllBtn.disabled = true;
     refreshBtn.disabled = true;
 
     if (!loadMore) {
@@ -267,6 +270,7 @@
 
       renderVoices();
       loadMoreBtn.hidden = !nextPageToken;
+      loadAllBtn.hidden = !nextPageToken;
 
       setStatus(
         `${voices.size} real voices loaded.` +
@@ -283,6 +287,7 @@
     } finally {
       loadingVoices = false;
       loadMoreBtn.disabled = false;
+      loadAllBtn.disabled = false;
       refreshBtn.disabled = false;
     }
   }
@@ -362,6 +367,29 @@
     voiceSearchTimer = setTimeout(() => loadVoices(false), 450);
   });
   loadMoreBtn.addEventListener("click", () => loadVoices(true));
+  loadAllBtn.addEventListener("click", async () => {
+    if (loadingVoices || !nextPageToken) return;
+    loadAllBtn.disabled = true;
+    let pagesLoaded = 0;
+    // Fetch only pages the authenticated ElevenLabs API actually exposes.
+    // The cap prevents a runaway loop if a provider repeats a pagination token.
+    const seenTokens = new Set();
+    try {
+      while (nextPageToken && pagesLoaded < 50 && !seenTokens.has(nextPageToken)) {
+        seenTokens.add(nextPageToken);
+        await loadVoices(true);
+        pagesLoaded++;
+        setStatus(`Loaded ${voices.size} voices so far; checking next page...`);
+      }
+      if (nextPageToken) {
+        setStatus(`Loaded ${voices.size} voices. More pages may remain; use Load All Available Voices again.`, "success");
+      } else {
+        setStatus(`Finished: ${voices.size} voices returned by your current ElevenLabs API access.`, "success");
+      }
+    } finally {
+      loadAllBtn.disabled = false;
+    }
+  });
   refreshBtn.addEventListener("click", () => loadVoices(false));
   generateBtn.addEventListener("click", generateSpeech);
 
