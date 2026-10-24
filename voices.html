@@ -452,7 +452,7 @@
           const seenTokens = new Set();
 
           for (let page = 0; page < 10; page++) {
-            const params = new URLSearchParams({ page_size: "100" });
+            const params = new URLSearchParams({ page_size: "100", source: "account" });
             if (nextPageToken) params.set("next_page_token", nextPageToken);
 
             const response = await fetch("./api/voices?" + params.toString(), {
@@ -470,7 +470,7 @@
               return;
             }
 
-            if (Array.isArray(data.voices)) providerVoices.push(...data.voices);
+            if (!data.success && data.error) {\n              voices = [];\n              voiceLoadError = data.error;\n              renderVoices();\n              return;\n            }\n            if (Array.isArray(data.voices)) providerVoices.push(...data.voices);
             const token = typeof data.next_page_token === "string" ? data.next_page_token : "";
             if (!(data.has_more ?? Boolean(token)) || !token || seenTokens.has(token)) break;
             seenTokens.add(token);
