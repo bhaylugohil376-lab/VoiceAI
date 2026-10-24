@@ -31,7 +31,7 @@
 <body>
 <main class="wrap">
   <h1>VoiceAI Text to Speech</h1>
-  <p>Choose voices available to your ElevenLabs account. Community voices may appear in previews but may not be usable for speech generation; your plan and credits still apply.</p>
+  <p>Choose voices available to your connected ElevenLabs account. Community voices may appear in previews but may not be usable for speech generation; your plan and credits still apply.</p>
 
   <section class="card">
     <label for="textInput">Text to convert</label>
@@ -75,7 +75,8 @@
       <p>Choose a voice by avatar. These free, locally generated initials avatars are placeholders, not photos of the voice actors.</p>
       <div id="voiceCards" class="voice-grid" aria-live="polite"></div>
     </section>
-\n  <section id="resultCard" class="card" hidden>
+
+  <section id="resultCard" class="card" hidden>
     <h2>Your generated audio</h2>
     <p id="selectedVoiceInfo"></p>
     <audio id="audioPlayer" controls></audio>
@@ -288,7 +289,8 @@
       voiceCards.append(tile);
     });
   }
-\n  async function loadVoices(loadMore = false) {
+
+  async function loadVoices(loadMore = false) {
     if (loadingVoices) return;
     if (loadMore && !nextPageToken) return;
 
@@ -317,7 +319,7 @@
       const response = await authorizedFetch(SUPABASE_FUNCTIONS_URL + "/voiceai-voices?" + params);
       const payload = await response.json();
 
-      if (!payload.success || !Array.isArray(payload.voices)) {
+      if (!response.ok || !payload.success || !Array.isArray(payload.voices)) {
         throw new Error(payload.error || "Invalid voices response.");
       }
 
