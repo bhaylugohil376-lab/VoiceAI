@@ -235,7 +235,7 @@
     }
 
     $("voiceCount").textContent =
-      `${voices.size} community voices loaded` + (providerTotalCount != null ? ` / ${providerTotalCount} available from ElevenLabs` : "") +
+      `${voices.size} ${currentProvider === "ttsai" ? "TTS.ai" : "ElevenLabs community"} voices loaded` + (currentProvider !== "ttsai" && providerTotalCount != null ? ` / ${providerTotalCount} available from ElevenLabs` : "") +
       (query ? `; ${Math.max(0, voiceSelect.options.length - 1)} match search` : "");
     renderVoiceCards(query);
   }
@@ -465,7 +465,7 @@
     }
   });
   voiceSelect.addEventListener("change", () => renderVoiceCards());
-  providerSelect.addEventListener("change", () => { currentProvider = providerSelect.value; nextPageToken = null; loadVoices(false); });
+  providerSelect.addEventListener("change", () => { currentProvider = providerSelect.value; nextPageToken = null; voiceSearch.value = ""; loadVoices(false); });
   refreshBtn.addEventListener("click", () => loadVoices(false));
   generateBtn.addEventListener("click", generateSpeech);
 
