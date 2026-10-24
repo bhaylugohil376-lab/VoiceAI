@@ -403,7 +403,7 @@
 
       if (contentType.includes("application/json")) {
         const payload = await response.json();
-        throw new Error(payload.error || "The API did not return audio.");
+        throw new Error([payload.error, payload.provider_message ? "Provider detail: " + (typeof payload.provider_message === "string" ? payload.provider_message : JSON.stringify(payload.provider_message)) : "", payload.provider_status ? "Provider status: " + payload.provider_status : ""].filter(Boolean).join(" | ") || "The API did not return audio.");
       }
 
       const blob = await response.blob();
