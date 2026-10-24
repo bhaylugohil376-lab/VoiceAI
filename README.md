@@ -24,6 +24,10 @@ Only health, voices, and text-to-speech are currently routed to Supabase Edge Fu
 
 TTS production readiness also requires server-side usage-limit enforcement in the Edge Function. Test provider credentials, CORS, signed-in voice listing, and audio generation before treating the service as production-ready.
 
+## Live verification limitations
+
+Automated repository checks and syntax tests do not prove provider credentials are valid. They also do not prove live voice listing or audio generation works; those require authenticated requests against the configured provider and backend.
+
 ## Security
 
 - Keep ElevenLabs and any service-role/secret keys server-side in Supabase Secrets.
