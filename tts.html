@@ -31,7 +31,7 @@
 <body>
 <main class="wrap">
   <h1>VoiceAI Text to Speech</h1>
-  <p>Choose voices available to your connected ElevenLabs account. Community voices may appear in previews but may not be usable for speech generation; your plan and credits still apply.</p>
+  <p>Browse ElevenLabs community voices. Some community voices may require account access or paid credits to generate speech.</p>
 
   <section class="card">
     <label for="textInput">Text to convert</label>
@@ -41,7 +41,7 @@
 
     <label for="voiceSearch">AI Voice Search</label>
     <input id="voiceSearch" type="search"
-      placeholder="Search ElevenLabs voices by name, style, language...">
+      placeholder="Search voices by name, style, language...">
 
     <div class="row">
       <div>
@@ -229,7 +229,7 @@
     }
 
     $("voiceCount").textContent =
-      `${voices.size} voices loaded` + (providerTotalCount != null ? ` / ${providerTotalCount} available from ElevenLabs` : "") +
+      `${voices.size} community voices loaded` + (providerTotalCount != null ? ` / ${providerTotalCount} available from ElevenLabs` : "") +
       (query ? `; ${Math.max(0, voiceSelect.options.length - 1)} match search` : "");
     renderVoiceCards(query);
   }
@@ -309,7 +309,7 @@
     setStatus(loadMore ? "Loading next voice page..." : "Loading real voices...");
 
     try {
-      const params = new URLSearchParams({ page_size: "100", source: "account" });
+      const params = new URLSearchParams({ page_size: "100", source: "library" });
       const searchTerm = voiceSearch.value.trim();
       if (searchTerm) params.set("search", searchTerm);
       if (loadMore && nextPageToken) {
@@ -337,7 +337,7 @@
       loadAllBtn.hidden = !nextPageToken;
 
       setStatus(
-        `${voices.size} account voices loaded.` +
+        `${voices.size} community voices loaded.` +
         (nextPageToken
           ? " More voices are available. Select Load More Voices."
           : " The provider reports no next page."),
