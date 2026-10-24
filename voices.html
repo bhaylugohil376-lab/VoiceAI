@@ -472,7 +472,7 @@
 
             if (Array.isArray(data.voices)) providerVoices.push(...data.voices);
             const token = typeof data.next_page_token === "string" ? data.next_page_token : "";
-            if (!data.has_more || !token || seenTokens.has(token)) break;
+            if (!(data.has_more ?? Boolean(token)) || !token || seenTokens.has(token)) break;
             seenTokens.add(token);
             nextPageToken = token;
           }
@@ -514,6 +514,8 @@
                 style:
                   String(
                     voice.style ||
+                    voice.labels?.use_case ||
+                    voice.labels?.description ||
                     voice.category ||
                     "professional"
                   ).toLowerCase(),
@@ -594,9 +596,17 @@
               gender === "all" ||
               voice.gender === gender;
 
-            const matchesStyle =
-              style === "all" ||
-              voice.style === style;
+            const styleText = `${voice.style || ""} ${voice.description || ""} ${(voice.tags || []).join(" ")}`.toLowerCase();
+            const styleAliases = {
+              professional: /professional|narrat|corporate|formal|news|premade/,
+              advertising: /advertis|commercial|promo|marketing|sales/,
+              podcast: /podcast|conversational|discussion|storytell/,
+              energetic: /energetic|excited|upbeat|dynamic|enthusiastic/,
+              conversational: /conversational|casual|friendly|natural|chat/
+            };
+            const matchesStyle = style === "all" ||
+              voice.style === style ||
+              (styleAliases[style] ? styleAliases[style].test(styleText) : styleText.includes(style));
 
             return (
               matchesSearch &&
