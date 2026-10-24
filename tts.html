@@ -236,7 +236,7 @@
 
 
   function initials(name) {
-    return String(name || "Voice").trim().split(/\\s+/).slice(0, 2).map(part => Array.from(part)[0] || "").join("").toUpperCase() || "AI";
+    return String(name || "Voice").trim().split(/\s+/).slice(0, 2).map(part => Array.from(part)[0] || "").join("").toUpperCase() || "AI";
   }
 
   function renderVoiceCards(query = voiceSearch.value.trim().toLowerCase()) {
